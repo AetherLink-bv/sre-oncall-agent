@@ -55,6 +55,11 @@ release blocker; another agent is not a human reviewer.
 
 ## Engineering
 
+- Work from the accepted artifacts. Fix failing checks within accepted scope;
+  changed scope requires an updated human-reviewed plan. Preserve failure evidence.
+- Substantiate review findings with a trigger, impact and reproduction or exact
+  code path; label hypotheses. A verifier context only reports, never approves.
+
 - Prefer TDD: change a `node:test` in `test/` when changing `src/`. Run `npm run verify`.
 - After each assignment step, append one line to `PROGRESS.md` with `npm run progress:note -- [--kind status|decision|blocker] "<text>"`. Never edit or rewrite `PROGRESS.md` directly (Edit/Write on it are denied).
 - Runtime deps: `@anthropic-ai/claude-agent-sdk`, `zod`, Node built-ins. Nothing else.

@@ -9,7 +9,8 @@ import test from "node:test";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const git = (cwd, ...args) => execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
-const seedFixture = (fixture, corruptFile) => {
+const normalizeNewlines = text => text.replace(/\r\n/g, "\n");
+const seedFixture = (fixture, corruptFile, { autocrlf = false } = {}) => {
   mkdirSync(join(fixture, "src"), { recursive: true });
   mkdirSync(join(fixture, "scripts"), { recursive: true });
   for (const file of ["src/tools.ts", "src/telemetry.ts", "src/contract.ts", "src/executor.ts", "workshop.json", "scripts/checkpoint.mjs"]) {
@@ -26,6 +27,10 @@ const seedFixture = (fixture, corruptFile) => {
   appendFileSync(join(fixture, ".git", "info", "exclude"), "\n/node_modules\n");
   git(fixture, "config", "user.email", "checkpoint@example.invalid");
   git(fixture, "config", "user.name", "Checkpoint test");
+  if (autocrlf) {
+    git(fixture, "config", "core.autocrlf", "true");
+    git(fixture, "config", "core.eol", "crlf");
+  }
   git(fixture, "add", ".");
   git(fixture, "commit", "-qm", "fixture");
   symlinkSync(join(root, "node_modules"), join(fixture, "node_modules"), "junction");
@@ -46,10 +51,11 @@ const assertFailClosedA8 = (executor) => {
 test("checkpoint cuts come from committed HEAD and refuse overwrite", () => {
   const fixture = mkdtempSync(join(tmpdir(), "w5-checkpoint-"));
   try {
-    seedFixture(fixture);
+    seedFixture(fixture, undefined, { autocrlf: true });
     const sourceSha = git(fixture, "rev-parse", "HEAD");
     const committedTools = execFileSync("git", ["show", "HEAD:src/tools.ts"], { cwd: fixture, encoding: "utf8" });
     const committedExecutor = execFileSync("git", ["show", "HEAD:src/executor.ts"], { cwd: fixture, encoding: "utf8" });
+    const parentExecutor = readFileSync(join(fixture, "src/executor.ts"), "utf8");
     appendFileSync(join(fixture, "src/tools.ts"), "\n// uncommitted parent-only marker\n");
     const dirtyParentTools = readFileSync(join(fixture, "src/tools.ts"), "utf8");
     for (const id of ["start", "core-2", "core-3"]) {
@@ -63,10 +69,11 @@ test("checkpoint cuts come from committed HEAD and refuse overwrite", () => {
       if (id === "core-3") {
         assert.doesNotMatch(tools, /TODO\(A5\)/);
         assert.doesNotMatch(executor, /TODO\(A8\)/);
-        assert.equal(tools, committedTools);
-        assert.equal(executor, committedExecutor);
+        assert.match(tools, /\r\n/, "fixture must exercise CRLF worktree checkout");
+        assert.equal(normalizeNewlines(tools), committedTools);
+        assert.equal(normalizeNewlines(executor), committedExecutor);
       } else if (id === "core-2") {
-        assert.equal(tools, committedTools);
+        assert.equal(normalizeNewlines(tools), committedTools);
         assert.equal((executor.match(/TODO\(A8\)/g) ?? []).length, 1);
         assert.match(executor, /fail\(\["TODO\(A8\): rebuild the named human approval gate before execution"\]\)/);
         assertFailClosedA8(executor);
@@ -120,7 +127,7 @@ test("checkpoint cuts come from committed HEAD and refuse overwrite", () => {
     assert.equal(nestedResult.status, 0, nestedResult.stderr);
     const nestedCore2 = join(nestedStart, ".lab", "checkpoints", "core-2");
     assert.match(readFileSync(join(nestedCore2, "CHECKPOINT.md"), "utf8"), new RegExp(`Source commit: ${sourceSha}`));
-    assert.equal(readFileSync(join(nestedCore2, "src/tools.ts"), "utf8"), committedTools);
+    assert.equal(normalizeNewlines(readFileSync(join(nestedCore2, "src/tools.ts"), "utf8")), committedTools);
     assert.equal((readFileSync(join(nestedCore2, "src/executor.ts"), "utf8").match(/TODO\(A8\)/g) ?? []).length, 1);
     const checkpointTools = join(fixture, ".lab", "checkpoints", "start", "src", "tools.ts");
     appendFileSync(checkpointTools, "\n// participant checkpoint edit\n");
@@ -130,7 +137,7 @@ test("checkpoint cuts come from committed HEAD and refuse overwrite", () => {
     assert.match(repeat.stderr, /Refusing to overwrite/);
     assert.equal(readFileSync(checkpointTools, "utf8"), retainedEdit);
     assert.equal(readFileSync(join(fixture, "src/tools.ts"), "utf8"), dirtyParentTools);
-    assert.equal(readFileSync(join(fixture, "src/executor.ts"), "utf8"), committedExecutor);
+    assert.equal(readFileSync(join(fixture, "src/executor.ts"), "utf8"), parentExecutor);
     assert.equal(git(fixture, "status", "--porcelain"), "M src/tools.ts\n?? .lab/");
     assert.equal(git(fixture, "rev-parse", "HEAD"), sourceSha);
   } finally {

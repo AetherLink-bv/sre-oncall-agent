@@ -3,6 +3,14 @@
 Run this top-to-bottom before pushing a `fix/*` branch. Each item names the
 check and where it fails if broken. `npm run verify` covers 1–5 and 7.
 
+Review in three passes: behaviour, security boundaries, and alignment with
+the accepted intent and plan. For a material finding, give the file/line,
+trigger, impact and a reproduction or exact reachable code path. Mark
+unverified suspicions. Check dependency/settings changes, secrets and expanded
+permissions too. Humans validate findings and inspect the approval-gate diff
+directly; a passing check or verifier report is not approval. After a fix,
+rerun affected checks and update the evidence record.
+
 1. **Propose, don't act.** No mutating tool in `src/tools.ts`; mutations live
    only in `src/executor.ts`, a separate program that never reads model text.
 2. **Every claim carries a ref.** `parseVerdict` rejects verdicts without
@@ -26,3 +34,7 @@ check and where it fails if broken. `npm run verify` covers 1–5 and 7.
 8. **Detection is deterministic.** The console listener in
    `console/server.ts` uses fixed criteria; nothing routes detection through
    the model.
+
+The named approval record is a lab exercise, not authenticated production
+identity. Hooks and instructions are not isolation. See the
+[source principles and lab limits](docs/ai-native-sdlc.md).

@@ -16,6 +16,17 @@ prompts and proof, follow [CARD.md](CARD.md).
 
 ## Recommended self-paced route
 
+The [source principles and lab limits](docs/ai-native-sdlc.md) explain why
+each artifact feeds the next. Use the evidence record to link checks back
+to the intent, substantiate review findings and propose one next lesson.
+Work in one development loop unless a separate context has a clear purpose;
+an optional verifier still cannot replace required independent human review.
+
+Choose [WSL or native PowerShell](docs/platforms.md) before setup. The
+[assignment examples](docs/assignment-examples.md) show each scenario, starting
+state, expected result and stop condition. Use your own evidence; example
+screenshots and solved checkpoints do not complete an assignment for you.
+
 You can complete this route without a facilitator or a presentation. Use
 this page to navigate; [CARD.md](CARD.md) contains the exact prompts,
 commands, expected results and stop conditions. Read its **Before you act**

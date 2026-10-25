@@ -7,6 +7,10 @@ For the facilitator run sheet and timing, see [FACILITATOR.md](FACILITATOR.md).
 For the same assignment without a facilitator, start with [SOLO.md](SOLO.md).
 The card includes the explanations and checks needed to work independently.
 
+The [source principles and lab limits](docs/ai-native-sdlc.md) connect this
+route to the Anthropic AI-native SDLC, security and agent-loop articles.
+They add no required assignment or production permissions.
+
 The required route has **three core tasks**. Start with the AI SDLC: its
 purpose, stages, evidence and human decisions. Then open Claude Code before
 code edits. For each task, explain what you will do, why it is needed, and
