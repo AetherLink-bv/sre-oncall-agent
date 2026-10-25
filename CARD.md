@@ -6,17 +6,17 @@ Start with the task and its reason. Read each concept just before you use it. Th
 
 ## Start with the AI SDLC
 
-Faster code is not enough. A useful change needs a clear outcome, checked evidence and a human release decision.
+Faster code is not enough. Each step reads the previous artifact, checks an outcome and passes evidence forward. A failed check sends the work back, not past the gate.
 
 Plan → Design → Build → Test → Release → Observe → Plan again.
 
 Produce an accepted intent, a reviewed plan, a tested diff, a human release decision and one reviewed next task.
 
-We change the SRE agent and observe a local shop. These are practice systems, not the learning goal. Working without a facilitator? Follow SOLO.md for setup, self-review, pauses and blockers, then complete the same Core 1–3 steps below. Read each Before you act explanation; no presentation is required.
+We change the SRE agent and observe a local shop. These are practice systems, not the learning goal. Working without a facilitator? Follow SOLO.md for setup, self-review, pauses and blockers, then complete the same Core 1–3 steps below. Read each Before you act explanation; no presentation is required. See docs/ai-native-sdlc.md for the source principles and the limits of this local lab.
 
 ## Start
 
-Install Claude Code with the official instructions at https://code.claude.com/docs/en/setup, then create this isolated starter. Terminal 1 starts Claude Code after the lifecycle introduction and before code edits; terminal 2 configures the SDK and runs the lab.
+Install Claude Code with the official instructions at https://code.claude.com/docs/en/setup, then create this isolated starter. Terminal 1 starts Claude Code after the lifecycle introduction and before code edits; terminal 2 configures the SDK and runs the lab. Review user settings and hooks before model use. Keep services local; this lab does not provide production identity or network isolation.
 
 **Why:** Practise a software delivery cycle on a local SRE agent. Claude Code helps develop the software; the separate runtime agent reads the shop telemetry. Humans accept plans, review evidence and authorize release.
 
@@ -219,12 +219,12 @@ Slides: Establish a reviewable starting point · Ask for a small plan, then revi
 
 ![Keep the unfinished code for comparison](docs/assignment-examples/baseline.png)
 
-### 2.2 Run the red test: `npx tsx --test test/workshop/tools.test.ts`. Ask Claude Code: "Read intent.md, docs/spec.md and the failing test. Propose the smallest change in docs/plan.md. Name files, checks, risks, a rejected alternative and your stop point. Do not edit code. Wait for my review."
+### 2.2 Run the red test: `npx tsx --test test/workshop/tools.test.ts`. Ask Claude Code: "Read intent.md, docs/spec.md and the failing test. Propose the smallest change in docs/plan.md. Name files, checks, untrusted inputs, allowed access, a refusal test, a rejected alternative and your stop point. Keep one development loop for these two repairs. Do not edit code. Wait for my review."
 
 **Before you act:** A red test exposes the missing behaviour. The bench checks scripted outcomes across fixed scenarios, not model quality.
 
 - **See:** The test fails: `list_deploys` returns nothing. `npm run bench` fails too: without deploys the agent misses the bad deploy.
-- **Check:** Explain the failing assertion. Review the plan against your intent and the existing contract. Record your accepted scope in `docs/plan.md` before implementation.
+- **Check:** Explain the failing assertion. Review the plan against your intent and the existing contract. Record your accepted scope in `docs/plan.md` before implementation. If the implementation needs broader scope, stop and revise the plan for human review. Keep the accepted intent and plan with the code in the learner PR.
 - **Stuck?** Find the single `TODO(A5)` handler stub in `src/tools.ts`. Restore the read-only handler binding; inspect and preserve the existing MCP registration.
 
 **Example: Review the tool plan before implementation.** Example document, not an approved plan
@@ -242,7 +242,7 @@ Slides: Establish a reviewable starting point · Ask for a small plan, then revi
 **Before you act:** MCP exposes named tools. The existing registration points to a handler that reads data; restore that binding only after the human reviews the small plan.
 
 - **See:** `test/workshop/tools.test.ts` is green. The A8 valid-approval executor assertion remains red until the gate repair later in Core 2.
-- **Check:** After plan review, implement and run `npx tsx --test test/workshop/tools.test.ts`, then `npm run typecheck` and `npm run bench`. The bench prints `PASS bench`; executor tests remain intentionally red until the gate repair later in Core 2. Save the actual commands, results and any untested paths in `docs/verify/sdlc.md`. A8 remains expected red here, so this intermediate state is not yet release-ready.
+- **Check:** After plan review, implement and run `npx tsx --test test/workshop/tools.test.ts`, then `npm run typecheck` and `npm run bench`. The bench prints `PASS bench`; executor tests remain intentionally red until the gate repair later in Core 2. Save the actual commands, results and any untested paths in `docs/verify/sdlc.md`. A8 remains expected red here, so this intermediate state is not yet release-ready. Fix failures within the accepted scope and rerun the affected check before handing back. Preserve failure evidence; never weaken assertions.
 - **Stuck?** The tool still returns `[]`: inspect the handler binding and the preserved registration; do not add a second registration.
 
 **Example: Prove the deployment tool repair.** Expected result shape, not a recorded test run
@@ -278,7 +278,7 @@ Slides: Establish a reviewable starting point · Ask for a small plan, then revi
 **Before you act:** The approval gate validates a named human decision for this incident and proposal. The starter fails closed until you rebuild it.
 
 - **See:** The test is green. The executor now refuses to act without a named approval for this incident and this proposal.
-- **Check:** Run `npx tsx --test test/workshop/executor.test.ts`.
+- **Check:** Run `npx tsx --test test/workshop/executor.test.ts`. Identify the input record, the action it could authorize and the test that refuses a wrong incident, proposal or missing human name. A typed name is not authenticated identity.
 - **Stuck?** Read `test/workshop/executor.test.ts`. It names every case the gate must refuse. Chat refuses your sentence: that is correct for anything that changes the system. Approve, execute and resolve are buttons.
 
 **Example: Keep human permission specific.** Expected result shape, not a recorded test run
@@ -306,7 +306,7 @@ Slides: Establish a reviewable starting point · Ask for a small plan, then revi
 **Before you act:** Run the complete checks after both repairs so the results cover the full change.
 
 - **See:** All must pass before the code release decision.
-- **Check:** Record actual results in `docs/verify/sdlc.md`.
+- **Check:** Record actual results in `docs/verify/sdlc.md`. Map every accepted intent check to a test or observation and its limit. One live run does not prove model reliability.
 - **Stuck?** If a check fails, preserve its output and do not mark the change ready for release.
 
 **Example: Record checks, not a done label.** Example form; replace each field with actual output
@@ -329,12 +329,12 @@ Slides: Establish a reviewable starting point · Ask for a small plan, then revi
 
 Slides: Review the actual diff · Prepare the PR and make a release decision · Observe runtime with separate permission · Recovery: confirmed or not confirmed? · Turn the observation into the next task. Replaces A9.
 
-### 3.1 Ask Claude Code: "Review git diff workshop-base against intent.md, docs/plan.md and REVIEW.md. Identify functional defects, missing checks and unsupported claims. Cite files and lines. Do not edit, approve, commit, push or merge. Wait for my decision."
+### 3.1 Ask Claude Code: "Review git diff workshop-base against intent.md, docs/plan.md and REVIEW.md. Review behaviour, security boundaries and alignment with the accepted plan. For each material finding, cite a file and line, the trigger, impact and a reproduction or exact code path. Mark unverified suspicions. Check dependency, settings and permission changes too. Do not edit, approve, commit, push or merge. Wait for my decision."
 
 **Before you act:** First run git status --short. Untracked files are absent from the diff: inspect them and stage only intended files by exact path yourself before requesting review. Never stage secrets. Review checks whether the change meets the intent, not whether its explanation sounds convincing. Passing tests do not approve a change.
 
 - **See:** A list of findings, or an explicit no-findings result. The human has inspected the diff and evidence rather than accepting the model's conclusion.
-- **Check:** Verify every finding yourself. Request fixes and rerun affected checks when needed. Record your name, decision, residual risks and untested paths in `docs/verify/sdlc.md`.
+- **Check:** Verify every finding yourself. Request fixes and rerun affected checks when needed. Record your name, decision, residual risks and untested paths in `docs/verify/sdlc.md`. Inspect the approval-gate change directly. An optional fresh-context verifier only reports findings; it does not grant approval or replace required human review.
 - **Stuck?** When working solo, review your own diff in a separate pass and record that limitation. If repository policy requires another reviewer, wait for one.
 
 **Example: Judge the code against the intent.** Example review record, not an actual approval
@@ -421,12 +421,12 @@ Slides: Review the actual diff · Prepare the PR and make a release decision · 
 
 ![Human closure persists](docs/assignment-examples/console-resolved.png)
 
-### 3.5 Ask Claude Code: "Read the actual observations in docs/verify/sdlc.md. Propose one next change and the acceptance check or regression test that would prove it. Distinguish observed facts from hypotheses. Do not edit code or close the incident. Wait for my review."
+### 3.5 Ask Claude Code: "Read the actual observations in docs/verify/sdlc.md. Propose one next change and the acceptance check or regression test that would prove it. Name whether the lesson belongs in a regression test, enforced code boundary or reviewed CLAUDE.md/skill update. Distinguish observed facts from hypotheses. Do not edit code or close the incident. Wait for my review."
 
 **Before you act:** Maintenance feeds the next planning cycle. A closed incident or a model-generated lesson is not automatically a reviewed software improvement.
 
 - **See:** One proposed next task grounded in a trace, failed check, review finding or missing observation. It includes an acceptance check.
-- **Check:** Review the proposal yourself. Record the task, evidence and your decision in `docs/verify/sdlc.md`. Keep an unresolved incident open. Record progress with `npm run progress:note -- "SDLC: recorded actual evidence, release decision and next task"`.
+- **Check:** Review the proposal yourself. Record the task, evidence and your decision in `docs/verify/sdlc.md`. Keep an unresolved incident open. Record progress with `npm run progress:note -- "SDLC: recorded actual evidence, release decision and next task"`. Record one observed bottleneck or rework point and what would measure improvement next time. Do not claim a speed gain without a comparison.
 - **Stuck?** If the model or recovery was blocked, use that observed limitation. Do not invent a successful run. Implementing this next task is optional; proposing and reviewing it is required.
 
 **Example: Use the actual result for the next task.** Conditional example; use only if you observed this gap
@@ -460,6 +460,6 @@ Run `npm run checkpoint -- core-2` or `npm run checkpoint -- core-3` from the OR
 
 ## Where everything is
 
-- **Participant:** [Participant card](CARD.md) · [Console](http://127.0.0.1:4320) · [Course (concepts, self-paced)](course/index.html) · [Working alone](SOLO.md) · [Claude Code and SDK setup](https://github.com/RyanLisse/sre-oncall-agent/blob/main/docs/claude-code.md) · [Human Git release steps](docs/sdlc-git.md) · [Assignment scenarios and examples](docs/assignment-examples.md) · [WSL and PowerShell](docs/platforms.md)
+- **Participant:** [Participant card](CARD.md) · [Console](http://127.0.0.1:4320) · [Course (concepts, self-paced)](course/index.html) · [Working alone](SOLO.md) · [Claude Code and SDK setup](https://github.com/RyanLisse/sre-oncall-agent/blob/main/docs/claude-code.md) · [Human Git release steps](docs/sdlc-git.md) · [Assignment scenarios and examples](docs/assignment-examples.md) · [WSL and PowerShell](docs/platforms.md) · [AI-native SDLC principles and sources](docs/ai-native-sdlc.md)
 - **Facilitator:** [Facilitator run sheet](FACILITATOR.md) · [Workshop guide](WORKSHOP.md) · [Slides (separate repo)](https://github.com/RyanLisse/aetherlink-classroom-slides/blob/main/workshop5.html)
 - **Agent:** [Agent rules](CLAUDE.md) · [Contract](docs/spec.md) · [Bench cases](bench/cases.json) · [Review checklist](REVIEW.md)

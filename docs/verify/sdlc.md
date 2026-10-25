@@ -12,6 +12,9 @@ or template is not completion. Do not copy evidence from a solved checkpoint.
 
 ## Checks actually run
 
+Link every accepted intent check to a row below. Preserve a failing result
+and the subsequent fix; do not substitute a scripted bench for live evidence.
+
 | Command or observation | Actual result | What it proves | What it does not prove |
 | --- | --- | --- | --- |
 | <focused test, first run> | <failure> | <missing behaviour> | <limits> |
@@ -23,6 +26,8 @@ or template is not completion. Do not copy evidence from a solved checkpoint.
 
 - Reviewed diff: <baseline and change commit or working diff>
 - Findings and your response: <verified findings, fixes or no findings>
+- Finding proof: <file/line, trigger, impact and reproduction or exact code path; label unverified suspicions>
+- Security pass: <untrusted input, secrets, dependency/settings changes and permission boundaries inspected>
 - Human reviewer and decision: <name, accepted or changes required, reason>
 - Review mode: <independent reviewer, or self-review; no independent reviewer>
 - Risks and untested paths: <what remains unknown>
@@ -42,4 +47,6 @@ or template is not completion. Do not copy evidence from a solved checkpoint.
 - Human action: <actual decision, never a simulated approval>
 - Next task: <one change justified by these observations>
 - Acceptance check or regression test: <what would prove that change>
+- Lesson destination: <regression test, enforced code boundary or reviewed instruction/skill; proposal only>
+- Observed bottleneck: <rework or delay you saw, and a comparison to measure next time; no invented speed gain>
 - Human review of the next task: <name and decision>

@@ -40,6 +40,14 @@ The slides: run `python3 serve.py` in the slides repo, then open
 
 ## Teach from the task
 
+Use the [source principles](docs/ai-native-sdlc.md) to connect the steps, not
+as another lecture. Ask: which artifact did you read, which check failed,
+and what changed because of it? At plan review, name one trust boundary and
+refusal test. At diff review, require proof behind findings. At the close,
+ask for one observed bottleneck and where the next lesson belongs. Do not
+promise faster delivery from a single workshop run. Main-loop simplicity
+does not mean removing the executor or optional fresh-context verification.
+
 Welcome the group with the AI-SDLC learning goal. Keep welcome and W4 recap
 within five minutes. Ask for one useful lesson or surprise from W4 and the
 check that would catch it next time. Take two or three short answers.

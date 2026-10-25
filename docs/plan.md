@@ -24,5 +24,10 @@ the second repair.
 ## Risks and human plan review
 
 - Risk and check: <what could go wrong and how you will detect it>
+- Trust boundary: <untrusted input, allowed access and the test that refuses unsafe use>
 - Reviewer and decision: <human name, accepted scope or requested changes>
 - Claude's stop point: <when to return for human review>
+
+If scope changes, update this plan and get human review again. Within the
+accepted scope, Claude may fix and rerun a failing check; retain the failure
+evidence and never weaken assertions. Keep this plan with the learner PR.
