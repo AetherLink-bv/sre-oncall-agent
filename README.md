@@ -53,8 +53,18 @@ npm test                                # green: the main suite
 npm run test:workshop                   # red: the exercises (by design)
 ```
 
+This nine-assignment route uses `workshop/start`; the current `main` branch contains a separate completed-runtime course, so do not follow that route during these exercises.
+
 Start Claude Code in the folder (`claude`) and run `/status`: it shows the
 guard and progress hooks from `.claude/settings.json`.
+
+Open [SOLO.md](SOLO.md) and paste the A1 prompt. Claude Code checks the setup
+and explains the expected red workshop tests. You inspect the console and
+accept the setup before Claude Code builds an exercise.
+
+For a visual route through the AI-SDLC, start Claude Code with
+`claude --plugin-dir ./course/ai-sdlc-mod` and run `/sdlc`. The optional mod
+reads the same nine prompts from `SOLO.md` and leaves every human gate intact.
 
 ## Run it
 
@@ -115,8 +125,9 @@ turn green as you rebuild them.
 | A8 | The gate: the executor acts only on a NAMED human approval |
 | A9 | Maintain: resolve the incident with notes that become a lesson |
 
-The full steps, catch-up commands and step tags are in
-**[WORKSHOP.md](WORKSHOP.md)**. Working alone? Follow **[SOLO.md](SOLO.md)**.
+The classroom goals and checks are in **[WORKSHOP.md](WORKSHOP.md)**. The exact
+Claude Code prompts, learner choices, and stop points are in
+**[SOLO.md](SOLO.md)**. Use the same SOLO prompts in a team or alone.
 
 ## The rules
 
