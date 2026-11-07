@@ -95,7 +95,7 @@
       {
         "matcher": "Bash|PowerShell|Read|Grep|Glob|Write|Edit|MultiEdit|NotebookEdit",
         "hooks": [
-          { "type": "command", "command": "node ${CLAUDE_PROJECT_DIR}/.claude/hooks/guard.mjs" }
+          { "type": "command", "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/guard.mjs\"" }
         ]
       }
     ],
@@ -103,21 +103,21 @@
       {
         "matcher": "Write|Edit|MultiEdit|Bash",
         "hooks": [
-          { "type": "command", "command": "node ${CLAUDE_PROJECT_DIR}/.claude/hooks/progress.mjs" }
+          { "type": "command", "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/progress.mjs\"" }
         ]
       }
     ],
     "SessionStart": [
       {
         "hooks": [
-          { "type": "command", "command": "node ${CLAUDE_PROJECT_DIR}/.claude/hooks/progress.mjs" }
+          { "type": "command", "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/progress.mjs\"" }
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "node ${CLAUDE_PROJECT_DIR}/.claude/hooks/progress.mjs" }
+          { "type": "command", "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/progress.mjs\"" }
         ]
       }
     ]

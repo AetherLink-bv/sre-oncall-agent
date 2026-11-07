@@ -46,7 +46,7 @@ Stop when the console opens and you can explain each expected workshop failure.
 Paste this prompt into Claude Code.
 
 ```text
-Read intent.md, the INC-1001 fixture and REVIEW.md. Interview me one question at a time about who the SRE agent serves. Help me write three checks a stranger can repeat. Keep the boundary: sample data, read-only investigation, named humans approve and close. Ask before editing intent.md. Stop after one interview round and show the diff for my review. Do not build or push.
+Read intent.md, fixtures/incidents/bad-deploy.json (INC-1001) and REVIEW.md. Interview me one question at a time about who the SRE agent serves. Help me write three checks a stranger can repeat. Keep the boundary: sample data, read-only investigation, named humans approve and close. Ask before editing intent.md. Stop after one interview round and show the diff for my review. Do not build or push.
 ```
 
 Reject a check that describes a wish instead of an observable result. Accept
