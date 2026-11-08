@@ -63,7 +63,13 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const fmt = (iso) => new Date(iso).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 const api = (p, b) => fetch("/api" + p, b ? { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(b) } : {}).then((r) => r.json());
 
-async function health() { const h = await api("/health"); $("#health").textContent = `${h.model} · shop ${h.shop ? h.shop.revision + " " + h.shop.mode : "offline"} · ${h.telemetry ? h.telemetry.buckets + " buckets" : "no telemetry"}`; $("#mode").textContent = h.model === "offline" ? "offline" : h.model; }
+async function health() {
+  const h = await api("/health");
+  const model = h.model === "offline" ? "Scripted demo (no model connection)" : h.model;
+  const shop = h.shop ? `shop online · ${h.shop.revision} ${h.shop.mode}` : "shop offline";
+  $("#health").textContent = `${model} · listener ${h.listening ? "active" : "inactive"} · ${shop} · ${h.telemetry ? h.telemetry.buckets + " buckets" : "no telemetry"}`;
+  $("#mode").textContent = h.model === "offline" ? "scripted demo" : h.model;
+}
 
 function renderSidebar() {
   const act = incidents.filter((i) => i.state === "active" || i.state === "stale" || i.state === "mitigated"), hist = incidents.filter((i) => i.state === "resolved");
