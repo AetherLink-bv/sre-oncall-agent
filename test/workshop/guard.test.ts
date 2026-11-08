@@ -19,9 +19,11 @@ const guard = (payload: object) => {
   return out.hookSpecificOutput?.permissionDecision;
 };
 
-test("A4: participant rule — agent cannot edit bench/ratchet.json", () => {
-  const d = guard({ tool_name: "Edit", tool_input: { file_path: join(cwd, "bench/ratchet.json") } });
-  assert.equal(d, "deny", "the ratchet floor is human-owned: edits must be denied");
+test("A4: participant rule — agent cannot edit or write bench/ratchet.json", () => {
+  for (const tool_name of ["Edit", "Write"]) {
+    const d = guard({ tool_name, tool_input: { file_path: join(cwd, "bench/ratchet.json") } });
+    assert.equal(d, "deny", `the ratchet floor is human-owned: ${tool_name} must be denied`);
+  }
 });
 
 test("A4: guard still allows an agent artefact write", () => {

@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, cpSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, cpSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -26,8 +26,8 @@ const FILL = (dir, step) => {
     case "A-5": w(dir, "src/tools.ts", 'tool(\n  "list_deploys",\n'); break;
     case "A-6": w(dir, "docs/diagnosis-live.md", "# Live diagnosis\nfilled\n"); break;
     case "A-7": w(dir, "bench/cases.json", JSON.stringify([1, 2, 3, 4, 5, 6])); break;
-    case "A-8": w(dir, "approvals/INC-1.approval.json", "{}\n"); w(dir, "src/executor.ts", 'if (!isApproved(record, id, "rollback")) return err\n'); break;
-    case "A-9": w(dir, "lessons/lessons.md", "## INC-1\n## INC-2\n## INC-3\n"); w(dir, "docs/hackathon-intent.md", "# Hackathon\nfilled\n"); break;
+    case "A-8": w(dir, "src/executor.ts", 'if (!isApproved(record, id, "rollback")) return err\n'); break;
+    case "A-9": w(dir, "lessons/proposed/INC-1.md", "# Proposed lesson\n"); w(dir, "docs/hackathon-intent.md", "# Hackathon\nfilled\n"); w(dir, "HANDOFF.md", "# Handoff\nnext step\n"); break;
   }
 };
 
@@ -59,6 +59,39 @@ test("A-1 file signals do not claim that tests or runtime checks ran", () => {
   assert.match(log, /\*\*Validation:\*\* OPEN/);
   assert.match(log, /\*\*Checks to run:\*\* run npm ci, npm test/);
   assert.doesNotMatch(log, /Dependencies installed|suite ran|green tests|produced its first audit entries/);
+});
+
+test("A-8 local signal needs no fabricated approval or execution", () => {
+  const dir = setup();
+  FILL(dir, "A-8");
+  const r = run(dir, ["--status"]);
+  assert.match(r.stdout, /1\/9 assignments with local signals/);
+  assert.match(r.stdout, /keep the console action HUMAN OPEN/);
+  assert.equal(existsSync(join(dir, "approvals")), false);
+});
+
+test("A-9 local signal keeps lesson promotion and resolution open", () => {
+  const dir = setup();
+  FILL(dir, "A-9");
+  const r = run(dir, ["--status"]);
+  assert.match(r.stdout, /1\/9 assignments with local signals/);
+  assert.match(r.stdout, /keep promotion and resolution HUMAN OPEN/);
+  assert.equal(existsSync(join(dir, "lessons/lessons.md")), false);
+});
+
+test("A-7 local signal keeps both ratchet values unchanged", () => {
+  const dir = setup();
+  FILL(dir, "A-7");
+  const r = run(dir, ["--status"]);
+  assert.match(r.stdout, /harmful 0 and both ratchet values unchanged/);
+  assert.doesNotMatch(r.stdout, /lowering bench\/ratchet/);
+});
+
+test("A-6 local signal preserves the two-minute healthy baseline", () => {
+  const dir = setup();
+  FILL(dir, "A-6");
+  const r = run(dir, ["--status"]);
+  assert.match(r.stdout, /keep healthy traffic running for two minutes, then chaos deploy/);
 });
 
 test("each detected assignment signal appends exactly one marked entry", () => {

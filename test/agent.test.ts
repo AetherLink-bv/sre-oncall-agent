@@ -45,6 +45,33 @@ test("offline verdicts for the four scenarios", async () => {
   }
 });
 
+test("a deploy inside a metric bucket stays a candidate, not a false causal claim", () => {
+  const t: Telemetry = {
+    service: "checkout",
+    logs: [{ ts: "2026-11-08T15:40:42.000Z", level: "error", msg: "checkout failed" }],
+    metrics: [
+      { ts: "2026-11-08T15:40:30.000Z", error_rate: 0.005, p95_ms: 220, version: "v2.14.0", n: 50 },
+      { ts: "2026-11-08T15:40:40.000Z", error_rate: 0.12, p95_ms: 230, version: "v2.14.0", n: 50 },
+    ],
+    deploys: [
+      { id: "d-old", version: "v2.14.0", at: "2026-11-08T14:00:00.000Z", author: "release", summary: "previous" },
+      { id: "d-new", version: "v2.15.0", at: "2026-11-08T15:40:41.088Z", author: "release", summary: "candidate", diff: "+ changed checkout" },
+    ],
+  };
+
+  const v = offlineVerdict(incident("INC-LIVE", "2026-11-08T15:40:50.000Z"), t);
+  assert.equal(v.proposal, "rollback");
+  assert.match(v.hypothesis, /metric bucket starting .*deploy is a candidate cause/i);
+  assert.doesNotMatch(v.hypothesis, /minutes after|nothing else changed/i);
+  const metricEvidence = v.evidence.find((e) => e.source === "metrics")?.note ?? "";
+  assert.match(metricEvidence, /bucket may span a deploy/i);
+  assert.doesNotMatch(metricEvidence, /on v2\.14\.0/i);
+  assert.doesNotMatch(v.ruled_out.join("\n"), /load\/dependency/i);
+  assert.match(v.would_change_my_mind, /bucket ending before/i);
+  assert.match(v.blast_radius, /affected versions, regions, and customer segments remain OPEN/i);
+  assert.doesNotMatch(v.blast_radius, /all .* traffic|on v2\.15\.0/i);
+});
+
 test("the loop calls metrics, deploys, logs and proposes a lesson", async () => {
   const t = await load("bad-deploy");
   const d = await deps(t, offlineQuery(t));

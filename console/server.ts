@@ -199,8 +199,15 @@ const server = createServer(async (req, res) => {
         if (r.outcome === "failed") { const w = store.newIncident(`Deployment watch failed on ${r.revision}: ${r.reason}`, "watch"); broadcast("incidents", store.list()); void triage(w, `Deployment watch failed on ${r.revision}: ${r.reason}`); }
         return;
       }
-      if (!t) return void say(row.id, "agent", "error", `no telemetry at ${TELEMETRY}`);
-      const answer = await ask(route.text, { telemetry: t, model: MODEL });
+      const saved = loadIncident(row);
+      const savedTelemetry = saved ? await loadTelemetry(saved.telemetry) : undefined;
+      if (saved && !savedTelemetry?.ok) return void say(row.id, "agent", "error", "Saved diagnosis telemetry unavailable; cannot verify this diagnosis. Current telemetry was not substituted.");
+      const questionTelemetry = savedTelemetry?.ok ? savedTelemetry.value : t;
+      if (!questionTelemetry) return void say(row.id, "agent", "error", `no telemetry at ${TELEMETRY}`);
+      const telemetryContext = savedTelemetry?.ok
+        ? "Diagnosis snapshot; current telemetry not checked"
+        : "Question-time telemetry file snapshot; no saved diagnosis was available";
+      const answer = await ask(route.text, { telemetry: questionTelemetry, telemetryContext, model: MODEL });
       return void say(row.id, "agent", "text", answer);
     }
 

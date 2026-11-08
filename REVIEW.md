@@ -20,9 +20,10 @@ check and where it fails if broken. `npm run verify` covers 1–5 and 7.
    a `fix/*` branch is separately gated by `approvals/approvals.jsonl`
    (`npm run approve:git` in a human terminal — never inside the agent).
    Tested in `test/workshop/executor.test.ts` + `test/hooks.test.mjs`.
-7. **The ratchet only goes up.** `bench/ratchet.json` can only rise;
-   `bench/cases.json` is human-edited; the agent can never edit either
-   (guard hook).
+7. **The ratchet only goes up.** The guard denies Edit and Write to
+   `bench/ratchet.json`; it does not claim full shell protection.
+   `bench/cases.json` may change after the participant accepts an A7 case, so
+   review that diff and keep the score floor unchanged.
 8. **Detection is deterministic.** The console listener in
    `console/server.ts` uses fixed criteria; nothing routes detection through
    the model.

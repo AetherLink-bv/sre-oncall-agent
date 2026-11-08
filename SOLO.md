@@ -94,14 +94,14 @@ sample-data boundary, and the decisions that stay human-owned.
 First agree on the contract. Do not edit code in this step.
 
 ```text
-Read the accepted intent.md, docs/spec.md, src/contract.ts, src/runtime.ts, src/prompts.ts, and the A3 workshop test. Explain the current verdict contract in plain English. Propose the smallest contract change that requires non-empty customer_impact, keeps unsupported claims OPEN, and keeps the offline and optional real-model schemas aligned. Do not edit code or tests. Stop for my contract review.
+Read the accepted intent.md, docs/spec.md, src/contract.ts, src/runtime.ts, src/prompts.ts, and the A3 workshop test. Explain the current verdict contract in plain English. Propose the smallest contract change that requires non-empty customer_impact, keeps unsupported claims OPEN, and keeps the offline and optional real-model schemas aligned. Describe observed request failures or latency; keep affected versions, regions, and customer segments OPEN unless the cited metric establishes them. Do not edit code or tests. Stop for my contract review.
 ```
 
 Choose one invalid verdict. Accept the contract only when that verdict must
 fail.
 
 ```text
-Use the contract I accepted. Run the focused A3 test and show the red assertion. Explain the failure before editing. Then implement the accepted A3 contract without weakening tests. Change TODO(A3), the contract schema and types, all offline runtime verdict branches, the real-model schema in src/prompts.ts, and the relevant contract, approval, and executor fixtures that consume customer_impact. Do not change unrelated product scaffolding. Rerun the focused A3 test. Run the main tests, typecheck, and the offline investigation. Show the exact outputs and diff. Do not copy a solved implementation, approve, execute, resolve, or push.
+Use the contract I accepted. Run the focused A3 test and show the red assertion. Explain the failure before editing. Then implement the accepted A3 contract without weakening tests. Change TODO(A3), docs/spec.md, the contract schema and types, all offline runtime verdict branches, the real-model schema in src/prompts.ts, the relevant contract, approval, and executor fixtures that consume customer_impact, and display customer_impact in src/cli.ts and console/index.html. Do not change unrelated product scaffolding. Rerun the focused A3 test. Run the main tests, typecheck, and the offline investigation. Show the exact CLI output, console field, test outputs, and diff. Do not copy a solved implementation, approve, execute, resolve, or push.
 ```
 
 Run the project skill as a separate read-only checkpoint.
@@ -118,7 +118,7 @@ small TODO(A3) diff, the green focused rerun, and the verification verdict.
 Build the chat refusal first.
 
 ```text
-Read intent.md, src/chat.ts, and test/workshop/chat.test.ts. Explain the chat-refusal contract in plain English. Keep the named MUTATION constant because the progress hook checks it. Add a negative test that the read-only question "Was the deploy the cause?" remains a question and is not refused. Ask me to choose one extra operational mutation phrase. Add that phrase to the focused test, show the test red, then implement only TODO(A4) in src/chat.ts. Rerun the focused chat test and show the diff. Do not edit .claude/, approvals/, lessons/lessons.md, PROGRESS.md, or bench/ratchet.json. Do not approve or execute anything. Stop before the human hook step.
+Read intent.md, src/chat.ts, and test/workshop/chat.test.ts. Explain the chat-refusal contract in plain English. Add a named MUTATION regex constant because the progress hook checks it. Add a negative test that the read-only question "Was the deploy the cause?" remains a question and is not refused. Ask me to choose one extra operational mutation phrase. Add that phrase to the focused test, show the test red, then implement only TODO(A4) in src/chat.ts. Rerun the focused chat test and show the diff. Do not edit .claude/, approvals/, lessons/lessons.md, PROGRESS.md, or bench/ratchet.json. Do not approve or execute anything. Stop before the human hook step.
 ```
 
 Choose one extra mutation phrase. Confirm that the focused chat test turns
@@ -168,14 +168,15 @@ Choose one alternative cause. Then ask Claude Code for the bounded plan and
 the exact commands that you run yourself.
 
 ```text
-Use the incident path we reviewed. Propose a local demo plan with files, order, risks, proof, rollback, and one alternative cause. Wait for my approval. Reuse running processes. After I approve, give me exact commands for separate terminals. I will start the console with AGENT_LISTEN_WINDOW_MIN=1, start the shop, keep traffic running, and run the one-shot bad-deploy chaos command in its own terminal. Do not run chaos or stop processes yourself. When I confirm the incident exists, help me trace each diagnosis claim to a stable source:ref label. Keep diagnosis-snapshot evidence separate from current telemetry. Ask before writing docs/diagnosis-live.md. Mark missing evidence OPEN. Do not approve, execute, resolve, or push.
+Use the incident path we reviewed. Propose a local demo plan with files, order, risks, proof, rollback, and one alternative cause. Wait for my approval. Reuse running processes. After I approve, give me exact commands for separate terminals. I will start the console with AGENT_LISTEN_WINDOW_MIN=1, start the shop, keep healthy traffic running for two minutes to establish the before state, and then run the one-shot bad-deploy chaos command in its own terminal. Do not run chaos or stop processes yourself. When I confirm the incident exists, help me trace each diagnosis claim to a stable source:ref label. Keep diagnosis-snapshot evidence separate from current telemetry. Ask before writing docs/diagnosis-live.md. Mark missing evidence OPEN. Do not approve, execute, resolve, or push.
 ```
 
 Run the approved commands in separate terminals. Start the console with
-`AGENT_LISTEN_WINDOW_MIN=1`. Start the shop in another terminal. Keep traffic
-running in a third terminal. Run the one-shot bad-deploy command in a fourth
-terminal. Production keeps the five-minute default. Do not stop a process that
-you did not start.
+`AGENT_LISTEN_WINDOW_MIN=1`. Start the shop in another terminal. Keep healthy
+traffic running in a third terminal for two minutes before the one-shot bad
+deploy. This baseline supplies the before state for the later breakpoint
+comparison. Run the one-shot command in a fourth terminal. Production keeps
+the five-minute default. Do not stop a process that you did not start.
 
 Open the incident and paste this question into the incident chat.
 

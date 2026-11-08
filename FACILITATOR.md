@@ -1,8 +1,9 @@
-# Facilitate Workshop 5 from one incident
+# Facilitate Workshop 5 from one failure story
 
-The slides lead. `SOLO.md` contains the matching copy-ready prompts. Keep
-fixture INC-1001 as the reference story. Record the generated live incident id
-in A6. Do not introduce a solved branch between steps.
+The slides lead. `SOLO.md` contains the matching copy-ready prompts. Keep one
+failure story across two intake records: fixture INC-1001 is the reference and
+A6 creates a new live incident id. Do not introduce a solved branch between
+steps.
 
 Claude Code is the builder. The on-call agent is the product. The core product
 uses scripted fictional evidence. Never call scripted output live model proof.
@@ -45,7 +46,7 @@ produce the evidence route. Do not spend class time regenerating the app.
 
 ## Use the same note rhythm on every block
 
-1. State why the block exists for INC-1001.
+1. State why the block exists for the failure story and name the current record.
 2. Ask the room to predict the visible result.
 3. Play the short illustrative clip when it helps.
 4. Pause on the named proof line.
@@ -87,7 +88,9 @@ The saved clips are illustrative. The participant's own output is the proof.
   There is no `src/mcp-server.ts`.
 - **A6.** Use separate terminals. Start the console with
   `AGENT_LISTEN_WINDOW_MIN=1`. Start the shop separately. Keep traffic running
-  in another terminal. Run the one-shot chaos command in its own terminal.
+  in another terminal. Keep healthy traffic running for two minutes before the
+  one-shot chaos command so the diagnosis can compare a before state with the
+  bad-deploy breakpoint. Run the one-shot command in its own terminal.
   The participant performs these process actions. The listener creates an
   incident only after telemetry stays above the threshold for the configured
   window. Do not treat the first traffic request as an incident. Record the
@@ -96,8 +99,9 @@ The saved clips are illustrative. The participant's own output is the proof.
   and compare the alternative with diagnosis `ruled_out` evidence.
 - **A7.** The offline bench checks deterministic fixture policy. It does not
   prove live model prompt-injection resistance.
-- **A8.** Keep Approve, Execute, and Resolve `HUMAN OPEN`. Automated tests can
-  prove the gate without performing the decision.
+- **A8.** Use the deterministic fixture record to prove the gate contract.
+  Keep Approve, Execute, and Resolve `HUMAN OPEN`; A8 does not operate on the
+  live A6 record.
 - **A9.** `/handoff` prints a portable prompt after the classroom override. It
   does not write `HANDOFF.md`. A separate approved prompt saves the exact
   reviewed text.
@@ -111,8 +115,8 @@ same participant lab.
 | --- | --- |
 | 1 | `AGENT_LISTEN_WINDOW_MIN=1 npm run console` |
 | 2 | `npm run shop` |
-| 3 | `npm run traffic` and keep it running |
-| 4 | `npm run chaos -- deploy v2.15.0 --mode bad-deploy` once |
+| 3 | `npm run traffic`; keep it healthy for two minutes, then keep it running |
+| 4 | After the baseline, run `npm run chaos -- deploy v2.15.0 --mode bad-deploy` once |
 
 Production keeps the default five-minute listener window. Stop only processes
 that you started. Use Ctrl+C in their own terminals after validation.
