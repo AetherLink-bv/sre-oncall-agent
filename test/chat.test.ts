@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { routeMessage } from "../src/chat.js";
+import { ask, routeMessage } from "../src/chat.js";
+import { loadTelemetry } from "../src/telemetry.js";
 
 test("watch commands route to the grammar, not the model", () => {
   const r = routeMessage("Watch the next deployment for five minutes.");
@@ -32,4 +33,17 @@ test("a malformed watch command is refused with the grammar error, not treated a
 
 test("everything else is a read-only question", () => {
   assert.equal(routeMessage("How is production doing?").kind, "question");
+});
+
+test("the offline A6 challenge answer cites replayable snapshot evidence", async () => {
+  const telemetry = await loadTelemetry("fixtures/telemetry/bad-deploy.json");
+  assert.equal(telemetry.ok, true);
+  if (!telemetry.ok) throw new Error("unreachable");
+
+  const answer = await ask("Could this be something other than the deployment?", { telemetry: telemetry.value });
+  assert.match(answer, /^\(offline investigator — scripted, not model evidence\)/);
+  assert.match(answer, /Stored telemetry snapshot \[metrics:2026-10-05T03:45:00\.000Z\]/);
+  assert.match(answer, /\[deploys:d-4821\]/);
+  assert.match(answer, /\[logs:2026-10-05T03:45:03\.000Z\]/);
+  assert.match(answer, /not a live current-health check/);
 });
