@@ -65,12 +65,11 @@ folder. Restart the same command if project skills remain missing after trust.
 Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
 The lesson only needs a terminal and browser.
 
-### Optional live-model connection
+### Optional live-model connection after A5
 
 The required route stays scripted and offline. Claude Code is the builder; the
-product's separate live-model path uses the Claude Agent SDK. Prepare your own
-local Claude Code login before A1, but activate the product model only after A5
-and only when your facilitator approves usage and cost.
+product's separate live-model path uses the Claude Agent SDK. Introduce and
+activate this path only after A5, with approved usage and cost.
 
 Never copy credentials into chat, Git, browser fields, remote hosts, or another
 participant's machine. Current Anthropic guidance says the local Agent SDK can
