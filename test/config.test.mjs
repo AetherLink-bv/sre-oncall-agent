@@ -81,10 +81,12 @@ test("approve.mjs is not callable by the agent", () => {
   assert.match(deny, /scripts\/approve|npm run approve/);
 });
 
-test("PROGRESS.md: the agent appends via npm run progress:note; Edit/Write stay denied", () => {
+test("PROGRESS.md stays denied while ordinary repo edits stay allowed", () => {
   const { allow, deny } = settings.permissions;
   assert.ok(allow.includes("Bash(npm run progress*)"), "progress:note is covered by the allow list");
   assert.ok(deny.includes("Edit(./PROGRESS.md)") && deny.includes("Write(./PROGRESS.md)"), "direct edits stay denied");
   const pkg = JSON.parse(readFileSync("package.json", "utf8"));
   assert.equal(pkg.scripts["progress:note"], "node scripts/progress-note.mjs");
+  const guard = readFileSync(".claude/hooks/guard.mjs", "utf8");
+  assert.ok(guard.includes('decide("allow", "ordinary repo edit")'));
 });

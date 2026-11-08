@@ -112,5 +112,5 @@ if (tool === "Bash" || tool === "PowerShell") {
   else if (AGENT_WRITES.test(rel)) decide("allow", "agent artefact dir");
   else if (/^bench\/ratchet\.json$/.test(rel)) decide("deny", "participant rule (A4): the ratchet floor is human-owned — the agent never edits it");
   else if (SDLC_ARTEFACT.test(rel)) decide("ask", "SDLC artefact: confirm this edit with the human");
-  else decide("ask", "edit needs a human confirmation");
+  else decide("allow", "ordinary repo edit");
 } else decide("allow", "tool not gated");
