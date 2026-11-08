@@ -87,7 +87,7 @@ export const ask = async (text: string, deps: AskDeps): Promise<string> => {
   for await (const e of rt.query({
     prompt: `${text}\n\n${lessons}`,
     options: {
-      systemPrompt: `${ONCALL_SYSTEM}\n\nMode: QUESTION. The operator asked a question. Answer in plain prose with evidence references. Telemetry context: ${telemetryContext}. Do NOT return the JSON verdict and do NOT propose a mitigation; if they want one, tell them to send "Investigate: …".`,
+      systemPrompt: `${ONCALL_SYSTEM}\n\nMode: QUESTION. The operator asked a question. Inspect this snapshot with summarize_metrics and list_deploys before answering. Use search_logs and get_diff if needed. Report unavailable tools as OPEN. Answer in plain prose with evidence references. Telemetry context: ${telemetryContext}. Do NOT return the JSON verdict and do NOT propose a mitigation; if they want one, tell them to send "Investigate: …".`,
       mcpServers: { [SERVER_NAME]: createTelemetryServer(deps.telemetry) },
       tools: [...ALLOWED_TOOLS], allowedTools: [...ALLOWED_TOOLS],
       permissionMode: "dontAsk", settingSources: [], maxTurns: 8, maxBudgetUsd: 0.3,
