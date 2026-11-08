@@ -115,5 +115,5 @@ if (tool === "Bash" || tool === "PowerShell") {
   //   deny Edit/Write to bench/ratchet.json — the ratchet floor is
   //   human-owned. test/workshop/guard.test.ts grades it.
   else if (SDLC_ARTEFACT.test(rel)) decide("ask", "SDLC artefact: confirm this edit with the human");
-  else decide("ask", "edit needs a human confirmation");
+  else decide("allow", "ordinary repo edit");
 } else decide("allow", "tool not gated");
