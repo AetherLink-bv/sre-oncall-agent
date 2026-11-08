@@ -41,14 +41,27 @@ test("no PROGRESS.md → silent exit", () => {
 test("--status prints N/9 with a checklist", () => {
   const dir = setup();
   const r = run(dir, ["--status"]);
-  assert.match(r.stdout, /0\/9 assignments with evidence/);
+  assert.match(r.stdout, /0\/9 assignments with local signals/);
   FILL(dir, "A-1"); FILL(dir, "A-5");
   const r2 = run(dir, ["--status"]);
-  assert.match(r2.stdout, /2\/9 assignments with evidence/);
+  assert.match(r2.stdout, /2\/9 assignments with local signals/);
   assert.match(r2.stdout, /A-5 read-only tool/);
+  assert.match(r2.stdout, /A-1 setup — local signal found; validation OPEN; run:/);
+  assert.doesNotMatch(r2.stdout, /assignments with evidence|✓|\bdone\b/i);
 });
 
-test("each completed assignment appends exactly one marked entry", () => {
+test("A-1 file signals do not claim that tests or runtime checks ran", () => {
+  const dir = setup();
+  FILL(dir, "A-1");
+  assert.equal(run(dir).status, 0);
+  const log = readFileSync(join(dir, "PROGRESS.md"), "utf8");
+  assert.match(log, /\*\*Observed local signals:\*\*/);
+  assert.match(log, /\*\*Validation:\*\* OPEN/);
+  assert.match(log, /\*\*Checks to run:\*\* run npm ci, npm test/);
+  assert.doesNotMatch(log, /Dependencies installed|suite ran|green tests|produced its first audit entries/);
+});
+
+test("each detected assignment signal appends exactly one marked entry", () => {
   const dir = setup();
   FILL(dir, "A-2");
   assert.equal(run(dir).status, 0);
@@ -83,7 +96,7 @@ test("workshop/start shape: exercise markers inside TODO comments do not count (
   w(dir, "docs/hackathon-intent.md", "<fill in: …>\n");
   const r = run(dir, ["--status"]);
   assert.equal(r.status, 0);
-  assert.match(r.stdout, /0\/9 assignments with evidence/);
+  assert.match(r.stdout, /0\/9 assignments with local signals/);
 });
 
 test("no network or dynamic imports in the hook", () => {

@@ -90,7 +90,7 @@ Other useful commands:
 ```bash
 npm run demo                 # the whole loop on a bad deploy, about 2 minutes
 npm run doctor               # preflight check
-npm run progress             # which assignments already have evidence
+npm run progress             # which assignments have local signals; validation stays OPEN
 npm run workshop:check       # the TODO markers you still have to fill in
 npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run   # INC-1001 from fixtures
 ```
@@ -104,8 +104,9 @@ Each step of the AI SDLC leaves one file behind. Write them in this order:
 2. **`docs/spec.md`** — the contract the code must meet.
 3. **`docs/plan.md`** — the steps, smallest first, and the checks.
 4. **`PROGRESS.md`** — the build log: append-only. The progress hook appends
-   an entry when it sees local evidence for an assignment; you add your own
-   lines at the bottom. Nobody rewrites old lines.
+   an entry when it sees a local signal for an assignment. Validation stays
+   OPEN until the actual checks are reviewed separately. You add your own lines
+   at the bottom. Nobody rewrites old lines.
 5. **`REVIEW.md`** — the review checklist you run before you share a change.
 
 ## The assignment

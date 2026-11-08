@@ -19,8 +19,8 @@ claude
 
 `workshop/start` has four pieces removed (the TODO(A3/A4/A5/A8) markers —
 `npm run workshop:check` lists them). `npm test` stays green; the red tests
-live in `test/workshop/`. `npm run progress` shows which assignments already
-have evidence.
+live in `test/workshop/`. `npm run progress` shows which assignments have local
+signals. Validation stays OPEN until the actual checks are reviewed separately.
 
 Open [the A1 prompt](SOLO.md#a1-check-the-setup) in Claude Code. It installs
 the dependencies, generates the fixtures, runs both test suites and opens the
