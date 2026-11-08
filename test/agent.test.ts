@@ -45,11 +45,79 @@ test("offline verdicts for the four scenarios", async () => {
   }
 });
 
+test("a deploy inside a metric bucket stays a candidate, not a false causal claim", () => {
+  const t: Telemetry = {
+    service: "checkout",
+    logs: [{ ts: "2026-11-08T15:40:42.000Z", level: "error", msg: "checkout failed" }],
+    metrics: [
+      { ts: "2026-11-08T15:40:30.000Z", error_rate: 0.005, p95_ms: 220, version: "v2.14.0", n: 50 },
+      { ts: "2026-11-08T15:40:40.000Z", error_rate: 0.12, p95_ms: 230, version: "v2.14.0", n: 50 },
+    ],
+    deploys: [
+      { id: "d-old", version: "v2.14.0", at: "2026-11-08T14:00:00.000Z", author: "release", summary: "previous" },
+      { id: "d-new", version: "v2.15.0", at: "2026-11-08T15:40:41.088Z", author: "release", summary: "candidate", diff: "+ changed checkout" },
+    ],
+  };
+
+  const v = offlineVerdict(incident("INC-LIVE", "2026-11-08T15:40:50.000Z"), t);
+  assert.equal(v.proposal, "rollback");
+  assert.match(v.hypothesis, /metric bucket starting .*deploy is a candidate cause/i);
+  assert.doesNotMatch(v.hypothesis, /minutes after|nothing else changed/i);
+  const metricEvidence = v.evidence.find((e) => e.source === "metrics")?.note ?? "";
+  assert.match(metricEvidence, /bucket may span a deploy/i);
+  assert.doesNotMatch(metricEvidence, /on v2\.14\.0/i);
+  assert.doesNotMatch(v.ruled_out.join("\n"), /load\/dependency/i);
+  assert.match(v.would_change_my_mind, /bucket ending before/i);
+  assert.match(v.blast_radius, /affected versions, regions, and customer segments remain OPEN/i);
+  assert.doesNotMatch(v.blast_radius, /all .* traffic|on v2\.15\.0/i);
+});
+
+test("missing deploy evidence stays OPEN and latency reports aggregate scope", async () => {
+  const latency = { ...(await load("slow-dependency")), deploys: [] };
+  const verdict = offlineVerdict(incident("INC-LATENCY", "2026-10-05T03:43:00Z"), latency);
+  assert.match(verdict.hypothesis, /Deployment evidence is unavailable.*remains OPEN/);
+  assert.doesNotMatch(verdict.hypothesis, /no deploy in the window/i);
+  assert.doesNotMatch(verdict.ruled_out.join("\n"), /bad deploy/i);
+  assert.match(verdict.customer_impact, /aggregate p95.*affected endpoints, regions, and traffic share remain OPEN/i);
+  assert.match(verdict.blast_radius, /aggregate p95.*affected endpoints, regions, and traffic share remain OPEN/i);
+  assert.doesNotMatch(verdict.blast_radius, /every .* request/i);
+
+  const noise = { ...(await load("noisy-alert")), deploys: [] };
+  const quiet = offlineVerdict(incident("INC-NOISE", "2026-10-05T03:51:00Z"), noise);
+  assert.doesNotMatch(quiet.ruled_out.join("\n"), /bad deploy/i);
+  assert.ok(quiet.data_gaps.some((gap) => /list_deploys/.test(gap)));
+});
+
+test("an empty metric window leaves customer impact and blast radius OPEN", () => {
+  const empty: Telemetry = { service: "checkout", logs: [], metrics: [], deploys: [] };
+  const verdict = offlineVerdict(incident("INC-EMPTY", "2026-10-05T03:51:00Z"), empty);
+  assert.match(verdict.customer_impact, /OPEN.*no metric points/i);
+  assert.match(verdict.blast_radius, /OPEN.*no metric points/i);
+  assert.match(verdict.hypothesis, /OPEN.*no metric points/i);
+  assert.equal(verdict.confidence, "low");
+  assert.equal(verdict.proposal, "investigate-more");
+  assert.doesNotMatch(`${verdict.customer_impact}\n${verdict.blast_radius}`, /none observed|no customer-facing metric moved/i);
+});
+
+test("error-only evidence reports aggregate movement and leaves affected scope OPEN", async () => {
+  const errors = await load("mystery-errors");
+  const verdict = offlineVerdict(incident("INC-ERRORS", "2026-10-05T03:55:00Z"), errors);
+  assert.match(verdict.customer_impact, /aggregate error_rate.*affected customers, regions, versions, and traffic share remain OPEN/i);
+  assert.match(verdict.blast_radius, /aggregate error_rate.*affected customers, regions, versions, and traffic share remain OPEN/i);
+});
+
 test("the loop calls metrics, deploys, logs and proposes a lesson", async () => {
   const t = await load("bad-deploy");
   const d = await deps(t, offlineQuery(t));
   const run = await investigate(incident("INC-1001", "2026-10-05T03:50:00Z"), d);
   assert.deepEqual(run.trace.map((x) => x.tool), ["summarize_metrics", "list_deploys", "get_diff", "search_logs"]);
+  assert.deepEqual(run.trace.find((x) => x.tool === "get_diff")?.input, { deploy: "d-4821" });
+  assert.deepEqual(run.trace.find((x) => x.tool === "search_logs")?.input, {
+    level: "error",
+    since: "2026-10-05T02:50:00.000Z",
+    until: "2026-10-05T03:50:00Z",
+    limit: 5,
+  });
   assert.ok(run.result.ok && run.result.value.evidence.some((e) => e.source === "diff"), "the diff is cited");
   assert.equal(run.result.ok, true);
   assert.ok(run.lessonFile);
@@ -71,6 +139,7 @@ test("the model receives the rollback evidence boundary and missing-deploy polic
     called = true;
     const prompt = args.options?.systemPrompt;
     assert.ok(typeof prompt === "string");
+    assert.deepEqual(args.options.settingSources, []);
     assert.match(prompt, /rollback proposal requires a deploys evidence entry from a non-empty list_deploys result/);
     assert.match(prompt, /list_deploys is empty or failed, propose investigate-more/);
     assert.match(prompt, /Never invent a deploys citation/);

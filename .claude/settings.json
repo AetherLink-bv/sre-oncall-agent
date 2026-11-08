@@ -90,6 +90,7 @@
   },
   "disableBypassPermissionsMode": "disable",
   "disableSkillShellExecution": true,
+  "autoMemoryEnabled": false,
   "hooks": {
     "PreToolUse": [
       {

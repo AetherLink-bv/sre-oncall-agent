@@ -52,23 +52,27 @@ export interface AskDeps {
   readonly telemetry: Telemetry;
   readonly model?: string | undefined; // only explicit offline uses the scripted summary
   readonly query?: QueryFn;
+  readonly telemetryContext?: string | undefined;
   readonly onEvent?: (e: AgentEvent) => void;
 }
 
 /** Offline: answer from the same tools, deterministically. Never pretends to be a model. */
-const offlineAnswer = (text: string, t: Telemetry): string => {
+const offlineAnswer = (text: string, t: Telemetry, telemetryContext: string): string => {
   const h = handlers(t);
   const m = h.summarize_metrics({});
   const d = h.list_deploys({}).slice(0, 3);
   const errs = h.search_logs({ level: "error", limit: 3 });
+  const bp = m.breakpoints[0];
+  const metricsRef = bp?.ts ?? m.last_ts ?? "window";
   const health = m.breakpoints.length === 0
-    ? `Production looks steady: error_rate ${m.error_rate_last}, p95 ${m.p95_ms_last} ms over ${m.points} buckets, no ≥2× jump.`
-    : `There is a breakpoint at ${m.breakpoints[0]?.ts}: ${m.breakpoints[0]?.what} ${m.breakpoints[0]?.from} → ${m.breakpoints[0]?.to} on ${m.breakpoints[0]?.version}. error_rate now ${m.error_rate_last}, p95 ${m.p95_ms_last} ms.`;
+    ? `${telemetryContext} [metrics:${metricsRef}]: error_rate ${m.error_rate_last}, p95 ${m.p95_ms_last} ms over ${m.points} buckets, no ≥2× jump.`
+    : `${telemetryContext} [metrics:${metricsRef}]: ${bp?.what} ${bp?.from} → ${bp?.to}; this bucket may span a deploy. Latest snapshot error_rate ${m.error_rate_last}, p95 ${m.p95_ms_last} ms.`;
   return [
     `(offline investigator — scripted, not model evidence)`,
     health,
-    `Latest deploys: ${d.map((x) => `${x.id} ${x.version} ${x.at.slice(11, 19)}`).join(" · ") || "none in telemetry"}.`,
-    errs.length ? `Latest errors: ${errs.map((e) => e.msg).join(" | ")}` : "No error-level log lines.",
+    `Latest deploys: ${d.map((x) => `[deploys:${x.id}] ${x.version} ${x.at.slice(11, 19)}`).join(" · ") || "none in telemetry"}.`,
+    errs.length ? `Latest errors: ${errs.map((e) => `[logs:${e.ts}] ${e.msg}`).join(" | ")}` : "No error-level log lines.",
+    `These references describe stored telemetry, not a live current-health check.`,
     `You asked: "${text}". For a full diagnosis with a proposal, send "Investigate: <what you see>".`,
   ].join("\n");
 };
@@ -76,14 +80,15 @@ const offlineAnswer = (text: string, t: Telemetry): string => {
 /** Real model: same read-only tools, same lessons, free-text answer, NO proposal field. */
 export const ask = async (text: string, deps: AskDeps): Promise<string> => {
   const rt = resolveRuntime(deps.telemetry, deps.model);
-  if (rt.model === undefined) return offlineAnswer(text, deps.telemetry);
+  const telemetryContext = deps.telemetryContext ?? "Stored telemetry snapshot";
+  if (rt.model === undefined) return offlineAnswer(text, deps.telemetry, telemetryContext);
   const query = deps.query ?? rt.query;
   const lessons = renderLessons(await loadLessons(lessonsStore()), guessTag(text));
   let answer = "";
   for await (const e of query({
     prompt: `${text}\n\n${lessons}`,
     options: {
-      systemPrompt: `${ONCALL_SYSTEM}\n\nMode: QUESTION. The operator asked a question. Answer in plain prose with evidence references. Do NOT return the JSON verdict and do NOT propose a mitigation; if they want one, tell them to send "Investigate: …".`,
+      systemPrompt: `${ONCALL_SYSTEM}\n\nMode: QUESTION. The operator asked a question. Inspect this snapshot with summarize_metrics and list_deploys before answering. Use search_logs and get_diff if needed. Report unavailable tools as OPEN. Answer in plain prose with evidence references. Telemetry context: ${telemetryContext}. Do NOT return the JSON verdict and do NOT propose a mitigation; if they want one, tell them to send "Investigate: …".`,
       mcpServers: { [SERVER_NAME]: createTelemetryServer(deps.telemetry) },
       tools: [...ALLOWED_TOOLS], allowedTools: [...ALLOWED_TOOLS],
       permissionMode: "dontAsk", settingSources: [], maxTurns: 8, maxBudgetUsd: 0.3,

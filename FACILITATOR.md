@@ -1,175 +1,182 @@
-# Facilitator run sheet — Workshop 5 (one day, starts 10:00)
+# Facilitate Workshop 5 from one failure story
 
-The day practises the **AI software delivery lifecycle** through three
-required core tasks. Claude Code is the development assistant; the runtime
-SRE agent is the application being changed. Only skills, hooks, subagents and
-additional bench cases are optional depth. Participants execute from
-**[CARD.md](CARD.md)** or the hub
-(`http://127.0.0.1:4320/hub`). Both are generated from `workshop.json`
-(`npm run card`). Change the steps there, never in the generated files.
+The slides lead. `SOLO.md` contains the matching copy-ready prompts. Keep one
+failure story across two intake records: fixture INC-1001 is the reference and
+A6 creates a new live incident id. Do not introduce a solved branch between
+steps.
 
-## Prepare (the evening before)
+Claude Code is the builder. The on-call agent is the product. The core product
+uses scripted fictional evidence. Never call scripted output live model proof.
 
-Use two separate clones. Never present a solved clone as the starter.
+Before A1, state the scope. The starter supplies the console, shop, traffic,
+chaos, fixtures, tests, TypeScript runtime, Zod contracts, and read-only tool
+infrastructure. Participants build the missing A3, A4, A5, and A8 behavior and
+produce the evidence route. Do not spend class time regenerating the app.
 
-| Clone | Checkpoint | Check |
-| --- | --- | --- |
-| Participant route | `npm run checkpoint -- start` then `cd .lab/checkpoints/start` | the A5 tool and A8 approval exercises are intentionally incomplete; A8 fails closed |
-| Solved demo | `npm run checkpoint -- core-3` then `cd .lab/checkpoints/core-3` | `npm run verify` and `npm run test:workshop` pass |
+## Prepare the room
 
-From each clone, create the intended checkpoint, then run its launcher:
-`npm run checkpoint -- start` (or `core-3` for the solved demo), followed by
-`cd .lab/checkpoints/start` (or `core-3`) and `npm start -- --fast`. Open
-`http://127.0.0.1:4320/hub`. Ctrl+C stops only processes started by that
-launcher. Run one clone at a time on the default ports; if a port is busy,
-only stop your own workshop launcher.
+1. Use a clean `workshop/start` clone for each participant.
+2. Open any terminal at the repository root. Cursor is optional.
+3. Run `claude --setting-sources project --strict-mcp-config --no-chrome` and review the
+   displayed folder path. This loads project context without user or global
+   settings. The repository disables auto memory for the lesson. The SRE
+   product runtime ignores builder settings and uses only its explicit tools.
+4. Accept trust only for the participant's own clone. Never bypass trust.
+5. Restart the same command if project skills remain missing after trust.
+6. Explain that Claude Code is the builder. Do not introduce the product's
+   optional Agent SDK connection yet.
+7. Keep the required route scripted and offline. Introduce the live-model route
+   only after A5 and only with approved usage, cost, and local authentication.
+8. Reuse an existing console only when it belongs to this lab and its listener
+   window is known. Do not start duplicates.
+9. Keep the full skills pack and `/sdlc` mod optional.
 
-After the short AI-SDLC introduction, have participants create the starter
-and run `claude` in terminal 1, then submit the read-only assistant prompt in
-[CARD.md](CARD.md) after the lifecycle introduction and before code edits.
-In terminal 2, from the original clone root, configure supported SDK access as
-described in that guide, enter the same starter, then run `npm ci`,
-`npm run fixtures`,
-`npm run model:check` and `npm start -- --fast`. The Agent SDK is separate
-from interactive CLI login; do not promise a subscription login proves SDK
-access.
-
-The slides: run `python3 serve.py` in the slides repo, then open
-`http://localhost:8080/workshop5.html` (presenter view:
-`workshop5-presenter.html`).
-
-## Teach from the task
-
-Start with the AI SDLC: why code alone is not enough, the lifecycle stages,
-the evidence participants will produce, and the decisions humans keep.
-Then introduce Claude Code as the development assistant and the shop as the
-practice system. Do not open with installation or a checkout demonstration.
-For each core, name the lifecycle stage, what participants will do, why it
-is needed, and what will prove it.
-Explain only the concept needed for the next action. Show one example,
-then let participants use it. The card and hub put these explanations next
-to the steps under **Before you act**.
-
-| Task | Why now | Explain at first use | Evidence to collect |
-| --- | --- | --- | --- |
-| Core 1: specify from evidence | A plausible diagnosis is not permission to change software. | Telemetry, references and data gaps before drafting an intent; human acceptance before planning. | `docs/diagnosis-live.md` plus a human-accepted `intent.md` with observable checks. |
-| Core 2: design, build and verify | Core 1 defines the outcome; each repair needs a reviewed plan. | Human starter baseline; review a plan before repairing `list_deploys`, then review a gate plan before repairing `checkApproval`; check the same incident and run full verification. | `docs/plan.md`, a meaningful diff, the actual trace, focused checks and full verification results. |
-| Core 3: review, release and learn | Tests do not accept or release their own change. | Start with actual diff review, then human PR/release decision, runtime observation and next-task review. | `docs/verify/sdlc.md` records review, release or `RELEASE BLOCKED`, runtime result and next task. |
-
-Do not insert optional skills, hooks, subagents or extra bench-case work
-between these tasks. The human baseline, code review, release decision and
-runtime observation are required work, not optional Git-gate material. Explain
-concepts just before their first use. Return to the opening SDLC map during
-the final reflection, using the work participants actually did.
+For the optional route, participants authenticate Claude Code on their own
+machine. Never accept copied credentials or move authentication to a remote
+host. First require one bounded fixture run with `--max-turns 8` and
+`--max-budget-usd 0.30`. Review its completed diagnosis and tool trace. Only
+then may they restart their own console with
+`AGENT_MODEL=sonnet AGENT_LISTEN_WINDOW_MIN=1 npm run console`. The console has
+no global model-budget guard. A health label is readiness evidence, not model
+evidence. Allow at most one approved investigation, then stop to control usage.
+Restart with `env -u AGENT_MODEL AGENT_LISTEN_WINDOW_MIN=1 npm run console`
+when authentication, limits, cost approval, or the run fails.
 
 ## Time boxes
 
-Before the day, prepare the learner repositories using
-[docs/sdlc-git.md](docs/sdlc-git.md). GitHub learner repositories need the
-published upstream `workshop/start` branch and Actions enabled; a main-only
-fork is not enough. Keep the inherited CI and review gates intact. Missing
-repository access is a release blocker, not a reason to simulate a merge.
+| Time | Block | Visible checkpoint |
+| --- | --- | --- |
+| 10:00–10:18 | Incident, outcome, terminal, project skills | Participants distinguish Claude Code from the product |
+| 10:18–10:37 | A1 | Shallow map, healthy console, green main suite, expected red workshop tests |
+| 10:37–10:55 | A2 | Reviewed intent with three repeatable checks |
+| 10:55–11:10 | Break | Help only with the current checkpoint |
+| 11:10–11:50 | A3 | Accepted contract, focused red, small patch, focused green, verification verdict |
+| 11:50–12:00 | Proof checkpoint | A partner follows the A3 evidence |
+| 12:00–13:00 | Lunch | Preserve participant work |
+| 13:00–13:30 | A4 | Chat refusal, named human hook edit, focused guard denial |
+| 13:30–13:55 | A5 | Read-only tool result and exact trace arguments |
+| 13:55–14:35 | A6 | Cited sample diagnosis, snapshot wording, chat refusal |
+| 14:35–14:50 | Break | Keep owned processes running only when needed |
+| 14:50–15:10 | A7 | Offline before and after bench, harmful 0, unchanged floor |
+| 15:10–15:30 | A8 | Negative gate test; real human action remains OPEN |
+| 15:30–15:55 | A9 | Lesson proposal, hackathon intent, reviewed and saved handoff |
+| 15:55–16:00 | Close | Each learner names the hackathon first step |
 
-Use the 31-slide core route through **Show the completed lifecycle**. The 7
-slides after it are reference only. The rest
-is reference material or a separate follow-up, not another required session.
+## Use the same note rhythm on every block
 
-| Time | Slide title / section | Block | Expected output |
-| --- | --- | --- | --- |
-| 10:00–10:30 | AI-SDLC introduction, then Claude Code | Purpose, lifecycle, outputs and human decisions first; then assistant and practice system | participants can state the required artifacts and why evidence comes first |
-| 10:30–11:00 | Start the lab and check your starting point | Setup and preflight | starter and Claude Code ready; SDK preflight passes or access blocker is recorded |
-| 11:00–11:15 | Break | Break | — |
-| 11:15–11:40 | Core 1: observe the evidence | Detection, one fault, references and data gaps | diagnosis checked against telemetry; `docs/diagnosis-live.md` |
-| 11:40–12:00 | Core 1: accept intent | Draft and human review of observable outcome | accepted `intent.md` and decision recorded |
-| 12:00–13:00 | Lunch | Lunch | — |
-| 13:00–13:20 | Core 2: baseline and plan review | Human-owned baseline; smallest plan against intent | meaningful repair diff is possible; reviewed `docs/plan.md` |
-| 13:20–14:10 | Core 2: repair the tool | Review the small plan, restore the registered handler, then check the same incident | focused tool test, typecheck, bench and actual trace recorded |
-| 14:10–14:40 | Core 2: repair the gate and verify | Review the gate plan, repair `checkApproval`, then run the complete checks | executor test, full verification, workshop and hook checks pass; results recorded |
-| 14:40–14:55 | Break | Break | — |
-| 14:55–15:15 | Core 3: review the actual diff | Inspect the staged and untracked files against intent and `REVIEW.md` | findings verified by a human |
-| 15:15–15:35 | PR and release decision | Human-owned learner-repo PR, current-head checks and review | merge decision recorded, or `RELEASE BLOCKED` with exact reason |
-| 15:35–15:50 | Runtime observation | Briefly inspect actual model label, trace and recovery; avoid a long button demo | observed result or blocker recorded; NOT LANDED stays open |
-| 15:50–16:00 | Next task and SDLC evidence | Propose and review one evidence-based next task; show the full record | `docs/verify/sdlc.md` shows artifacts, checks, human decisions, runtime and next task |
+1. State why the block exists for the failure story and name the current record.
+2. Ask the room to predict the visible result.
+3. Play the short illustrative clip when it helps.
+4. Pause on the named proof line.
+5. Let participants build with the copy prompt.
+6. Inspect one participant screen or run a partner check.
+7. Stop at the stated human boundary.
 
-Protect the delivery and review blocks; timebox the runtime button
-demonstration. Use practice time for catch-up, not more definitions.
-INC-1001 is a fixture ID; live incidents have their own IDs. Offline output
-is scripted and is not model-quality evidence. Real model wording varies:
-teach the verified trace, missing evidence and gaps, not exact sentences.
+The saved clips are illustrative. The participant's own output is the proof.
 
-## Top failure + fix per block
+## Keep waits bounded
 
-Participants working independently follow [SOLO.md](SOLO.md) and the same
-card. They record self-review as a limitation and never bypass a required
-external reviewer. Missing access or review becomes `RELEASE BLOCKED`.
+- After two minutes without visible progress, ask Claude to state the blocker
+  and next focused check.
+- Keep setup waits below eight minutes before pairing the participant.
+- Keep normal build waits below six minutes before a focused intervention.
+- Give the A6 listener 90 seconds with `AGENT_LISTEN_WINDOW_MIN=1` before you
+  inspect traffic, console health, and incident state.
+- Do not fill waits with unrelated theory or a full-suite rerun.
 
-- **Start** — `npm start` stops with a port message: another copy runs. Stop
-  only your own workshop launcher; never kill an unknown process. Node too old:
-  install Node 22+.
-- **Core 1** — no incident: the lab terminal must show traffic lines. Use one
-  fault trigger only: click **Bad deploy v2.15.0** in the shop OR run the
-  chaos CLI, never both. The shop UI counters cover this browser's checkout
-  requests over the last 30 seconds, not the terminal's traffic. Its chart
-  covers 60 seconds. The console reads server telemetry from
-  `demo/data/telemetry.json`; incident history is stored separately in SQLite.
-  Never click Reset to force a green counter or treat it as recovery evidence.
-  Without
-  `--fast` detection takes five minutes. Check `curl 127.0.0.1:4320/api/incidents`.
-  References are text, not links: search the data file for the timestamp.
-  Offline chat is a scripted summary, not a new model run.
-- **Core 2** — the tool returns `[]`: inspect the registered
-  `tool("list_deploys", …)` and its handler binding. The starter preserves the
-  registration but its handler is an empty stub. The console reloads on save
-  (a reload line in the lab terminal); do not restart the launcher to reload
-  code. Incident history persists in SQLite, while the shop resets on restart.
-  For a fresh repeat, create a new disposable checkpoint; do not rebreak a
-  stale incident.
-  Offline Core 1 output uses `investigate-more` with a data gap as the
-  deterministic starter example. Real-model output varies; check its actual
-  trace, deploy references and gaps. A failed contract or fabricated citation
-  means preserve the output and stop, not assume the same diagnosis.
-- **Core 3** — a button is grey: read the banner. It names the one allowed
-  step. The server refuses every other button with 409. Execute is refused
-  when the named approval does not match this incident and the actual
-  proposal. Do not assume every model response proposes rollback.
-  Allow about two minutes for recovery checks; keep the lab running.
-- **Catch-up** — `npm run checkpoint -- core-2` makes a separate copy in
-  `.lab/checkpoints/core-2`. It never changes the participant's files. They
-  compare and copy one file themselves. Core 2 is an intermediate catch-up
-  point with the read-only tool solved and the A8 gate still cut. Core 3 is
-  the solved reference. Neither proves participant-authored work. Never
-  `git checkout <tag> -- <files>` over participant work.
+## Recovery by assignment
 
-## If recovery says NOT LANDED
+- **A1.** Confirm the branch and current diff. `npm run workshop:check` only
+  locates unfinished markers. It does not prove completion.
+  If port 4320 is free, start the console with
+  `AGENT_LISTEN_WINDOW_MIN=1 npm run console`. If an owned console already uses
+  the default five-minute window, let the human choose between that wait and a
+  restart of only their own console.
+- **A2.** Reject wishes such as "the agent is reliable." Ask who observes what
+  result.
+- **A3.** The accepted change crosses the contract schema, types, offline
+  runtime verdicts, and main-test fixtures. Keep those dependent edits in
+  scope. Do not weaken the test.
+- **A4.** Claude builds the chat refusal. A named human edits
+  `.claude/hooks/guard.mjs`. Replace the four-line `TODO(A4)` comment block
+  immediately before `else if (SDLC_ARTEFACT.test(rel))` with
+  `else if (rel === "bench/ratchet.json") decide("deny", "guard: ratchet is human-owned");`.
+  Do not claim full shell protection.
+- **A5.** Both the handler and server registration live in `src/tools.ts`.
+  There is no `src/mcp-server.ts`.
+- **A6.** Use separate terminals. Start the console with
+  `AGENT_LISTEN_WINDOW_MIN=1`. Start the shop separately. Keep traffic running
+  in another terminal. Keep healthy traffic running for two minutes before the
+  one-shot chaos command so the diagnosis can compare a before state with the
+  bad-deploy breakpoint. Run the one-shot command in its own terminal.
+  The participant performs these process actions. The listener creates an
+  incident only after telemetry stays above the threshold for the configured
+  window. Do not treat the first traffic request as an incident. Record the
+  generated live incident id and keep fixture INC-1001 separate. The scripted
+  chat may summarize evidence without comparing causes. Mark that gap `OPEN`
+  and compare the alternative with diagnosis `ruled_out` evidence.
+- **A7.** The offline bench checks deterministic fixture policy. It does not
+  prove live model prompt-injection resistance.
+- **A8.** Use the deterministic fixture record to prove the gate contract.
+  Keep Approve, Execute, and Resolve `HUMAN OPEN`; A8 does not operate on the
+  live A6 record.
+- **A9.** `/handoff` prints a portable prompt after the classroom override. It
+  does not write `HANDOFF.md`. A separate approved prompt saves the exact
+  reviewed text.
 
-The console names the failed check, its value and the limit. The full and
-double checks must both pass; only the half check may fail. In the seeded
-rollback example, occasional transient errors can still produce
-`NOT LANDED`. Keep that incident open. Read the failed window and the logs.
-Investigate or escalate. Do not execute again to get a green result: the
-console allows no second execute. Use this to teach the safe stop.
+## A6 terminal layout
 
-## Repeat the demo without deleting participant work
+Check ports before starting a process. Reuse only processes that belong to the
+same participant lab.
 
-Stop the lab with Ctrl+C. Make a new disposable copy with
-`npm run checkpoint -- core-3`, then `cd .lab/checkpoints/core-3` and
-`npm start -- --fast`. `npm run fixtures` regenerates fixture telemetry only;
-it does not reset live telemetry, console history, approvals or lessons.
+| Terminal | Command role |
+| --- | --- |
+| 1 | `AGENT_LISTEN_WINDOW_MIN=1 npm run console` |
+| 2 | `npm run shop` |
+| 3 | `npm run traffic`; keep it healthy for two minutes, then keep it running |
+| 4 | After the baseline, run `npm run chaos -- deploy v2.15.0 --mode bad-deploy` once |
 
-## Explicit offline fallback (agent unavailable)
+Production keeps the default five-minute listener window. Stop only processes
+that you started. Use Ctrl+C in their own terminals after validation.
 
-Use `npm start -- --fast --offline`; state clearly that it is a fallback, not
-model evidence. The code exercises use TypeScript and `node:test`; the
-required route also includes evidence, intent, planning, review and release
-decisions. Participants do the two `TODO` markers by hand;
-`npm run test:workshop` still grades them. The guard
-hook is a `node` process and still works when fed stdin:
-`echo '{"tool_name":"Edit","tool_input":{"file_path":"…/bench/ratchet.json"}}' | node .claude/hooks/guard.mjs`.
-Deterministic investigation commands must use `--model offline`. Only a human
-may run `npm run approve:git`, in their own terminal.
+## Human-owned decisions
 
-## What the evidence means
+- The participant accepts `intent.md` and the verdict contract.
+- The participant writes the A4 hook rule.
+- The participant starts the A6 scenario.
+- The participant may choose to approve, execute, or resolve in the local
+  console. Do not require those actions for automated completion.
+- The participant decides whether to promote a lesson.
+- The participant reviews the handoff before Claude saves it.
 
-The offline runtime proves the scripted integration, not model quality.
-`npm run progress` checks files and code patterns; it is not a test runner.
-Ask each team to show its own command result or UI action.
+Never fabricate a name, approval, execution, resolution, or accepted lesson.
+
+After A9, share this text in participant chat:
+
+```text
+You finished A1–A9 with the project skills already included in the SRE repository. Keep your reviewed HANDOFF.md as the hackathon start point.
+
+For selective reuse, open the public Claude Code skills pack: https://github.com/AetherLink-bv/claude-code-skills-pack
+
+Clone it into a separate folder after the lesson. Choose one skill, then paste this prompt into Claude Code:
+
+Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
+```
+
+Claude Code 2.1.319 can warn that a `Write(...)` permission rule never matches
+because that release uses the merged `Edit(...)` tool. Do not weaken project
+permissions. Keep the repository hook and focused guard test as the A4 proof.
+
+## Optional material
+
+- Use the AI-native SDLC explanation in the slide appendix only when the room
+  asks for the model.
+- Use `/sdlc` only as a view over the first `SOLO.md` prompt for each assignment.
+- Use the real-model eval only with approved model access, cost, and data.
+- Use the Daily Brief lab only after A1 through A9 are complete.
+
+## No-Claude fallback
+
+Pair the participant or complete the TypeScript TODO by hand. Run the same
+focused tests. Read the project skill files aloud when Claude Code is not
+available. Keep every human decision and evidence boundary unchanged.

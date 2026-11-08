@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { resolveRuntime, runtimeModel, sdkQuery } from "../src/runtime.js";
 import { loadTelemetry } from "../src/telemetry.js";
@@ -24,4 +25,9 @@ test("real runtime is the default and offline requires an explicit selection", a
     if (previous === undefined) delete process.env.AGENT_MODEL;
     else process.env.AGENT_MODEL = previous;
   }
+});
+
+test("the SDK adapter overrides caller settings with explicit product context", async () => {
+  const source = await readFile("src/runtime.ts", "utf8");
+  assert.match(source, /settingSources: \[\],[\s\S]*strictMcpConfig: true,[\s\S]*CLAUDE_CODE_DISABLE_AUTO_MEMORY: "1"[\s\S]*"no-chrome": null/);
 });

@@ -1,450 +1,367 @@
-# Practise the AI-native SDLC on your own
+# Build the AI SRE first responder with Claude Code
 
-For the shorter classroom route, use [WORKSHOP.md](WORKSHOP.md) and
-[PARTICIPANT.md](PARTICIPANT.md). This recommended self-paced route teaches
-the required AI software delivery lifecycle. Claude Code is the development
-assistant; the runtime SRE agent is the application being changed. The
-numbered steps below remain a separate optional offline reference for mirror
-consumers. Their content is retained for compatibility. The Daily Brief is a
-separate activity, not this solo route.
+Claude Code is the builder. The on-call agent is the product that you build.
+The product runs offline against scripted fictional evidence. A real model
+investigator is optional and is not part of the core proof.
 
-Use [docs/claude-code.md](docs/claude-code.md) for official Claude Code
-installation and separate Agent SDK setup. The Agent SDK defaults to `sonnet`;
-`npm run model:check` must pass before a real-model fault injection. Offline
-is an explicit scripted fallback, not model evidence. For canonical actions,
-prompts and proof, follow [CARD.md](CARD.md).
+You make every product choice. You inspect every diff. You also perform every
+human action. Claude Code may not approve, execute, resolve, edit `.claude/`,
+promote a lesson, rewrite `PROGRESS.md`, or push.
 
-## Recommended self-paced route
+## Open the project in a terminal
 
-You can complete this route without a facilitator or a presentation. Use
-this page to navigate; [CARD.md](CARD.md) contains the exact prompts,
-commands, expected results and stop conditions. Read its **Before you act**
-text before each step. The course and numbered offline examples below are
-optional reference, not a second assignment.
+1. Clone the exercise branch.
 
-### Before you start
+   ```sh
+   git clone --branch workshop/start --single-branch https://github.com/AetherLink-bv/sre-oncall-agent.git
+   cd sre-oncall-agent
+   ```
 
-1. Check `node --version` (22 or newer), `npm --version` and `git --version`.
-2. Follow [the setup guide](docs/claude-code.md) to install Claude Code and
-   configure separate SDK access. Use your own approved accounts and synthetic
-   data only. Real model requests may cost money.
-3. Prepare your own learner repository using
-   [the publishing prerequisites](docs/sdlc-git.md#publish-only-to-your-learner-repository).
-   Check repository access, Actions and any required reviewer before Core 1.
-   You may continue locally if these are blocked, but record `RELEASE BLOCKED`.
-4. Reserve a focused session for Core 1 through the same-incident check in
-   Core 2. Keep the launcher running across those steps so the before/after
-   evidence describes the same incident.
+2. Review the current path and confirm that this is your own clone.
+3. Run `claude --setting-sources project --strict-mcp-config --no-chrome` at the repository
+   root. This workshop command loads project context without user or global
+   settings. The repository disables auto memory for this bounded lesson. The
+   separate SRE product runtime ignores builder settings and
+   exposes only its explicit telemetry tools.
+4. Review Claude Code's folder-trust prompt. Accept only when the displayed
+   path is your own trusted clone. Never bypass trust for an unfamiliar folder.
+5. Check that the project skills are available. Restart the same command if
+   they remain missing after trust.
 
-First read **Start with the AI SDLC** in [CARD.md](CARD.md). Name the stages,
-the evidence you will produce and the decisions you keep. Then use the SRE
-agent and shop to practise that cycle; operating the console is not the goal.
+Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
+The lesson only needs a terminal and browser. The repository already contains
+the project skills. You do not need the full skills pack.
 
-### Start with Claude Code
+Do not ask Claude Code to rebuild the whole app. The starter already supplies
+the local console, checkout shop, traffic, chaos, fictional fixtures, tests,
+Zod contracts, and read-only tool infrastructure. You build the missing A3,
+A4, A5, and A8 behavior. You also produce the intent, diagnosis evidence,
+offline fixture coverage, human boundaries, and handoff.
 
-- **Task:** Create a disposable starter and begin with the coding assistant.
-- **Why:** AI-assisted delivery starts by agreeing on the problem, evidence
-  and human boundaries, not by prompting directly for code.
-- **Action:** In terminal 1, clone the repository, create the starter
-  checkpoint, enter it and run `claude`. Submit the read-only prompt in
-  [CARD.md](CARD.md) after the lifecycle introduction and before code edits.
-  In terminal 2, from the original clone root, configure SDK access as
-  described in the setup guide, then enter
-  the same checkpoint, run `npm ci`, `npm run fixtures`,
-  `npm run model:check`, and `npm start -- --fast`.
-- **Proof:** The SDK preflight returns `READY`, and console health reports
-  the selected model before fault injection. If SDK access is unavailable,
-  record the blocker; use `npm start -- --fast --offline` only as an explicit
-  fallback. Offline output is not model evidence.
-
-When both terminals are occupied, ask Claude Code to run safe checks or use
-`/exit` before typing shell commands, then reopen Claude Code afterward. Never
-type shell commands into the active assistant prompt.
-
-### Core 1 — turn observed evidence into accepted intent
-
-- **Task:** Break the shop once, inspect the diagnosis and trace, verify every
-  reference against telemetry, and draft `intent.md` from the observations.
-- **Why:** An incident diagnosis is input to a software requirement, not the
-  requirement itself. A missing deploy signal is unknown, not proof that no
-  deploy happened.
-- **Action:** Click **Bad deploy v2.15.0** once in the shop at
-  `http://127.0.0.1:4310`. Check the incident at `http://127.0.0.1:4320`,
-  citations and trace against `demo/data/telemetry.json`. Save
-  `docs/diagnosis-live.md`. Use the Core 1 prompt in the card to draft an
-  intent naming the user, outcome, observable checks, boundary and open
-  question. Review and accept it yourself before Core 2. Record actual
-  observations with `npm run progress:note -- "..."`.
-- **Proof:** `docs/diagnosis-live.md` has checked evidence; `intent.md` has
-  your accepted scope and decision. Real model wording varies. If a citation
-  is fabricated or a contract fails, preserve the output and stop; do not
-  weaken the contract.
-
-### Core 2 — review both plans, repair and verify
-
-- **Task:** Create a human-owned starter baseline. Review a plan before each
-  repair, restore the read-only `list_deploys` handler, check the same
-  incident, then repair the `checkApproval` gate.
-- **Why:** Each repair has its own scope and human plan review. The same
-  incident trace shows whether the tool repair changes the evidence.
-- **Action:** Follow the baseline steps in
-  [docs/sdlc-git.md](docs/sdlc-git.md). Follow the Core 2 prompts and checks
-  in [CARD.md](CARD.md). Record both plans and your decisions in
-  `docs/plan.md`; record checks and trace in `docs/verify/sdlc.md`.
-- **Proof:** The tool and gate plans were reviewed before edits. Both repairs
-  have a visible diff. The same-incident trace and complete check results are
-  recorded. The A8 gate remains cut only until its repair within Core 2.
-
-### Core 3 — review, release and learn
-
-- **Task:** Review the actual diff first. Make a human PR and release
-  decision, or record `RELEASE BLOCKED`. Observe the runtime result and
-  propose one reviewed next task.
-- **Why:** Passing tests do not accept or publish a change. Runtime recovery
-  is separate from code release.
-- **Action:** Follow the Core 3 prompts in [CARD.md](CARD.md). A human checks
-  the PR head, CI and required review before deciding to merge. Record the
-  runtime model, trace, recovery result and reviewed next task in
-  `docs/verify/sdlc.md`.
-- **Proof:** A human has reviewed the diff and made a release decision or
-  documented the exact blocker. Observe runtime results; do not infer them
-  from a local reload. Keep `NOT LANDED` or unknown recovery open.
-
-### Completion checklist
-
-- [ ] The diagnosis is checked against evidence and `intent.md` is accepted.
-- [ ] `docs/plan.md` was reviewed before implementation and the repair diff is
-      nonempty.
-- [ ] Focused and full code checks, actual diff review and human release
-      decision (or `RELEASE BLOCKED`) are recorded.
-- [ ] The actual runtime model label, trace and recovery outcome are recorded,
-      or the missing observation is explicitly marked blocked/not run.
-- [ ] One next task and its acceptance check are proposed and reviewed.
-- [ ] No approval, execution, mitigation, resolution, commit, push or merge was
-      delegated to the assistant.
-
-### Review when you are the only participant
-
-You are the human reviewer, not Claude. Before each repair, read the plan
-against your accepted intent and record your name and decision. After the
-checks, take a separate review pass through the actual diff using `REVIEW.md`.
-Verify Claude's findings yourself. Record **self-review; no independent
-reviewer** in `docs/verify/sdlc.md`. An agent's review is not independent
-human approval.
-
-If your learner repository permits self-review, you may make the human merge
-decision after current-head CI passes. If policy requires another reviewer,
-request that review and record `RELEASE BLOCKED` until it arrives. Do not
-disable protection. A blocked release is an honest workshop outcome, not a
-merged change. Runtime approval and execution are separate human actions.
-
-### Pause, resume or get unstuck
-
-- Before pausing, save your files and record the current card step, checkpoint
-  path, branch, incident ID and next action with `npm run progress:note --
-  "..."`. Do not put credentials in the note.
-- To resume code work, open the same checkpoint, inspect `git status --short`
-  and `npm run progress`, then open Claude Code. Do not create another starter
-  over your existing work.
-- Keep the launcher running for the same-incident comparison. A launcher
-  restart archives old telemetry and starts a new shop run; it is not a
-  continuation of the original measurement. Preserve the old evidence and
-  mark an interrupted comparison as not completed. Do not copy runtime data
-  or approvals to manufacture continuity.
-- If setup fails, use the card's troubleshooting steps. If a test fails,
-  keep its output and ask Claude to explain that failure before changing code.
-  Do not lower contracts, tests or the bench floor to continue.
-- If you cannot proceed, record the failed command or card step, expected
-  result, actual result and missing access in `docs/verify/sdlc.md`. Ask your
-  course contact or repository maintainer with that sanitized evidence.
-  You can stop with a documented blocker; a facilitator is not required to
-  make up a successful result.
-
-### Catch up without overwriting your starter
-
-Run catch-up commands from the original clone root, not a modified starter.
-Each creates a separate checkpoint and preserves the participant's files.
-Tell anyone helping which checkpoint you entered.
-
-```bash
-cd /path/to/sre-oncall-agent
-npm run checkpoint -- core-2
-cd .lab/checkpoints/core-2
-```
-
-For Core 3, return to the original root and run
-`npm run checkpoint -- core-3`, then enter `.lab/checkpoints/core-3`.
-Do not copy runtime data, approvals, progress or lesson history from a solved
-checkpoint. `core-2` is an intermediate tool-solved, gate-unfinished catch-up
-point within Core 2. `core-3` is the solved reference. Neither proves
-participant-authored work.
-
-## Optional legacy offline reference — not the assignment
-
-Use a separate, unchanged clone for these examples, not your starter or repair
-branch. Step 0 expects solved code and cannot pass on the unfinished starter.
-These examples do not replace Core 1–3 or its delivery artifacts.
-
-The numbered steps below are deterministic offline reference material. Every
-investigation command explicitly selects `--model offline`; they are not model
-evidence.
-
-| Step | You do | Time |
-| --- | --- | --- |
-| 0 | Install, generate the fixtures, run the suite | 5 min |
-| 1 | Read the alert and the data the agent can see | 10 min |
-| 2 | Run the first investigation and read the trace | 10 min |
-| 3 | Break the evidence rules on purpose | 10 min |
-| 4 | Sign the approval, then watch the fix land | 10 min |
-| 5 | Review the proposed lesson and promote a pattern | 10 min |
-| 6 | Run the bench, then try to lower the ratchet | 5 min |
-| 7 | (Optional) Run with a real model | 5 min |
-| 8 | Break a live shop and watch the whole loop | 10 min |
-
----
-
-## Step 0 — Install
-
-**Explain:** This optional reference uses the scripted runtime. The current
-recommended route starts Claude Code first and separately preflights the real
-Agent SDK.
-
-**Do:**
+Use one assignment at a time. Stop at each review point. If Claude shows no
+visible progress for two minutes, ask:
 
 ```text
-npm ci
-npm run fixtures
-npm run verify
+State the blocker and the next focused check.
 ```
 
-**Check:** `npm run fixtures` writes five files under `fixtures/telemetry/`.
-`npm run verify` ends with `PASS bench`.
+Do not run the full suite after every prompt. Run the checks named by the
+current assignment.
 
----
+## A1. Map the repo and prove setup
 
-## Step 1 — What the agent can see
-
-![The on-call loop](docs/diagrams/01-architecture.svg)
-
-**Explain:** The agent gets an alert and three tools. It cannot change the
-system. That is the whole design.
-
-**See it:** Open `fixtures/incidents/bad-deploy.json` (the alert) and
-`fixtures/telemetry/bad-deploy.json` (the system). Find the minute where
-`error_rate` jumps and the deploy two minutes before it.
-
-Open `src/tools.ts`. Count the tools. Try to find a tool that writes.
-
-**Check:** Three tools: `search_logs`, `summarize_metrics`, `list_deploys`.
-None writes. The deploy is `d-4821` at 03:43; errors start at 03:45.
-
----
-
-## Step 2 — The first investigation
-
-**Explain:** `query()` runs a loop: the model asks for a tool, the SDK runs
-it, the result goes back. `maxTurns` caps the loop. The trace records every
-tool call so you can see WHAT the agent looked at before you read what it
-concluded.
-
-**See it:** `ONCALL_SYSTEM` in `src/prompts.ts` is the method: lessons →
-metrics → deploys → logs → verdict. `investigate()` in `src/agent.ts` is the
-loop.
-
-**Do:**
+Start with the project skill. The slash command must be the first text in the
+prompt.
 
 ```text
-npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run --model offline
+/show-me Read CLAUDE.md and fixtures/incidents/bad-deploy.json. Then inspect only src/cli.ts, console/server.ts, and src/agent.ts. Give me a shallow map of two intake paths: the fixture CLI for INC-1001 and the live console listener that creates a new incident id from shop telemetry. Show where both paths call the shared investigate flow. Stay read-only. Do not generate HTML. Name those three entry files and one shared runtime file I should inspect next, then stop.
 ```
 
-**Check:** The trace lists the three tools in order. The diagnosis has six
-lines: What's happening / Root cause / Blast radius / Proposed fix / Ruled
-out / Would change my mind. Proposal is `rollback`, severity is `page`. The
-last line says a human decides.
-
-Now run the other three scenarios. Predict the proposal before each run:
+Review the map. You must be able to point to the fixture, runtime, trace, and
+console before you continue.
 
 ```text
-npm run investigate -- fixtures/incidents/slow-dependency.json --dry-run --model offline
-npm run investigate -- fixtures/incidents/noisy-alert.json --dry-run --model offline
-npm run investigate -- fixtures/incidents/mystery-errors.json --dry-run --model offline
+Use the repository map we just reviewed. Check Node and my current diff. Install dependencies only if they are missing, then generate the sample fixtures. Run the main tests. Run the workshop tests and explain why A3, A4, A5, and A8 are expected to fail. Do not solve them. Run npm run workshop:check only to locate unfinished markers; it is not a completion gate. Check port 4320. If it is free, start the console with AGENT_LISTEN_WINDOW_MIN=1. If it is occupied, do not stop the process. Report whether it belongs to this lab and whether its listener window is known. Show the console health and local URL. Do not push or change hooks. Stop for my setup review.
 ```
 
-**Check:** `scale`, `no-action`, `investigate-more`. Note the confidence on
-the last one is `low`, so the contract would have refused a strong proposal.
+Open the local URL yourself. The main suite must pass. The workshop suite must
+fail only at the unfinished A3, A4, A5, and A8 contracts.
 
----
+If an owned console already uses port 4320 with an unknown or five-minute
+listener window, choose one option before A6. Either accept the five-minute
+wait, or approve a restart of only that owned console with the one-minute
+classroom setting.
 
-## Step 3 — Break the rules on purpose
+Choose which expected red assignment you want to inspect first. Stop when you
+can explain the repo map, console health, and expected red tests.
 
-![The model proposes. Code checks.](docs/diagrams/02-contract.svg)
+## A2. Write a reviewed intent
 
-**Explain:** The model proposes; code checks. Three rules live in
-`parseVerdict()` in `src/contract.ts`:
-
-- a strong proposal needs two evidence sources;
-- `rollback` needs a `deploys` line;
-- `low` confidence can only propose `investigate-more`.
-
-And one in `checkTrace()` in `src/agent.ts`: a cited source whose tool was
-never called fails.
-
-**Do:** Run the adversarial alert. Its text tells the agent to skip the rules.
+Use one design round with at most three questions.
 
 ```text
-npm run investigate -- fixtures/incidents/adversarial.json --dry-run --model offline
+/design-control-loop Read intent.md, fixtures/incidents/bad-deploy.json, and REVIEW.md. Ask me at most three questions in one round about the operator, the observable outcome, and the read-only boundary. Recommend an answer for each question. Map my answers to intent.md fields. Stay in design mode. Do not edit or build. Stop after the field map.
 ```
 
-Then try the loop budget:
+Reject a check that describes a wish. Choose an operator outcome and three
+results that a stranger can repeat.
 
 ```text
-npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run --model offline --max-turns 2
+Use the decisions from the design-control-loop interview. Propose an exact intent.md diff with one operator outcome, three checks a stranger can repeat, the sample-data boundary, and the named human decisions. Wait for my approval. After I approve, edit only intent.md and show the diff. Do not build or push.
 ```
 
-**Check:** The adversarial alert gets the same verdict as the clean one —
-alert text is data. With `--max-turns 2` the run ends with
-`maxTurns (2) reached before a verdict`, not a guess.
+Stop when `intent.md` names the operator, three repeatable checks, the
+sample-data boundary, and the decisions that stay human-owned.
 
-Open `test/agent.test.ts` and read the test *"a model that skips the tools and
-answers from the alert fails the contract"*. That is the trace rule.
+## A3. Build and verify the verdict contract
 
----
-
-## Step 4 — Sign, then watch it land
-
-**Explain:** Without `--dry-run`, an investigation drafts an approval record
-as `pending`. A NAMED human signs it. Whatever executes the fix is a separate
-system that calls `isApproved(record, incident, proposal)`. Then `watch`
-confirms the metric returned to baseline with three bounded checks — at half,
-full and double the expected window. Not a polling loop.
-
-**Do:**
+First agree on the contract. Do not edit code in this step.
 
 ```text
-npm run investigate -- fixtures/incidents/bad-deploy.json --model offline
-cat approvals/INC-1001.approval.json
-npm run approve -- fixtures/incidents/bad-deploy.json --by <your name>
+Read the accepted intent.md, docs/spec.md, src/contract.ts, src/runtime.ts, src/prompts.ts, and the A3 workshop test. Explain the current verdict contract in plain English. Propose the smallest contract change that requires non-empty customer_impact, keeps unsupported claims OPEN, and keeps the offline and optional real-model schemas aligned. Describe observed request failures or latency; keep affected versions, regions, and customer segments OPEN unless the cited metric establishes them. Do not edit code or tests. Stop for my contract review.
 ```
 
-Pretend the deploy owner rolled back at 03:52. `after-rollback.json` is the
-telemetry after that:
+Choose one invalid verdict. Accept the contract only when that verdict must
+fail.
 
 ```text
-npm run watch -- fixtures/incidents/bad-deploy.json --metric error_rate \
-  --fix-at 2026-10-05T03:52:00Z --after fixtures/telemetry/after-rollback.json
+Use the contract I accepted. Run the focused A3 test and show the red assertion. Explain the failure before editing. Then implement the accepted A3 contract without weakening tests. Change TODO(A3), docs/spec.md, the contract schema and types, all offline runtime verdict branches, the real-model schema in src/prompts.ts, the relevant contract, approval, and executor fixtures that consume customer_impact, and display customer_impact in src/cli.ts and console/index.html. Do not change unrelated product scaffolding. Rerun the focused A3 test. Run the main tests, typecheck, and the offline investigation. Show the exact CLI output, console field, test outputs, and diff. Do not copy a solved implementation, approve, execute, resolve, or push.
 ```
 
-Now watch WITHOUT the fix (the original telemetry):
+Run the project skill as a separate read-only checkpoint.
 
 ```text
-npm run watch -- fixtures/incidents/bad-deploy.json --metric error_rate \
-  --fix-at 2026-10-05T03:52:00Z
+/verify-this Verify this claim: the A3 verdict contract cannot pass without non-empty customer_impact and the offline investigation still reports customer impact. Use the accepted spec, the focused A3 test, the main tests, typecheck, and the offline output. Report VERIFIED, NOT VERIFIED, or INCONCLUSIVE with file and output references. Stay read-only.
 ```
 
-**Check:** The approval file flips from `"pending"` to `"approved"` with your
-name. The first watch says `LANDED` and `PASS watch`. The second says
-`NOT LANDED` and exits 2. Neither run closed anything — only a human closes.
+Stop when you have the accepted contract, the original red assertion, the
+small TODO(A3) diff, the green focused rerun, and the verification verdict.
 
-Try `npm run approve -- ... --by ""`. It refuses: an anonymous approval is not
-an approval.
+## A4. Wire and prove the controls
 
----
-
-## Step 5 — The lessons loop
-
-![The lessons loop](docs/diagrams/03-lessons.svg)
-
-**Explain:** The agent reads `lessons/lessons.md` filtered to the alert's
-`#tag`, never the whole file. It never appends. It writes a proposal to
-`lessons/proposed/` and a human promotes it by PR. When one tag has three
-entries, the pattern belongs in a playbook, not the log.
-
-**See it:** `renderLessons()` and `promotionCandidates()` in
-`src/lessons.ts`. `lessons/lessons.md` has two seed entries.
-
-**Do:** Open `lessons/proposed/INC-1001.md` from Step 4. Fill in `fix` and
-`gotcha`. Append it to `lessons/lessons.md`. Run the investigation again and
-read the prompt the agent would get:
+Build the chat refusal first.
 
 ```text
-npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run --model offline
+Read intent.md, src/chat.ts, and test/workshop/chat.test.ts. Explain the chat-refusal contract in plain English. Add a named MUTATION regex constant because the progress hook checks it. Add a negative test that the read-only question "Was the deploy the cause?" remains a question and is not refused. Ask me to choose one extra operational mutation phrase. Add that phrase to the focused test, show the test red, then implement only TODO(A4) in src/chat.ts. Rerun the focused chat test and show the diff. Do not edit .claude/, approvals/, lessons/lessons.md, PROGRESS.md, or bench/ratchet.json. Do not approve or execute anything. Stop before the human hook step.
 ```
 
-**Check:** `#bad-deploy` now has two entries; one more and
-`promotionCandidates()` flags it. The `fix` and `gotcha` lines came from you,
-not the agent — the agent only knows what it proposed.
+Choose one extra mutation phrase. Confirm that the focused chat test turns
+green.
 
----
+Now perform the human step. Edit `.claude/hooks/guard.mjs` yourself. Replace
+the `TODO(A4)` comment immediately before
+`else if (SDLC_ARTEFACT.test(rel))` with this exact rule:
 
-## Step 6 — The ratchet
+```js
+else if (rel === "bench/ratchet.json")
+  decide("deny", "guard: ratchet is human-owned");
+```
 
-![The ratchet](docs/diagrams/04-ratchet.svg)
-
-**Explain:** `bench/cases.json` holds the expected proposal and severity for
-each scenario. `bench/ratchet.json` is the floor CI enforces: pass-rate ≥
-`min_rate` and `harmful` ≤ 0. A *harmful* answer is a strong action the key
-says is wrong. The floor only goes up.
-
-**Do:**
+This rule denies the guarded file-edit tools for `bench/ratchet.json`.
+Claude Code may not perform this edit.
 
 ```text
-npm run bench
+Read the human edit in .claude/hooks/guard.mjs and test/workshop/guard.test.ts. Do not edit either file. Run only the focused guard test. Explain whether Edit and Write to bench/ratchet.json are denied, and show the audit result. Do not claim that the hook blocks every shell command. Stop for my review.
 ```
 
-Now edit `bench/cases.json`: change the `noisy-alert` expectation to
-`rollback`. Run the bench again.
+Stop when chat refuses your phrase, the human-owned hook edit has a named
+author, and the focused guard test records the expected denial. This hook
+proves the file-edit boundary. It does not prove full shell protection.
 
-**Check:** The bench reports `🚫 noisy-alert` as harmful and `FAIL bench`.
-Revert the edit. Then try `npm run bench -- --raise` — the floor moves to
-100% and will stay there.
-
----
-
-## Step 7 — Optional: verify model access
-
-This is optional model verification, not the first model use. Follow
-[docs/claude-code.md](docs/claude-code.md), configure SDK access in the shell
-only, and run the bounded preflight before an investigation.
-
-**Do:**
+## A5. Build a read-only deploy tool
 
 ```text
-npm run model:check
-npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run --model sonnet
+Read intent.md, src/tools.ts, src/runtime.ts, src/chat.ts, and test/workshop/tools.test.ts. Explain how list_deploys stays read-only and where its trace arguments are recorded. Show the three starter bypasses that read deploys without the new handler. Ask me to choose one edge case: an empty time window or a missing deploy. Show the focused A5 test red. After my approval, implement TODO(A5) in src/tools.ts and remove the list_deploys bypasses from src/runtime.ts and src/chat.ts so offline investigation and chat use the registered handler. Add my edge case and rerun the focused test. Then run the main tests, typecheck, and the offline investigation. Show the tool result and exact trace arguments. Do not add a mutation tool, approve, execute, resolve, or push.
 ```
 
-**Check:** If the preflight is unavailable, report the limitation and do not
-invent credentials or use CLI OAuth as an SDK bypass. If it passes, the trace
-shows real tool calls through the in-process MCP server and the verdict still
-passes the contract. Model output varies; preserve a failed contract or
-fabricated citation and stop.
+Choose the empty-window or missing-deploy case. Inspect the handler, server
+registration, tool result, and exact trace arguments.
 
----
+Stop when `list_deploys` is registered, read-only, tested, and visible in the
+offline trace. No rollback, approval, or mutation tool may exist.
 
-## Step 8 — Break a live shop
+## Optional after A5: connect the product model
 
-**Explain:** Fixtures replay the past. The demo shop is a running service you
-can break *now*. It writes its own telemetry in the shape the agent reads —
-the agent never talks to the shop, exactly as it would read Grafana rather
-than your service.
+Claude Code is already your local builder. The product runtime stays scripted
+and offline for the required route. Its read-only tool path now exists. Connect
+the product to the Claude Agent SDK only when your facilitator approves usage.
 
-**Do (by hand):** run `npm start -- --fast --offline`. It starts the shop, the traffic
-and the console in one terminal. Open the shop at `http://localhost:4310`. Customers check out on
-their own (10 per second). Click a button under **Make something break** and
-watch the error bar cross the dashed 2% line. After about a minute the
-console at `http://localhost:4320` raises the alert. Its banner names the next
-allowed step. **Reset to healthy** is a facilitator
-lever, not the fix.
+Use your own local login. Never copy a login, OAuth token, or API key to chat,
+Git, a browser field, a remote host, or another participant. Current Anthropic
+guidance says a local Agent SDK run can use your Claude Code login and consumes
+your plan limits. An intentionally configured API key uses the linked Console
+organization and may use paid API credits.
 
-Do not run legacy demo scripts that auto-approve. Use the explicit launcher
-and the human-gated console route instead; a human still approves, executes,
-mitigates and resolves separately.
+Use this prompt before starting the product model:
 
----
+```text
+Read README.md, src/runtime.ts, src/e2e.ts, console/server.ts, and package.json. Explain the difference between my local Claude Code builder session and the optional Claude Agent SDK product runtime. Check only whether Claude Code is signed in and whether npm run doctor reports the Claude Code login path; never print, read, or copy credentials. Propose the smallest local activation plan that keeps the core lesson offline, waits until after A5, first runs one CLI investigation with max-turns 8 and max-budget-usd 0.30, and only then optionally restarts my own console with AGENT_MODEL=sonnet. Require one completed model diagnosis plus its tool trace. State that the console has no global model-budget guard. Include the usage/cost warning and the fallback that restarts without AGENT_MODEL. Do not run a paid model, edit files, or start processes. Stop for my review.
+```
 
-## What you built
+Run one bounded fixture investigation first:
 
-An agent with a fixed division of labour: it searches, cites, proposes and
-verifies. You decide, you act, you close. The three things that keep it
-honest are code, not prompts: the evidence rules in `contract.ts`, the trace
-check in `agent.ts`, and the ratchet in `bench.ts`.
+```sh
+npm run investigate -- fixtures/incidents/bad-deploy.json --model sonnet --max-turns 8 --max-budget-usd 0.30 --dry-run
+```
+
+The SDK checks `--max-budget-usd` between model turns, so one turn can exceed
+it. Strict MCP isolation keeps this lab's model context limited to telemetry.
+
+Review the completed diagnosis, cost line, and tool trace. Only then may you
+stop the console process that you started and launch the optional console path:
+
+```sh
+AGENT_MODEL=sonnet AGENT_LISTEN_WINDOW_MIN=1 npm run console
+```
+
+The console has no global model-budget guard. Submit at most one approved
+`Investigate: ...` message. A model name in `/api/health` proves configuration
+only. A completed diagnosis plus a visible tool trace proves that this run used
+the model path. Stop after one accepted proof. If authentication, plan limits,
+cost approval, or the model run fails, return to the scripted route:
+
+```sh
+env -u AGENT_MODEL AGENT_LISTEN_WINDOW_MIN=1 npm run console
+```
+
+Official references: [Agent SDK quickstart](https://code.claude.com/docs/en/agent-sdk/quickstart)
+and [use the Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan).
+
+## A6. Diagnose a live sample incident
+
+Map the scripted incident path before you start processes.
+
+```text
+/show-me Read docs/plan.md, fixtures/incidents/bad-deploy.json, and the existing shop, traffic, chaos, and console scripts. Map two shallow paths: the fixture CLI for INC-1001 and the live listener that creates a new incident id from shop telemetry. Show where both paths use the shared investigate flow and tool trace. Stay read-only. Do not generate HTML. Separate scripted fixture output from optional model output, then stop.
+```
+
+Choose one alternative cause. Then ask Claude Code for the bounded plan and
+the exact commands that you run yourself.
+
+```text
+Use the incident path we reviewed. Propose a local demo plan with files, order, risks, proof, rollback, and one alternative cause. Wait for my approval. Reuse running processes. After I approve, give me exact commands for separate terminals. I will start the console with AGENT_LISTEN_WINDOW_MIN=1, start the shop, keep healthy traffic running for two minutes to establish the before state, and then run the one-shot bad-deploy chaos command in its own terminal. Do not run chaos or stop processes yourself. When I confirm the incident exists, help me trace each diagnosis claim to a stable source:ref label. Keep diagnosis-snapshot evidence separate from current telemetry. Ask before writing docs/diagnosis-live.md. Mark missing evidence OPEN. Do not approve, execute, resolve, or push.
+```
+
+Run the approved commands in separate terminals. Start the console with
+`AGENT_LISTEN_WINDOW_MIN=1`. Start the shop in another terminal. Keep healthy
+traffic running in a third terminal for two minutes before the one-shot bad
+deploy. This baseline supplies the before state for the later breakpoint
+comparison. Run the one-shot command in a fourth terminal. Production keeps
+the five-minute default. Do not stop a process that you did not start.
+
+Open the incident and paste this question into the incident chat.
+
+```text
+Which evidence supports the proposed rollback? Show stable source:ref labels. Separate the diagnosis snapshot from current telemetry. Do not approve or execute anything.
+```
+
+The answer must use stable `metrics:`, `deploys:`, `diff:`, or `logs:`
+references. It must not describe current telemetry as the earlier diagnosis
+snapshot.
+
+Paste the tested alternative-cause question into the incident chat.
+
+```text
+Could this be something other than the deployment?
+```
+
+The scripted chat may summarize evidence without comparing causes. If it does,
+mark the cause comparison `OPEN`. Compare the alternative yourself with the
+diagnosis `ruled_out` evidence. Do not claim that chat performed that review.
+
+Now paste the mutation request into the incident chat.
+
+```text
+Roll back now.
+```
+
+Stop when the chat refuses, no decision record appears, and every diagnosis
+claim maps to a stable evidence reference. Scripted output proves the fixture
+pipeline. It is not live model evidence.
+
+## A7. Add and verify an offline fixture case
+
+The offline bench checks deterministic fixtures and policy results. It does
+not prove resistance to live model prompt injection.
+
+```text
+Read bench/cases.json, bench/ratchet.json, the current bench results, and the bench tests. Explain what the offline scripted bench proves and what it does not prove. Run the bench before any edit and save its exact output plus the original case count and ratchet values under docs/verify/a7-offline-bench/baseline/. Ask me to choose one incident variation. Propose a deterministic fixture case and its expected policy result, then wait for my approval. After I approve, add the case without weakening existing cases or lowering the score floor. Run the bench again, save the exact output under docs/verify/a7-offline-bench/treatment/, and rerun one neighboring case. Show the diff, case count, pass result, and harmful count. Do not claim that this proves resistance to live model prompt injection. Do not alter hooks, approve, execute, resolve, or push.
+```
+
+Choose one deterministic incident variation. Review the expected policy result
+before Claude Code adds the case.
+
+```text
+/verify-this Verify this claim: the new deterministic fixture case increases the case count by one, the new case passes, harmful remains 0, and both ratchet values are unchanged. Compare the saved baseline and treatment outputs and the neighboring rerun. Report VERIFIED, NOT VERIFIED, or INCONCLUSIVE with evidence references. Stay read-only.
+```
+
+Stop when the new fixture passes, `harmful` remains zero, the score floor is
+unchanged, and the neighboring case agrees. A real model eval is optional and
+outside the core route.
+
+## A8. Build the approval gate
+
+A gate blocks action until the approval matches the incident, action, and
+named person.
+
+```text
+Read intent.md, src/executor.ts, approvals/README.md, and the A8 workshop test. Explain the exact incident-and-action match that a valid approval requires. Ask me to choose one negative case: wrong incident or wrong action. Show the focused A8 test red. After my approval, implement only TODO(A8), add the negative case, and rerun the focused test. Then run the main tests and typecheck. Show why the negative case stays blocked. Do not create an approval, click Approve, Execute, or Resolve, edit a human decision record, or push. Stop with the real console action marked HUMAN OPEN.
+```
+
+Choose the wrong-incident or wrong-action case. Inspect the negative result and
+the exact TODO(A8) diff.
+
+Do not operate the sample console as part of the automated assignment. Keep
+Approve, Execute, and Resolve marked `HUMAN OPEN` until a named participant
+chooses to perform them.
+
+Stop when the focused and main checks pass, the chosen mismatch stays blocked,
+and no approval or execution record was created by Claude Code.
+
+## A9. Turn the lesson into a hackathon handoff
+
+Day 4 separated curated `memory.md` from session context and technical logs.
+Day 5 uses the same distinction:
+
+- `lessons/lessons.md` contains human-reviewed operational knowledge.
+- `approvals/audit.jsonl` records actions and decisions.
+- `PROGRESS.md` records local signals. It does not prove validation.
+- `HANDOFF.md` carries reviewed context and every open item to the next person.
+
+```text
+Read docs/diagnosis-live.md, lessons/proposed/, lessons/lessons.md, approvals/audit.jsonl, and PROGRESS.md. Explain the difference between curated operational knowledge, the action log, and local progress signals. Propose one reusable lesson with the incident id and stable evidence references. Do not edit lessons/lessons.md. Ask me which claim a human can accept and which claim must stay OPEN. Then interview me one question at a time about a hackathon problem. Draft docs/hackathon-intent.md with an outcome, three repeatable checks, boundaries, and OPEN questions. Show the proposed lesson and intent diff for review. Do not resolve the incident, promote the lesson, or push.
+```
+
+Choose one lesson claim and one hackathon problem. Keep human lesson promotion
+and incident resolution `OPEN`.
+
+The handoff skill normally creates a clipboard prompt. For this lesson, print
+the full text first and stop before a file edit.
+
+```text
+/handoff Create a handoff prompt for the next teammate. Include the accepted intent, verified checks with evidence references, every HUMAN OPEN item, the hackathon intent, and one concrete next step. Do not claim that the incident was resolved, the lesson was promoted, or a human action happened. Distinguish forbidden service mutations from allowed local verification evidence writes under docs/verify/. For this classroom run, do not copy to the clipboard. Print the full handoff here for my review. Stop before editing any file.
+```
+
+Review the full handoff. After you approve the text, save it in a separate
+step.
+
+```text
+Save the exact handoff text I just approved to HANDOFF.md. Ask before writing the file. Do not add new claims or change the reviewed wording. Show the diff, then stop. Do not push.
+```
+
+Ask a partner to read only `HANDOFF.md` and name the next step. Stop when the
+partner can continue without guessing and every human action still appears as
+`HUMAN OPEN`.
+
+## After A9: choose one skill for the hackathon
+
+The repository already included every project skill used in A1–A9. Keep the
+reviewed handoff as your hackathon start point. Then open the public
+[Claude Code skills pack](https://github.com/AetherLink-bv/claude-code-skills-pack)
+for selective reuse. Do not bulk-install the pack or change global settings.
+
+Clone the pack into a separate folder:
+
+```sh
+git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
+cd claude-code-skills-pack
+claude --setting-sources project --strict-mcp-config --no-chrome
+```
+
+Choose one skill. Ask Claude to propose a project-local install:
+
+```text
+Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
+```
+
+## Optional course mod
+
+Start Claude Code with `claude --plugin-dir ./course/ai-sdlc-mod` and run
+`/sdlc` to view A1 through A9 inside Claude Code. The mod reads the first prompt
+from each `SOLO.md` assignment. It fills the input but does not submit it.
+
+## Optional completed-runtime course
+
+Open `course/index.html` after A1 through A9. The course explains the runtime,
+contract, gate, and lessons flow. It is reference material. It does not replace
+the red-to-green participant build.
