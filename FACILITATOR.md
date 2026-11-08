@@ -1,8 +1,11 @@
 # Facilitator run sheet — Workshop 5 (one day, starts 10:00)
 
-The day: nine assignments A1–A9 on `workshop/start`. Solved states live on
-tags `w5-step-0-setup` … `w5-step-8-maintain`. Participants catch up with
-`git checkout w5-step-N -- <files>` (exact file lists in WORKSHOP.md).
+The day: nine assignments A1–A9 on `workshop/start`. Keep participants on
+that branch and use the matching prompt in `SOLO.md` first. Each participant
+builds, inspects the actual output, and stops for the human review.
+Solved tags `w5-step-0-setup` … `w5-step-8-maintain` are comparison material
+after an attempt. Preserve local work and inspect `git diff <tag> -- <files>`.
+Apply only a reviewed change; do not copy the solved files over an exercise.
 Assignment titles below match the slide deck.
 
 ## Time boxes
@@ -13,7 +16,7 @@ Assignment titles below match the slide deck.
 | 10:50–11:00 | A1 Setup check | `npm test` green; `npm run test:workshop` red; console on :4320 |
 | 11:00–11:15 | break | — |
 | 11:28–11:43 | A2 Write your team intent.md | `intent.md` filled — boundary + 3 verifiable checks |
-| 11:47–12:00 | A3 Spec + contract green (finish after lunch) | `test/workshop/contract.test.ts` going red→green; `docs/spec.md` filled |
+| 11:47–12:00 | A3 Spec + contract green (finish after lunch) | accepted verdict contract; A3 tests going red→green; main suite, typecheck and offline investigation pass |
 | 12:00–13:00 | lunch | — |
 | 13:30–13:50 | A4 Wire and prove the controls | chat refuses "roll back now"; audit.jsonl has denies; `guard.test.ts` green |
 | 13:50–14:05 | A5 Build a read-only tool | `list_deploys` in the console investigation trace |
@@ -26,14 +29,17 @@ Assignment titles below match the slide deck.
 The gaps between boxes (11:15–11:28, 11:43–11:47, 13:00–13:30, 14:05–14:10,
 14:55–15:04, 15:15–15:23, 15:30–15:42) are the deck's talk/demo segments.
 
-A8's **optional second half** is the git gate: a participant pushes
-`fix/<name>` (denied by the guard hook), their neighbour runs
-`npm run approve:git -- <name> fix/<name> "<reason>"` in their own terminal.
-Skip it if the afternoon runs long — the runtime gate is the core lesson.
+A8 builds and tests the runtime gate. The participant operates the sample
+console personally. The git gate is reference material for a separately
+authorized shared workflow. Do not push or run `npm run approve:git` in this
+local classroom lab. Claude Code never approves, executes, or resolves.
 
 ## Top failure + fix per block
 
-- **A1** — tests red in `npm test`: wrong branch. `git checkout workshop/start`, `npm ci`. (Exercise tests live in `test/workshop/` — `npm test` is green by design.)
+- **A1** — tests red in `npm test`: inspect the exact failure, current branch,
+  and local diff first. Preserve participant work before correcting a wrong
+  branch manually. On `workshop/start`, the main suite should pass; only
+  `test/workshop/` starts red. Resume the A1 setup prompt after correction.
 - **A2** — intent reads like a wish list: demand the three *verifiable* checks, each runnable by a stranger.
 - **A3** — `npm test` shows 5 failures or the dry run prints `FAIL contract`: `customer_impact` is in `src/contract.ts` but not yet in the offline verdicts in `src/runtime.ts` or the fixtures in `test/contract.test.ts`.
 - **A3** — "green" but the console broke: they dropped a required field. The console renders the same schema; `npm run typecheck` catches it first.
@@ -44,17 +50,20 @@ Skip it if the afternoon runs long — the runtime gate is the core lesson.
 - **A8** — execute button stays disabled: approval pending or name empty; a name is required and it must match *this* incident + `rollback`.
 - **A9** — lessons entry without provenance: notes must include incident id, date and the human's name (the console does this — free-form edits do not count). `/handoff` writes `HANDOFF.md` — check it exists.
 
-## Reset the shop/console
+## Reuse or restart your own shop/console
 
-```bash
-pkill -f "demo/shop.ts" ; pkill -f "console/server.ts"
-rm -rf demo/data demo/incidents console/data approvals/*.approval.json
-npm run shop &          # fresh shop on :4310
-npm run console &       # fresh console on :4320
-```
+Reuse the existing shop and console when they belong to this lab. Check ports
+4310 and 4320 before starting anything; do not start a second server on an
+occupied port.
 
-Telemetry rebuilds deterministically from `fixtures/` — no state survives a
-reset except what participants wrote (lessons, docs, code).
+If a restart is necessary, stop only your own shop and console with Ctrl+C in
+the terminals where you started them. Preserve participant work, runtime
+state, evidence, and approval records. Do not delete them as part of setup.
+
+For a fresh facilitator demo, use a separate demo working directory. Keep the
+participant's directory intact. Start the shop and console there only after
+their ports are free. Do not silently discard runtime data or stop another
+person's process.
 
 ## No-Claude dry run (agent unavailable)
 
@@ -66,5 +75,5 @@ The whole day works without Claude Code — every exercise is plain TypeScript +
   `echo '{"tool_name":"Edit","tool_input":{"file_path":"…/bench/ratchet.json"}}' | node .claude/hooks/guard.mjs`
 - Claude-specific bits that degrade gracefully: skills don't load
   (read `.claude/skills/incident-triage/SKILL.md` aloud instead), hooks don't
-  fire (feed them stdin as above), `npm run approve:git` refuses without
-  `CLAUDECODE=0` — run it outside the agent anyway.
+  fire (feed them stdin as above). Keep the git gate as reference material;
+  this fallback does not push or run `npm run approve:git`.

@@ -1,0 +1,7 @@
+{
+  "name": "ai-sdlc-workshop",
+  "version": "0.1.0",
+  "description": "Shows the nine AI-SDLC workshop assignments inside Claude Code",
+  "license": "MIT",
+  "author": { "name": "AetherLink Academy" }
+}

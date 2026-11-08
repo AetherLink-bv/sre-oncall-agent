@@ -3,7 +3,7 @@
  * ---------------------------------------------------------------------------
  * AGENT_MODEL=offline (default, no key) or a real model name.
  *
- * The offline fake runs the SAME three tools against the SAME fixture, in the
+ * The offline fake runs the SAME four tools against the SAME fixture, in the
  * order the system prompt prescribes, and derives a verdict with a fixed
  * rule. It is deterministic so the room can predict it. Its output is a
  * demonstration of the pipeline, never model evidence.
@@ -197,7 +197,6 @@ export const offlineQuery =
     yield { type: "system", subtype: "init" };
     const incident = extractIncident(prompt);
     const maxTurns = options.maxTurns ?? Number.POSITIVE_INFINITY;
-    // The method takes 3 tool turns + 1 answer turn.
     const steps: readonly ToolName[] = ["summarize_metrics", "list_deploys", "get_diff", "search_logs"];
     if (maxTurns < steps.length + 1) {
       yield { type: "result", subtype: "error_max_turns", num_turns: Math.min(maxTurns, steps.length), total_cost_usd: 0 };

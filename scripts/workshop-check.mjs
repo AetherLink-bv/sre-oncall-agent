@@ -28,8 +28,20 @@ for (const [label, file, re] of MARKERS) {
 }
 const workshopSuite = existsSync("test/workshop") && existsSync("test/workshop/contract.test.ts");
 console.log(`${workshopSuite ? "ok  " : "MISS"}  workshop suite       test/workshop/*.test.ts`);
+const solo = readFileSync("SOLO.md", "utf8");
+const workshop = readFileSync("WORKSHOP.md", "utf8");
+const promptCount = (solo.match(/Paste this prompt into Claude Code\./g) ?? []).length;
+const linkCount = (workshop.match(/\]\(SOLO\.md#a[1-9]-/g) ?? []).length;
+const branchCopies = /git (?:checkout|diff) w5-step/.test(`${solo}\n${workshop}`);
+const humanGates = [
+  "You must edit `.claude/hooks/guard.mjs` by hand",
+  "operate the local console yourself",
+  "Resolve the sample incident yourself",
+].every((line) => solo.includes(line));
+const promptFirstDocs = promptCount === 9 && linkCount === 9 && !branchCopies && humanGates;
+console.log(`${promptFirstDocs ? "ok  " : "MISS"}  prompt-first docs    9 SOLO prompts + human gates`);
 
-if (mode === "--expect-start" && (present !== MARKERS.length || !workshopSuite)) {
+if (mode === "--expect-start" && (present !== MARKERS.length || !workshopSuite || !promptFirstDocs)) {
   console.error(`\nworkshop:check FAIL — expected ${MARKERS.length} cut markers, found ${present}`);
   process.exit(1);
 }

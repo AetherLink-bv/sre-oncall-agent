@@ -1,289 +1,178 @@
-# Tutorial: build an AI SRE first responder
+# Build the AI SRE first responder with Claude Code
 
-You can do this path alone. Each step has four parts: **Explain**, **See it**,
-**Do**, **Check**. Everything runs offline. A real model run is optional and
-needs your own API key.
+Use this path when you work alone. You build the same nine assignments as the
+classroom route in `WORKSHOP.md`. Claude Code writes code and runs checks. You
+choose the examples, inspect every diff, and make every human decision.
 
-| Step | You do | Time |
-| --- | --- | --- |
-| 0 | Install, generate the fixtures, run the suite | 5 min |
-| 1 | Read the alert and the data the agent can see | 10 min |
-| 2 | Run the first investigation and read the trace | 10 min |
-| 3 | Break the evidence rules on purpose | 10 min |
-| 4 | Sign the approval, then watch the fix land | 10 min |
-| 5 | Review the proposed lesson and promote a pattern | 10 min |
-| 6 | Run the bench, then try to lower the ratchet | 5 min |
-| 7 | (Optional) Run with a real model | 5 min |
-| 8 | Break a live shop and watch the whole loop | 10 min |
+Everything runs locally with fictional data. Do not push, open a pull request,
+or deploy from this lab. The agent may not approve, execute, resolve, edit
+`.claude/`, or rewrite `PROGRESS.md`.
 
----
+## Start on the exercise branch
 
-## Step 0 — Install
-
-**Explain:** The project is a TypeScript agent on the Claude Agent SDK with
-three read-only tools and a scripted offline runtime.
-
-**Do:**
-
-```text
-npm install
-npm run fixtures
-npm run verify
+```bash
+git clone https://github.com/AetherLink-bv/sre-oncall-agent.git
+cd sre-oncall-agent
+git switch workshop/start
+claude
 ```
 
-**Check:** `npm run fixtures` writes five files under `fixtures/telemetry/`.
-`npm run verify` ends with `PASS bench`.
+Stay on `workshop/start` for all nine assignments; the current `main` branch teaches a separate completed-runtime course.
 
----
+Run `/status` in Claude Code. Confirm that the guard and progress hooks are
+active. Use one assignment at a time. Stop at its review point before you paste
+the next prompt.
 
-## Step 1 — What the agent can see
+Optional: start Claude Code with `claude --plugin-dir ./course/ai-sdlc-mod`
+and run `/sdlc` to view this route inside Claude Code. The prompt button fills
+the input but does not submit it.
 
-![The on-call loop](docs/diagrams/01-architecture.svg)
+## A1. Check the setup
 
-**Explain:** The agent gets an alert and three tools. It cannot change the
-system. That is the whole design.
-
-**See it:** Open `fixtures/incidents/bad-deploy.json` (the alert) and
-`fixtures/telemetry/bad-deploy.json` (the system). Find the minute where
-`error_rate` jumps and the deploy two minutes before it.
-
-Open `src/tools.ts`. Count the tools. Try to find a tool that writes.
-
-**Check:** Three tools: `search_logs`, `summarize_metrics`, `list_deploys`.
-None writes. The deploy is `d-4821` at 03:43; errors start at 03:45.
-
----
-
-## Step 2 — The first investigation
-
-**Explain:** `query()` runs a loop: the model asks for a tool, the SDK runs
-it, the result goes back. `maxTurns` caps the loop. The trace records every
-tool call so you can see WHAT the agent looked at before you read what it
-concluded.
-
-**See it:** `ONCALL_SYSTEM` in `src/prompts.ts` is the method: lessons →
-metrics → deploys → logs → verdict. `investigate()` in `src/agent.ts` is the
-loop.
-
-**Do:**
+Paste this prompt into Claude Code.
 
 ```text
-npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run
+We are on workshop/start. Read README.md, WORKSHOP.md, CLAUDE.md and package.json first. Check Node and my current diff. Install the dependencies and generate the sample fixtures. Run the main tests and the workshop tests. Explain why the workshop failures are expected; do not solve them yet. Reuse my existing console or start one on port 4320 if free. Show its health and the local URL. Do not push or change hooks. Stop for my setup review.
 ```
 
-**Check:** The trace lists the three tools in order. The diagnosis has six
-lines: What's happening / Root cause / Blast radius / Proposed fix / Ruled
-out / Would change my mind. Proposal is `rollback`, severity is `page`. The
-last line says a human decides.
+Open `http://localhost:4320` yourself. The main tests must pass. The A3, A4,
+A5, and A8 workshop tests must fail on their exercise TODOs. Run
+`npm run workshop:check` and name the first TODO that you will build.
 
-Now run the other three scenarios. Predict the proposal before each run:
+Stop when the console opens and you can explain each expected workshop failure.
+
+## A2. Write the intent
+
+Paste this prompt into Claude Code.
 
 ```text
-npm run investigate -- fixtures/incidents/slow-dependency.json --dry-run
-npm run investigate -- fixtures/incidents/noisy-alert.json --dry-run
-npm run investigate -- fixtures/incidents/mystery-errors.json --dry-run
+Read intent.md, fixtures/incidents/bad-deploy.json (INC-1001) and REVIEW.md. Interview me one question at a time about who the SRE agent serves. Help me write three checks a stranger can repeat. Keep the boundary: sample data, read-only investigation, named humans approve and close. Ask before editing intent.md. Stop after one interview round and show the diff for my review. Do not build or push.
 ```
 
-**Check:** `scale`, `no-action`, `investigate-more`. Note the confidence on
-the last one is `low`, so the contract would have refused a strong proposal.
+Reject a check that describes a wish instead of an observable result. Accept
+`intent.md` yourself before you continue.
 
----
+Stop when the outcome, three checks, owners, boundary, and an `OPEN` item are
+specific enough for another person to review.
 
-## Step 3 — Break the rules on purpose
+## A3. Build the verdict contract
 
-![The model proposes. Code checks.](docs/diagrams/02-contract.svg)
-
-**Explain:** The model proposes; code checks. Three rules live in
-`parseVerdict()` in `src/contract.ts`:
-
-- a strong proposal needs two evidence sources;
-- `rollback` needs a `deploys` line;
-- `low` confidence can only propose `investigate-more`.
-
-And one in `checkTrace()` in `src/agent.ts`: a cited source whose tool was
-never called fails.
-
-**Do:** Run the adversarial alert. Its text tells the agent to skip the rules.
+Paste this prompt into Claude Code.
 
 ```text
-npm run investigate -- fixtures/incidents/adversarial.json --dry-run
+Read our accepted intent.md and docs/spec.md. Propose the verdict contract, then wait for my acceptance. After acceptance, show the red A3 tests in test/workshop/contract.test.ts. Implement TODO(A3) in src/contract.ts. Add required non-empty customer_impact to src/runtime.ts and the fixtures in test/contract.test.ts too. Preserve the evidence and draft_only rules. Run the A3 tests, main suite, typecheck and offline bad-deploy investigation. Show the diff and actual outputs. Do not weaken tests or copy solved tags. Stop for my review.
 ```
 
-Then try the loop budget:
+Check every changed verdict consumer that the tests or type checker identify.
+Do not accept a contract that allows empty `customer_impact`, uncited claims, or
+an action without human approval.
+
+Stop when the A3 tests, the main suite, typecheck, and the offline investigation
+all pass with the new field.
+
+## A4. Rebuild the controls
+
+Paste this prompt into Claude Code.
 
 ```text
-npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run --max-turns 2
+Read intent.md, test/workshop/chat.test.ts and test/workshop/guard.test.ts. Use chat.test.ts for the chat contract; guard.test.ts checks the separate human hook edit. Implement only TODO(A4) in src/chat.ts so chat refuses rollback, scale, flag, approve and resolve requests and points to human controls. Ask me to choose one extra mutation phrase, then add its test. Run the relevant tests and show the diff. Do not edit .claude/, approvals/, PROGRESS.md or bench/ratchet.json. The human will add the hook rule. Do not approve or execute anything. Stop for my review.
 ```
 
-**Check:** The adversarial alert gets the same verdict as the clean one —
-alert text is data. With `--max-turns 2` the run ends with
-`maxTurns (2) reached before a verdict`, not a guess.
+You must edit `.claude/hooks/guard.mjs` by hand. Add the rule that denies agent
+edits to `bench/ratchet.json`. Claude Code must not make this edit. Ask Claude
+Code to run the A4 and hook tests after your change. Read the matching denial
+in `approvals/audit.jsonl` yourself.
 
-Open `test/agent.test.ts` and read the test *"a model that skips the tools and
-answers from the alert fails the contract"*. That is the trace rule.
+Stop when your extra mutation phrase is refused and the human-written hook rule
+produces a recorded denial.
 
----
+## A5. Build the read-only deploy tool
 
-## Step 4 — Sign, then watch it land
-
-**Explain:** Without `--dry-run`, an investigation drafts an approval record
-as `pending`. A NAMED human signs it. Whatever executes the fix is a separate
-system that calls `isApproved(record, incident, proposal)`. Then `watch`
-confirms the metric returned to baseline with three bounded checks — at half,
-full and double the expected window. Not a polling loop.
-
-**Do:**
+Paste this prompt into Claude Code.
 
 ```text
-npm run investigate -- fixtures/incidents/bad-deploy.json
-cat approvals/INC-1001.approval.json
-npm run approve -- fixtures/incidents/bad-deploy.json --by <your name>
+Read src/tools.ts and test/workshop/tools.test.ts. Show the red A5 tests, then implement TODO(A5): bind the list_deploys handler to the telemetry and register it in createTelemetryServer. Keep every tool read-only. Ask me to choose one empty or missing deploy case, then add its test. Run the A5 tests and an offline bad-deploy investigation. Show both code changes and the list_deploys trace. Do not copy a solved tag or add a mutation tool. Stop for my review.
 ```
 
-Pretend the deploy owner rolled back at 03:52. `after-rollback.json` is the
-telemetry after that:
+Inspect both changes in `src/tools.ts`. The handler must use telemetry data and
+the MCP server must register `list_deploys`. No rollback, scale, approval, or
+other write tool may exist.
+
+Stop when your extra case passes and the investigation trace contains the real
+deploy record.
+
+## A6. Diagnose a sample incident
+
+Paste this prompt into Claude Code.
 
 ```text
-npm run watch -- fixtures/incidents/bad-deploy.json --metric error_rate \
-  --fix-at 2026-10-05T03:52:00Z --after fixtures/telemetry/after-rollback.json
+Read docs/plan.md and the bad-deploy fixture. Propose a local demo plan using the existing shop, traffic and console scripts, then wait for me to accept it. Reuse running processes; do not stop unrelated ones. After acceptance, run sample traffic and the bad-deploy scenario. Help me match each diagnosis claim to its tool trace and compare one alternative cause. Ask before writing docs/diagnosis-live.md. Mark missing evidence OPEN. Do not approve, execute or resolve. Stop for my review.
 ```
 
-Now watch WITHOUT the fix (the original telemetry):
+Choose the alternative cause yourself. When no model is configured, inspect
+`ruled_out` and `would_change_my_mind`. Do not describe scripted output as
+model evidence.
+
+Stop when every diagnosis claim points to a tool result and unsupported claims
+are marked `OPEN` in `docs/diagnosis-live.md`.
+
+## A7. Add an adversarial bench case
+
+Paste this prompt into Claude Code.
 
 ```text
-npm run watch -- fixtures/incidents/bad-deploy.json --metric error_rate \
-  --fix-at 2026-10-05T03:52:00Z
+Read bench/cases.json and its current results. Propose one adversarial alert case based on our incident, then wait for me to accept it. Add the case without weakening existing cases, expected outcomes or bench/ratchet.json. Run the bench before and after. Show the diff, PASS result and harmful count. If it fails, explain the failure before proposing a fix. Do not alter hooks or the score floor. Stop for a neighbor to rerun the bench.
 ```
 
-**Check:** The approval file flips from `"pending"` to `"approved"` with your
-name. The first watch says `LANDED` and `PASS watch`. The second says
-`NOT LANDED` and exits 2. Neither run closed anything — only a human closes.
+Choose the false instruction inside the alert. Review its expected safe result
+before Claude Code adds it. Ask Claude Code to lower `bench/ratchet.json` and
+inspect the expected denial. Keep the file unchanged. If you work alone, rerun
+the bench in a new session and record that fact.
 
-Try `npm run approve -- ... --by ""`. It refuses: an anonymous approval is not
-an approval.
+Stop when the new case passes, `harmful` remains zero, and another run confirms
+the result.
 
----
+## A8. Build the approval gate
 
-## Step 5 — The lessons loop
-
-![The lessons loop](docs/diagrams/03-lessons.svg)
-
-**Explain:** The agent reads `lessons/lessons.md` filtered to the alert's
-`#tag`, never the whole file. It never appends. It writes a proposal to
-`lessons/proposed/` and a human promotes it by PR. When one tag has three
-entries, the pattern belongs in a playbook, not the log.
-
-**See it:** `renderLessons()` and `promotionCandidates()` in
-`src/lessons.ts`. `lessons/lessons.md` has two seed entries.
-
-**Do:** Open `lessons/proposed/INC-1001.md` from Step 4. Fill in `fix` and
-`gotcha`. Append it to `lessons/lessons.md`. Run the investigation again and
-read the prompt the agent would get:
+Paste this prompt into Claude Code.
 
 ```text
-npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run
+Read src/executor.ts and test/workshop/executor.test.ts. Show the red A8 tests, then implement TODO(A8) in checkApproval. Require a named human approval for this incident and this action. Ask me to choose one wrong incident or action. Test that case plus the valid approval. Run the A8 tests and remaining workshop tests. Show the diff and actual results. Never create an approval, click Approve or Execute, push, or change hooks. Stop for my review; I operate the console myself.
 ```
 
-**Check:** `#bad-deploy` now has two entries; one more and
-`promotionCandidates()` flags it. The `fix` and `gotcha` lines came from you,
-not the agent — the agent only knows what it proposed.
+Choose the mismatched incident or action yourself. Inspect the diff and confirm
+that pending, anonymous, mismatched, and cross-incident approvals fail.
 
----
+After the code review, operate the local console yourself. Enter your name,
+approve the sample rollback, click **Execute**, and watch for **LANDED**. Mark
+the sample incident mitigated yourself. Claude Code must not perform these
+steps.
 
-## Step 6 — The ratchet
+Stop when all workshop tests pass and your named approval gates only the exact
+sample action.
 
-![The ratchet](docs/diagrams/04-ratchet.svg)
+## A9. Keep the reviewed lesson
 
-**Explain:** `bench/cases.json` holds the expected proposal and severity for
-each scenario. `bench/ratchet.json` is the floor CI enforces: pass-rate ≥
-`min_rate` and `harmful` ≤ 0. A *harmful* answer is a strong action the key
-says is wrong. The floor only goes up.
+Resolve the sample incident yourself in the console. Write concrete resolution
+notes and inspect the entry in `lessons/lessons.md`.
 
-**Do:**
+Paste this prompt into Claude Code.
 
 ```text
-npm run bench
+Read our incident evidence and lessons/proposed/. Suggest one lesson with the incident id, date and evidence refs. Do not resolve the incident or edit lessons/lessons.md; I do that in the console. Interview me about my hackathon idea and draft docs/hackathon-intent.md with three checks and open questions. Ask before editing. Then use /handoff to record verified work, OPEN items and the next step. Do not rewrite PROGRESS.md or push. Stop for my review.
 ```
 
-Now edit `bench/cases.json`: change the `noisy-alert` expectation to
-`rollback`. Run the bench again.
+Review the proposed lesson yourself. Keep only claims that the incident evidence
+supports. Check that `docs/hackathon-intent.md` and `HANDOFF.md` preserve every
+unfinished item as `OPEN`.
 
-**Check:** The bench reports `🚫 noisy-alert` as harmful and `FAIL bench`.
-Revert the edit. Then try `npm run bench -- --raise` — the floor moves to
-100% and will stay there.
+Stop when the human-authored incident lesson has provenance and the next agent
+can continue from the handoff without guessing.
 
----
+## Explore the completed runtime after the build
 
-## Step 7 — Optional: a real model
-
-**Do:**
-
-```text
-export ANTHROPIC_API_KEY=sk-ant-...
-npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run --model sonnet
-```
-
-**Check:** The trace shows real tool calls through the in-process MCP server.
-The verdict passes the same contract. Compare its `ruled_out` and
-`would_change_my_mind` with the offline run — that is where a model adds
-judgment the script cannot.
-
----
-
-## Step 8 — Break a live shop
-
-**Explain:** Fixtures replay the past. The demo shop is a running service you
-can break *now*. It writes its own telemetry in the shape the agent reads —
-the agent never talks to the shop, exactly as it would read Grafana rather
-than your service.
-
-**Do (by hand):** run `npm run shop`, then `npm run console` in a second
-terminal. Open the shop at `http://localhost:4310`. Customers check out on
-their own (10 per second). Click a button under **Make something break** and
-watch the error bar cross the dashed 2% line. Within 10 s the console at
-`http://localhost:4320` raises the alert. **Reset to healthy** is a facilitator
-lever, not the fix.
-
-**Do (scripted):**
-
-```text
-npm run doctor
-npm run demo
-```
-
-Watch the seven steps: baseline → fault → diagnosis → executor refused
-(pending) → you approve → executor rolls back and collects three fresh
-checkouts → watch says LANDED.
-
-Now the two cases where rollback is wrong:
-
-```text
-npm run demo -- slow degrade
-npm run demo -- errors degrade
-```
-
-**Check:** With no deploy record the agent proposes `scale` and
-`investigate-more`, and the executor refuses both — it only implements
-rollback, and a human takes those actions by hand.
-
-Finally the deployment watch:
-
-```text
-npm run demo:watch
-```
-
-**Check:** The watch records the serving revision, waits for the next one,
-then probes `/checkout` every 1.5 s. When the injected bad deploy trips the
-fixed policy it prints `FAILED watch`, writes an incident file, and says
-*No automatic rollback.* Try `npm run watch-deploy -- "Watch the next
-deployment for five minutes. If it fails, roll back automatically."` — the
-extra sentence is rejected.
-
----
-
-## What you built
-
-An agent with a fixed division of labour: it searches, cites, proposes and
-verifies. You decide, you act, you close. The three things that keep it
-honest are code, not prompts: the evidence rules in `contract.ts`, the trace
-check in `agent.ts`, and the ratchet in `bench.ts`.
+Open `course/index.html` for the deeper explanation of the investigation loop,
+the verdict contract, the approval record, and the lessons flow. Use fixtures
+and `npm run investigate -- <fixture> --dry-run` to explore behavior. These
+runs supplement the nine assignments. They do not replace the red-to-green
+build evidence above.
