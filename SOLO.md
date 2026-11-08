@@ -18,11 +18,15 @@ promote a lesson, rewrite `PROGRESS.md`, or push.
    ```
 
 2. Review the current path and confirm that this is your own clone.
-3. Run `claude` at the repository root.
+3. Run `claude --setting-sources project --strict-mcp-config --no-chrome` at the repository
+   root. This workshop command loads project context without user or global
+   settings. The repository disables auto memory for this bounded lesson. The
+   separate SRE product runtime ignores builder settings and
+   exposes only its explicit telemetry tools.
 4. Review Claude Code's folder-trust prompt. Accept only when the displayed
    path is your own trusted clone. Never bypass trust for an unfamiliar folder.
-5. Check that the project skills are available. Restart `claude` at the
-   repository root if they remain missing after trust.
+5. Check that the project skills are available. Restart the same command if
+   they remain missing after trust.
 
 Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
 The lesson only needs a terminal and browser. The repository already contains
@@ -51,8 +55,9 @@ and offline for the required route. If your facilitator approves model usage,
 you may connect the product to the Claude Agent SDK after A5, when its read-only
 tool path is complete.
 
-Sign in on your own machine. Run `claude`, then use `/login` only when Claude
-Code asks you to authenticate. Do not copy a login, OAuth token, or API key to
+Sign in on your own machine. Run
+`claude --setting-sources project --strict-mcp-config --no-chrome`, then use `/login` only
+when Claude Code asks you to authenticate. Do not copy a login, OAuth token, or API key to
 chat, Git, a browser field, a remote host, or another participant. The current
 Anthropic guidance says a local Agent SDK run can use your Claude Code login;
 it consumes your plan limits. An API key, when intentionally configured, uses
@@ -100,7 +105,7 @@ Start with the project skill. The slash command must be the first text in the
 prompt.
 
 ```text
-/show-me Read README.md, WORKSHOP.md, CLAUDE.md, package.json, fixtures/incidents/bad-deploy.json, and the runtime entry points. Give me a shallow repository map of two intake paths: the fixture CLI for INC-1001 and the live console listener that creates a new incident id from shop telemetry. Show where both paths call the shared investigate flow. Stay read-only. Do not generate HTML. Name the four files I should inspect next, then stop.
+/show-me Read CLAUDE.md and fixtures/incidents/bad-deploy.json. Then inspect only src/cli.ts, console/server.ts, and src/agent.ts. Give me a shallow map of two intake paths: the fixture CLI for INC-1001 and the live console listener that creates a new incident id from shop telemetry. Show where both paths call the shared investigate flow. Stay read-only. Do not generate HTML. Name those three entry files and one shared runtime file I should inspect next, then stop.
 ```
 
 Review the map. You must be able to point to the fixture, runtime, trace, and
@@ -344,7 +349,7 @@ Clone the pack into a separate folder:
 ```sh
 git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
 cd claude-code-skills-pack
-claude
+claude --setting-sources project --strict-mcp-config --no-chrome
 ```
 
 Choose one skill. Ask Claude to propose a project-local install:

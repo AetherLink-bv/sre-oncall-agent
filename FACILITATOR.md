@@ -17,9 +17,12 @@ produce the evidence route. Do not spend class time regenerating the app.
 
 1. Use a clean `workshop/start` clone for each participant.
 2. Open any terminal at the repository root. Cursor is optional.
-3. Run `claude` and review the displayed folder path.
+3. Run `claude --setting-sources project --strict-mcp-config --no-chrome` and review the
+   displayed folder path. This loads project context without user or global
+   settings. The repository disables auto memory for the lesson. The SRE
+   product runtime ignores builder settings and uses only its explicit tools.
 4. Accept trust only for the participant's own clone. Never bypass trust.
-5. Restart `claude` if project skills remain missing after trust.
+5. Restart the same command if project skills remain missing after trust.
 6. Explain that Claude Code is the builder. The product's optional Agent SDK
    runtime is a separate connection.
 7. Keep the required route scripted and offline. Offer the live-model route

@@ -60,7 +60,16 @@ const KNOWN = new Set(["assistant", "user", "result", "system"]);
 export const sdkQuery: QueryFn = async function* ({ prompt, options }) {
   let sawResult = false;
   try {
-    for await (const message of query({ prompt, options: { ...options, strictMcpConfig: true } })) {
+    for await (const message of query({
+      prompt,
+      options: {
+        ...options,
+        settingSources: [],
+        strictMcpConfig: true,
+        env: { ...process.env, ...options.env, CLAUDE_CODE_DISABLE_AUTO_MEMORY: "1" },
+        extraArgs: { ...options.extraArgs, "no-chrome": null },
+      },
+    })) {
       sawResult ||= message.type === "result";
       yield (KNOWN.has(message.type) ? message : { type: "other" }) as AgentEvent;
     }

@@ -64,6 +64,12 @@ test("permission boundaries: secrets, approvals and bypass locked down", () => {
     assert.ok(deny.includes(p), `deny must cover ${p}`);
   }
   assert.equal(settings.disableBypassPermissionsMode, "disable");
+  assert.equal(settings.autoMemoryEnabled, false, "builder sessions must not load global auto memory");
+});
+
+test("the product SDK ignores builder context, auto memory and Claude in Chrome", () => {
+  const source = readFileSync("src/runtime.ts", "utf8");
+  assert.match(source, /settingSources: \[\],[\s\S]*strictMcpConfig: true,[\s\S]*CLAUDE_CODE_DISABLE_AUTO_MEMORY: "1"[\s\S]*"no-chrome": null/);
 });
 
 test("approve.mjs is not callable by the agent", () => {

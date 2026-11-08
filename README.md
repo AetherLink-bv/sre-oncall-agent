@@ -37,7 +37,8 @@ is never the detector.
 You need:
 
 - **Node.js 22 or newer** (check with `node --version`) and npm.
-- **Claude Code**, signed in with your own account (`claude`, then `/login`).
+- **Claude Code**, signed in with your own account
+  (`claude --setting-sources project --strict-mcp-config --no-chrome`, then `/login`).
   Claude Code is your builder.
 - **No API key.** The agent runs offline by default: a scripted investigator
   drives the same tools against the same data. Its output demonstrates the
@@ -51,10 +52,15 @@ cd sre-oncall-agent
 This command checks out the exercise branch directly. The current `main` branch
 contains a separate completed-runtime course.
 
-Review the current path and confirm it is your own clone. Run `claude` at the
-repository root. Accept Claude Code's folder-trust prompt only when the
+Review the current path and confirm it is your own clone. Run
+`claude --setting-sources project --strict-mcp-config --no-chrome` at the repository root.
+This workshop command loads project context without user or global settings.
+The repository disables Claude Code auto memory for this bounded lesson.
+The separate SRE product runtime ignores builder settings and exposes only its
+explicit telemetry tools.
+Accept Claude Code's folder-trust prompt only when the
 displayed path is your own trusted clone. Never bypass trust for an unfamiliar
-folder. Restart `claude` if project skills remain missing after trust.
+folder. Restart the same command if project skills remain missing after trust.
 
 Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
 The lesson only needs a terminal and browser.
@@ -201,7 +207,7 @@ Clone the pack into a separate folder. Start Claude Code there:
 ```sh
 git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
 cd claude-code-skills-pack
-claude
+claude --setting-sources project --strict-mcp-config --no-chrome
 ```
 
 Choose one skill. Ask Claude to propose a project-local install:
