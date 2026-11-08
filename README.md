@@ -32,7 +32,7 @@ uses fixed criteria (error rate above 2% or p95 above 2000 ms, sustained for
 about 5 minutes; set `AGENT_LISTEN_WINDOW_MIN=1` for a faster demo). The agent
 is never the detector.
 
-## Set up
+## Participant start
 
 You need:
 
@@ -43,24 +43,26 @@ You need:
   drives the same tools against the same data. Its output demonstrates the
   pipeline; it is not model evidence.
 
-```bash
-git clone <repo-url> sre-oncall-agent   # the URL your facilitator gives you
+```sh
+git clone --branch workshop/start --single-branch https://github.com/AetherLink-bv/sre-oncall-agent.git
 cd sre-oncall-agent
-git checkout workshop/start             # the lab branch
-npm install
-npm run fixtures
-npm test                                # green: the main suite
-npm run test:workshop                   # red: the exercises (by design)
+claude
 ```
 
-This nine-assignment route uses `workshop/start`; the current `main` branch contains a separate completed-runtime course, so do not follow that route during these exercises.
+This command checks out the exercise branch directly. The current `main` branch
+contains a separate completed-runtime course.
 
-Start Claude Code in the folder (`claude`) and run `/status`: it shows the
-guard and progress hooks from `.claude/settings.json`.
+Run `/status` in Claude Code. It shows the guard and progress hooks from
+`.claude/settings.json`.
 
-Open [SOLO.md](SOLO.md) and paste the A1 prompt. Claude Code checks the setup
-and explains the expected red workshop tests. You inspect the console and
+Open [SOLO.md](SOLO.md#a1-check-the-setup) and paste the A1 prompt. Claude Code
+installs the dependencies, generates the fixtures and runs both test suites.
+The main suite must pass. Only the A3, A4, A5 and A8 workshop tests must fail
+on their exercise TODOs. Open the console URL that Claude Code shows, then
 accept the setup before Claude Code builds an exercise.
+
+Facilitators use [`FACILITATOR.md`](FACILITATOR.md) for the schedule, expected
+starter failures and the manual fallback.
 
 For a visual route through the AI-SDLC, start Claude Code with
 `claude --plugin-dir ./course/ai-sdlc-mod` and run `/sdlc`. The optional mod

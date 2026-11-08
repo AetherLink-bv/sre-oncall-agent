@@ -11,14 +11,10 @@ optional (`AGENT_MODEL=<name>`).
 
 ## Setup
 
-```bash
-git clone <repo-url>            # the URL your facilitator gives you
+```sh
+git clone --branch workshop/start --single-branch https://github.com/AetherLink-bv/sre-oncall-agent.git
 cd sre-oncall-agent
-git checkout workshop/start
-npm ci && npm run fixtures
-npm test                        # green: the main suite
-npm run test:workshop           # red: the exercises (by design)
-npm run console                 # http://localhost:4320
+claude
 ```
 
 `workshop/start` has four pieces removed (the TODO(A3/A4/A5/A8) markers —
@@ -26,9 +22,13 @@ npm run console                 # http://localhost:4320
 live in `test/workshop/`. `npm run progress` shows which assignments already
 have evidence.
 
-Open [SOLO.md](SOLO.md) in Claude Code. Paste the prompt for the current
-assignment. Each prompt names the files, checks, human decision, and stopping
-point. Build on your own work. Do not copy files from solved branches or tags.
+Open [the A1 prompt](SOLO.md#a1-check-the-setup) in Claude Code. It installs
+the dependencies, generates the fixtures, runs both test suites and opens the
+console. The main suite must pass. Only the A3, A4, A5 and A8 workshop tests
+must fail on their exercise TODOs. Stop for the setup review before A2.
+
+Each later prompt names the files, checks, human decision and stopping point.
+Build on your own work. Do not copy files from solved branches or tags.
 
 ## Two gates — don't confuse them
 
@@ -55,7 +55,7 @@ point. Build on your own work. Do not copy files from solved branches or tags.
 
 **Goal:** everything installed, the console up, Claude Code connected.
 
-Paste the [A1 setup prompt](SOLO.md#a1-check-the-setup) into Claude Code.
+Use the A1 setup prompt that you pasted during setup.
 
 - `npm ci && npm run fixtures`
 - `npm test` → all green; `npm run test:workshop` → red on the A3/A4/A5/A8 tests
