@@ -52,15 +52,15 @@ blocker and next focused check. Do not rerun the full suite after every prompt.
 
 | Assignment | What you build | Your choice | Proof |
 | --- | --- | --- | --- |
-| A1 | Shallow repo map and setup evidence | Which expected red assignment to inspect first | Main suite green; only A3, A4, A5, and A8 red |
-| A2 | Reviewed `intent.md` | Operator and three repeatable checks | Reviewed diff with a read-only boundary |
-| A3 | Customer-impact verdict contract | One invalid verdict | Accepted contract, focused red, small patch, focused green, `/verify-this`: `VERIFIED`, `NOT VERIFIED`, or `INCONCLUSIVE` |
-| A4 | Chat refusal and one human-owned hook rule | One mutation phrase | Chat test, named human edit, focused guard denial |
-| A5 | Read-only `list_deploys` tool | Empty window or missing deploy | Tool result and exact trace arguments |
-| A6 | Cited sample incident diagnosis | One alternative cause | Stable `source:ref` labels, snapshot wording, mutation refusal |
-| A7 | Deterministic offline fixture coverage | One incident variation | Before and after bench, `harmful` 0, unchanged floor |
-| A8 | Exact approval gate | Wrong incident or wrong action | Negative test stays blocked; no human action fabricated |
-| A9 | Lesson proposal, hackathon intent, and approved handoff | One lesson claim and hackathon problem | Partner can resume from `HANDOFF.md` |
+| [A1](SOLO.md#a1-map-the-repo-and-prove-setup) | Shallow repo map and setup evidence | Which expected red assignment to inspect first | Main suite green; only A3, A4, A5, and A8 red |
+| [A2](SOLO.md#a2-write-a-reviewed-intent) | Reviewed `intent.md` | Operator and three repeatable checks | Reviewed diff with a read-only boundary |
+| [A3](SOLO.md#a3-build-and-verify-the-verdict-contract) | Customer-impact verdict contract | One invalid verdict | Accepted contract, focused red, small patch, focused green, `/verify-this`: `VERIFIED`, `NOT VERIFIED`, or `INCONCLUSIVE` |
+| [A4](SOLO.md#a4-wire-and-prove-the-controls) | Chat refusal and one human-owned hook rule | One mutation phrase | Chat test, named human edit, focused guard denial |
+| [A5](SOLO.md#a5-build-a-read-only-deploy-tool) | Read-only `list_deploys` tool | Empty window or missing deploy | Tool result and exact trace arguments |
+| [A6](SOLO.md#a6-diagnose-a-live-sample-incident) | Cited sample incident diagnosis | One alternative cause | Stable `source:ref` labels, snapshot wording, mutation refusal |
+| [A7](SOLO.md#a7-add-and-verify-an-offline-fixture-case) | Deterministic offline fixture coverage | One incident variation | Before and after bench, `harmful` 0, unchanged floor |
+| [A8](SOLO.md#a8-build-the-approval-gate) | Exact approval gate | Wrong incident or wrong action | Negative test stays blocked; no human action fabricated |
+| [A9](SOLO.md#a9-turn-the-lesson-into-a-hackathon-handoff) | Lesson proposal, hackathon intent, and approved handoff | One lesson claim and hackathon problem | Partner can resume from `HANDOFF.md` |
 
 ## Terms at the moment you need them
 
