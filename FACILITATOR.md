@@ -12,21 +12,21 @@ Assignment titles below match the slide deck.
 
 | time | block | expected output at a glance |
 |---|---|---|
-| 10:00–10:50 | intro: AI-native SDLC loop + repo tour | participants can name the 7 phases |
-| 10:50–11:00 | A1 Setup check | `npm test` green; `npm run test:workshop` red; console on :4320 |
+| 10:00–10:20 | intro: AI-native SDLC loop + repo tour | participants can name the 7 phases |
+| 10:20–11:00 | A1 Setup check | `npm test` green; `npm run test:workshop` red; console on :4320 |
 | 11:00–11:15 | break | — |
 | 11:28–11:43 | A2 Write your team intent.md | `intent.md` filled — boundary + 3 verifiable checks |
 | 11:47–12:00 | A3 Spec + contract green (finish after lunch) | accepted verdict contract; A3 tests going red→green; main suite, typecheck and offline investigation pass |
 | 12:00–13:00 | lunch | — |
 | 13:30–13:50 | A4 Wire and prove the controls | chat refuses "roll back now"; audit.jsonl has denies; `guard.test.ts` green |
 | 13:50–14:05 | A5 Build a read-only tool | `list_deploys` in the console investigation trace |
-| 14:10–14:40 | A6 Diagnose a live incident | `docs/diagnosis-live.md`; a challenged chat answer with refs |
+| 14:20–14:40 | A6 Diagnose a live incident | `docs/diagnosis-live.md`; a challenged chat answer with refs |
 | 14:40–14:55 | break | — |
 | 15:04–15:15 | A7 Pass the bench. Add a case. | `PASS bench`; a new case in cases.json; agent edit of ratchet.json denied |
 | 15:23–15:30 | A8 The gate: approve with your name | LANDED in console; `executor.test.ts` green |
-| 15:42–15:50 | A9 Maintain + your hackathon intent.md | new lessons.md entry; hackathon intent; `/handoff` → HANDOFF.md |
+| 15:42–15:56 | A9 Maintain + your hackathon intent.md | new lessons.md entry; hackathon intent; `/handoff` → HANDOFF.md |
 
-The gaps between boxes (11:15–11:28, 11:43–11:47, 13:00–13:30, 14:05–14:10,
+The gaps between boxes (11:15–11:28, 11:43–11:47, 13:00–13:30, 14:05–14:20,
 14:55–15:04, 15:15–15:23, 15:30–15:42) are the deck's talk/demo segments.
 
 A8 builds and tests the runtime gate. The participant operates the sample
