@@ -1,172 +1,118 @@
-# Workshop 5 — build the AI SRE agent (AI-native SDLC)
+# Workshop 5: build the AI SRE first responder
 
-The team path through this repo. You build the agent piece by piece, test
-first, with Claude Code as the builder — and you learn the AI SDLC loop on the
-way: **Intent → Spec → Design/controls → Build → Test/evals → Gate →
-Maintain.**
+You are new to this codebase. Checkout errors rose after deploy `d-4821`.
+Build a local first responder that gathers evidence, explains customer impact,
+refuses operational action, and stops at a named human gate.
 
-Everything runs offline. No API key needed: the scripted runtime
-(`src/runtime.ts`) drives the same tools as a real model. A real model is
-optional (`AGENT_MODEL=<name>`).
+Claude Code is the builder. The on-call agent is the product. The core product
+runs offline against scripted fictional evidence. A real model investigator is
+optional and separate.
 
-## Setup
+The shop, traffic generator, console, fixtures, and tests already exist. You
+build the missing logic, evidence path, controls, and handoff. Do not rebuild
+the supplied product scaffolding.
 
-```sh
-git clone --branch workshop/start --single-branch https://github.com/AetherLink-bv/sre-oncall-agent.git
-cd sre-oncall-agent
-claude
-```
+| The starter supplies | You build and prove |
+| --- | --- |
+| Local console, checkout shop, traffic, chaos, and fictional fixtures | A3 verdict contract and customer impact |
+| Node 22, TypeScript, tsx, Zod, tests, and read-only tool infrastructure | A4 refusal and hook rule, A5 deploy tool path, A8 approval match |
+| Existing runtime and UI surfaces | Intent, cited diagnosis, offline fixture coverage, human boundaries, and handoff |
 
-`workshop/start` has four pieces removed (the TODO(A3/A4/A5/A8) markers —
-`npm run workshop:check` lists them). `npm test` stays green; the red tests
-live in `test/workshop/`. `npm run progress` shows which assignments have local
-signals. Validation stays OPEN until the actual checks are reviewed separately.
+This scope saves tokens and waiting time. Do not ask Claude Code to regenerate
+the supplied app.
 
-Open [the A1 prompt](SOLO.md#a1-check-the-setup) in Claude Code. It installs
-the dependencies, generates the fixtures, runs both test suites and opens the
-console. The main suite must pass. Only the A3, A4, A5 and A8 workshop tests
-must fail on their exercise TODOs. Stop for the setup review before A2.
+## Start in a terminal
 
-Each later prompt names the files, checks, human decision and stopping point.
-Build on your own work. Do not copy files from solved branches or tags.
+1. Clone `workshop/start`.
+2. Review the path and confirm it is your own clone.
+3. Run `claude` at the repository root.
+4. Accept folder trust only for that clone. Never bypass trust for an
+   unfamiliar folder.
+5. Restart `claude` if project skills remain missing after trust.
+6. Open [SOLO.md](SOLO.md) and use the A1 prompt.
 
-## Two gates — don't confuse them
+Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
 
-- **Runtime gate** — a diagnosis needs a NAMED approval before the executor
-  may act: `npm run approve -- <incident> --by <name>` or the console buttons.
-  Record: `approvals/<inc>.approval.json`.
-- **SDLC gate** — in an authorized shared workflow, a `fix/*` branch may only
-  be pushed after a named human runs `npm run approve:git`. The agent cannot
-  run that command. This local lab does not push or exercise that gate.
+The repository already contains the project skills. The optional `/sdlc` mod
+shows the first prompt from each A1–A9 assignment. It does not submit a prompt
+or perform a human action.
 
-| # | Assignment | Build evidence |
-|---|---|---|
-| A1 | Setup check | Console health, green main suite, expected red workshop tests |
-| A2 | Write your team intent.md | Reviewed intent with three repeatable checks |
-| A3 | Spec + contract green | A3 tests, main suite, typecheck, offline investigation |
-| A4 | Wire and prove the controls | Chat refusal plus a human-written hook denial |
-| A5 | Build a read-only tool | A5 tests plus real `list_deploys` trace data |
-| A6 | Diagnose a sample incident | Cited diagnosis and one alternative cause |
-| A7 | Pass the bench. Add a case. | Before-and-after bench with `harmful` at zero |
-| A8 | The gate: approve with your name | Negative approval tests plus human console action |
-| A9 | Maintain + your hackathon intent.md | Human lesson, reviewed intent, and handoff |
+## Use one loop for all nine assignments
 
-## A1 — Setup check
+1. Learn the current shape.
+2. Choose one outcome or example.
+3. Build one small step.
+4. Inspect the diff and focused proof.
+5. Keep unsupported claims and human decisions `OPEN`.
 
-**Goal:** everything installed, the console up, Claude Code connected.
+If Claude shows no visible progress for two minutes, ask it to state the
+blocker and next focused check. Do not rerun the full suite after every prompt.
 
-Use the A1 setup prompt that you pasted during setup.
+## Build route
 
-- `npm ci && npm run fixtures`
-- `npm test` → all green; `npm run test:workshop` → red on the A3/A4/A5/A8 tests
-- `npm run console` → open `http://localhost:4320`, then `curl localhost:4320/api/health`
-- `claude` in this directory → `/status` shows the guard + progress hooks
+| Assignment | What you build | Your choice | Proof |
+| --- | --- | --- | --- |
+| [A1](SOLO.md#a1-map-the-repo-and-prove-setup) | Shallow repo map and setup evidence | Which expected red assignment to inspect first | Main suite green; only A3, A4, A5, and A8 red |
+| [A2](SOLO.md#a2-write-a-reviewed-intent) | Reviewed `intent.md` | Operator and three repeatable checks | Reviewed diff with a read-only boundary |
+| [A3](SOLO.md#a3-build-and-verify-the-verdict-contract) | Customer-impact verdict contract | One invalid verdict | Accepted contract, focused red, small patch, focused green, `/verify-this`: `VERIFIED`, `NOT VERIFIED`, or `INCONCLUSIVE` |
+| [A4](SOLO.md#a4-wire-and-prove-the-controls) | Chat refusal and one human-owned hook rule | One mutation phrase | Chat test, named human edit, focused guard denial |
+| [A5](SOLO.md#a5-build-a-read-only-deploy-tool) | Read-only `list_deploys` tool | Empty window or missing deploy | Tool result and exact trace arguments |
+| [A6](SOLO.md#a6-diagnose-a-live-sample-incident) | Cited sample incident diagnosis | One alternative cause | Stable `source:ref` labels, snapshot wording, mutation refusal |
+| [A7](SOLO.md#a7-add-and-verify-an-offline-fixture-case) | Deterministic offline fixture coverage | One incident variation | Before and after bench, `harmful` 0, unchanged floor |
+| [A8](SOLO.md#a8-build-the-approval-gate) | Exact approval gate | Wrong incident or wrong action | Negative test stays blocked; no human action fabricated |
+| [A9](SOLO.md#a9-turn-the-lesson-into-a-hackathon-handoff) | Lesson proposal, hackathon intent, and approved handoff | One lesson claim and hackathon problem | Partner can resume from `HANDOFF.md` |
 
-## A2 — Write your team intent.md
+## Terms at the moment you need them
 
-**Goal:** one page a stranger could hold you to. Fill `intent.md`: who the
-agent serves, the boundary (read-only; propose, never mutate; humans close),
-and **three checks a stranger can verify** (e.g. "chat refuses 'roll back
-now'", "a verdict without evidence refs is rejected"). The
-`design-control-loop` skill can interview you onto the page.
+- A **contract** is a result shape that a test can reject. You use it in A3.
+- A **trace** records the ordered tool calls and arguments behind a claim. You
+  inspect it in A5 and A6.
+- An **incident** is a detected service problem with an id, state, and evidence.
+- A **deploy** is a recorded software release such as `d-4821`.
+- A **bench** is a repeatable offline score over deterministic fixture cases.
+  It does not prove live model behavior.
+- A **gate** blocks an action until the exact human decision exists.
 
-Paste the [A2 intent prompt](SOLO.md#a2-write-the-intent) into Claude Code.
+## Human boundaries
 
-## A3 — Spec + contract green
+- A human accepts `intent.md` and the verdict contract.
+- A human edits `.claude/hooks/guard.mjs` in A4. Replace the four-line
+  `TODO(A4)` comment block immediately before
+  `else if (SDLC_ARTEFACT.test(rel))` with
+  `else if (rel === "bench/ratchet.json") decide("deny", "guard: ratchet is human-owned");`.
+  This rule does not claim full shell protection.
+- A human starts the A6 console, shop, continuous traffic, and one-shot chaos
+  command in four separate terminals. Set `AGENT_LISTEN_WINDOW_MIN=1` on the
+  console command for class. Production keeps five minutes.
+- A human may approve, execute, or resolve in the local console. Those actions
+  stay `HUMAN OPEN` unless a named participant performs them.
+- A human promotes a proposed lesson into `lessons/lessons.md`.
+- A human reviews the `/handoff` text before a separate approved write saves
+  the exact text to `HANDOFF.md`.
 
-**Goal:** rebuild the evidence rules **and** add the `customer_impact` field,
-test-first. `test/workshop/contract.test.ts` is red now. Write down the
-contract in `docs/spec.md`, then make it pass in `src/contract.ts`
-(`TODO(A3)`). `customer_impact` is required, so add it to the offline
-verdicts in `src/runtime.ts` and the verdict fixtures in
-`test/contract.test.ts` too. With only `src/contract.ts` changed, `npm test`
-shows 5 failures and the dry run prints `FAIL contract`. The console must
-still render a diagnosis — run one in
-`npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run`.
+Do not push, deploy, or run the git approval flow in this local lab.
 
-Paste the [A3 contract prompt](SOLO.md#a3-build-the-verdict-contract) into
-Claude Code. Accept the proposed contract before Claude Code edits code.
+## Evidence boundaries
 
-## A4 — Wire and prove the controls
+- The scripted investigator proves the offline fixture pipeline. It is not
+  live model evidence.
+- `npm run workshop:check` locates unfinished markers. It is not a completion
+  gate.
+- `PROGRESS.md` records local signals. It does not prove validation.
+- `approvals/audit.jsonl` records actions and decisions. It is not memory.
+- `lessons/lessons.md` is curated operational knowledge. A human reviews it.
+- The A7 offline bench proves deterministic policy coverage only. A live model
+  eval is optional and outside the core route.
 
-**Goal:** chat refuses mutations again (`src/chat.ts`, `TODO(A4)`), and the
-guard hook enforces your own rule. `.claude/hooks/guard.mjs` already denies
-network, secrets, self-approval and unapproved pushes. **You** add one rule
-(by hand — the agent may not edit hooks): deny agent edits to
-`bench/ratchet.json`. Prove it: `test/workshop/guard.test.ts` turns green and
-`approvals/audit.jsonl` shows a deny. Write the decision down in
-`docs/decisions/D01-*.md`.
+## From A9 to the hackathon
 
-Paste the [A4 controls prompt](SOLO.md#a4-rebuild-the-controls) into Claude
-Code. You edit `.claude/hooks/guard.mjs` by hand. Claude Code may only run the
-checks after your edit.
+Day 4 separated curated `memory.md` from session context and technical logs.
+Day 5 keeps the same distinction with lessons, audit records, progress signals,
+and the handoff.
 
-## A5 — Build a read-only tool
+Use `docs/hackathon-intent.md` to name one customer or operator problem, three
+repeatable checks, boundaries, and `OPEN` questions. Use `HANDOFF.md` to give
+the next teammate verified work, every human-owned item, and one next step.
 
-**Goal:** `list_deploys` works end to end. Implement the handler binding and
-register the tool in `src/tools.ts` (`TODO(A5)`) until
-`test/workshop/tools.test.ts` is green. Proof in the console: run an
-investigation and see `list_deploys` in the trace.
-
-Paste the [A5 tool prompt](SOLO.md#a5-build-the-read-only-deploy-tool) into
-Claude Code. Choose the empty or missing deploy case yourself.
-
-## A6 — Diagnose a live incident
-
-**Goal:** the full loop on live telemetry.
-
-Paste the [A6 diagnosis prompt](SOLO.md#a6-diagnose-a-sample-incident) into
-Claude Code. Accept the local plan before Claude Code starts the scenario.
-
-- Terminal 1: `npm run shop` (the checkout service, `localhost:4310`)
-- Terminal 2: `npm run traffic`, then `npm run chaos -- deploy v2.15.0 --mode bad-deploy`
-- The console raises the incident (deterministic listener) after the error
-  rate stays above 2% for about 5 minutes (`AGENT_LISTEN_WINDOW_MIN=1` for a
-  faster demo). Open it: read the diagnosis and match every evidence ref to
-  the trace line of the tool that produced it.
-- In chat, challenge it: *"Could this be something other than the deployment?"*
-- Save the diagnosis to `docs/diagnosis-live.md` (template header there).
-
-## A7 — Pass the bench. Add a case.
-
-**Goal:** the bench is the regression gate.
-
-Paste the [A7 bench prompt](SOLO.md#a7-add-an-adversarial-bench-case) into
-Claude Code. Choose and accept the false instruction yourself.
-
-- `npm run bench` → `PASS bench (5/5)` (or better)
-- Add one case to `bench/cases.json` (new incident shape or an adversarial
-  alert). `npm run bench` again.
-- Ask the agent to lower `bench/ratchet.json` `min_rate` → your guard rule
-  from A4 denies the edit. By hand, a lower floor still passes the bench (it
-  only checks the score against the floor), so review is the second guard:
-  reject any PR that lowers `ratchet.json`. The floor only goes up.
-
-## A8 — The gate: approve with your name
-
-**Goal:** the executor verifies a signed approval before it acts. Rebuild
-`checkApproval` in `src/executor.ts` (`TODO(A8)`) until
-`test/workshop/executor.test.ts` is green. Then in the console: Approve with
-your name → Execute → watch the three verified checkouts → **LANDED** → mark
-mitigated. And confirm chat still refuses *"roll back now"* — a button, not a
-sentence.
-
-Paste the [A8 gate prompt](SOLO.md#a8-build-the-approval-gate) into Claude
-Code. Claude Code builds and tests `checkApproval`. You operate **Approve**,
-**Execute**, and **Mark mitigated** in the local console.
-
-The git gate is reference material only. Do not push this local lab or run
-`npm run approve:git`. In an authorized shared workflow, a named human runs
-that command in their own terminal. The agent never approves itself.
-
-## A9 — Maintain + your hackathon intent.md
-
-**Goal:** close the loop. Resolve the incident in the console with real notes
-→ they land in `lessons/lessons.md` with provenance. Review
-`lessons/proposed/` (agent-written, unreviewed). Then write
-`docs/hackathon-intent.md`: the intent.md for the agent you build next.
-Hand the day off to the next agent or teammate with the `/handoff` skill —
-it writes a clipboard-ready `HANDOFF.md`.
-
-Resolve the sample incident yourself. Then paste the
-[A9 maintenance prompt](SOLO.md#a9-keep-the-reviewed-lesson) into Claude Code.
+The Daily Brief agent is a bonus after A1 through A9. Do not shorten the SRE
+route to fit the bonus.

@@ -1,13 +1,13 @@
 const FLOW = [
-  ["Setup", "Main suite passes; exercise failures are explained", "You inspect the console and accept the setup"],
-  ["Intent", "intent.md has three repeatable checks and an OPEN item", "You accept the intent before code changes"],
-  ["Spec", "A3, main suite, typecheck, and offline investigation pass", "You accept the contract before implementation"],
-  ["Controls", "Mutation chat and the human-written hook rule are refused", "You edit the guard rule and inspect its audit entry"],
-  ["Build", "The trace contains the real deploy record", "You choose and review the missing-deploy case"],
-  ["Evidence", "Every diagnosis claim points to a tool result", "You accept the demo plan and any file edit"],
-  ["Evals", "The new case passes, harmful stays zero, and a second run agrees", "You choose the adversarial instruction and rerun the bench"],
-  ["Gate", "All workshop tests pass; mismatched approvals fail", "You give the named approval and operate Execute"],
-  ["Maintain", "The reviewed lesson has provenance and OPEN work survives handoff", "You resolve the incident and author the final lesson"],
+  ["Setup", "A shallow repo map, green main suite, and expected red exercises", "You inspect the console and accept the setup"],
+  ["Intent", "intent.md has three repeatable checks and a read-only boundary", "You choose and accept the operator outcome"],
+  ["Contract", "The accepted A3 contract goes red, then green with customer impact", "You accept the contract before implementation"],
+  ["Controls", "Chat refuses mutation and the focused hook test records a denial", "You make the human-owned hook edit"],
+  ["Tool", "The read-only deploy result and exact trace arguments are visible", "You choose and review the edge case"],
+  ["Evidence", "Every diagnosis claim has a stable source:ref", "You start the sample scenario and keep human actions OPEN"],
+  ["Offline bench", "The fixture adds policy coverage, harmful stays zero, and the floor stays fixed", "You choose the deterministic incident variation"],
+  ["Gate", "The exact mismatch stays blocked and no approval is fabricated", "You decide whether to operate the local human controls"],
+  ["Maintain", "The lesson stays proposed and the approved handoff preserves OPEN work", "You review the handoff text before a separate save"],
 ]
 
 export function parseSolo(markdown) {

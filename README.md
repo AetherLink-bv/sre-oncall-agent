@@ -46,44 +46,48 @@ You need:
 ```sh
 git clone --branch workshop/start --single-branch https://github.com/AetherLink-bv/sre-oncall-agent.git
 cd sre-oncall-agent
-claude
 ```
 
 This command checks out the exercise branch directly. The current `main` branch
 contains a separate completed-runtime course.
 
-Run `/status` in Claude Code. It shows the guard and progress hooks from
-`.claude/settings.json`.
+Review the current path and confirm it is your own clone. Run `claude` at the
+repository root. Accept Claude Code's folder-trust prompt only when the
+displayed path is your own trusted clone. Never bypass trust for an unfamiliar
+folder. Restart `claude` if project skills remain missing after trust.
 
-Open [SOLO.md](SOLO.md#a1-check-the-setup) and paste the A1 prompt. Claude Code
-installs the dependencies, generates the fixtures and runs both test suites.
-The main suite must pass. Only the A3, A4, A5 and A8 workshop tests must fail
-on their exercise TODOs. Open the console URL that Claude Code shows, then
-accept the setup before Claude Code builds an exercise.
+Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
+The lesson only needs a terminal and browser.
+
+Open [SOLO.md](SOLO.md#a1-map-the-repo-and-prove-setup). Start A1 with the
+explicit `/show-me` prompt. It creates a read-only text map of the fixture,
+runtime, trace, and console path. The second A1 prompt runs setup checks. The
+main suite must pass. Only the A3, A4, A5, and A8 workshop tests must fail on
+their exercise TODOs. `npm run workshop:check` locates unfinished markers. It
+is not a completion gate.
 
 Facilitators use [`FACILITATOR.md`](FACILITATOR.md) for the schedule, expected
 starter failures and the manual fallback.
 
 For a visual route through the AI-SDLC, start Claude Code with
 `claude --plugin-dir ./course/ai-sdlc-mod` and run `/sdlc`. The optional mod
-reads the same nine prompts from `SOLO.md` and leaves every human gate intact.
+reads the first prompt from each A1–A9 section in `SOLO.md` and leaves every
+human gate intact. Use the remaining copy prompts from `SOLO.md` or the slides.
 
 ## Run it
 
-Three terminals:
+Use four separate terminals. Keep the console, shop, and traffic running.
+Run the chaos command once in the fourth terminal.
 
-```bash
-npm run shop                                        # 1 · the checkout shop on :4310
-npm run traffic                                     # 2 · traffic
-npm run console                                     # 3 · the console on :4320
-```
+| Terminal | Command |
+| --- | --- |
+| 1 | `AGENT_LISTEN_WINDOW_MIN=1 npm run console` |
+| 2 | `npm run shop` |
+| 3 | `npm run traffic` |
+| 4 | `npm run chaos -- deploy v2.15.0 --mode bad-deploy` |
 
-Then break the shop and watch the console:
-
-```bash
-npm run chaos -- deploy v2.15.0 --mode bad-deploy   # a bad deploy
-npm run chaos -- degrade --mode slow                # the same kind of fault, no deploy record
-```
+The one-minute listener setting belongs on the console process. Production
+uses the default five-minute window. Stop only processes that you started.
 
 Other useful commands:
 
@@ -91,7 +95,7 @@ Other useful commands:
 npm run demo                 # the whole loop on a bad deploy, about 2 minutes
 npm run doctor               # preflight check
 npm run progress             # which assignments have local signals; validation stays OPEN
-npm run workshop:check       # the TODO markers you still have to fill in
+npm run workshop:check       # locate unfinished markers; not a completion gate
 npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run   # INC-1001 from fixtures
 ```
 
@@ -118,15 +122,15 @@ turn green as you rebuild them.
 
 | # | Assignment |
 | --- | --- |
-| A1 | Setup check: install, green main suite, console up, Claude Code connected |
-| A2 | Write your team `intent.md` |
-| A3 | Spec + contract: the evidence rules and the new `customer_impact` field, test-first |
-| A4 | Controls: chat refuses mutations again; add your own guard rule by hand |
-| A5 | Build the read-only `list_deploys` tool |
-| A6 | Diagnose a live incident from the console |
-| A7 | Pass the bench and add one case; the ratchet only goes up |
-| A8 | The gate: the executor acts only on a NAMED human approval |
-| A9 | Maintain: resolve the incident with notes that become a lesson |
+| A1 | Map the repo and prove setup |
+| A2 | Write a reviewed `intent.md` with three repeatable checks |
+| A3 | Accept, build, and verify the `customer_impact` verdict contract; `/verify-this` returns `VERIFIED`, `NOT VERIFIED`, or `INCONCLUSIVE` |
+| A4 | Build chat refusal; add the protected-file hook rule by hand |
+| A5 | Build `list_deploys` and remove the starter bypasses |
+| A6 | Start a sample incident and trace every diagnosis claim |
+| A7 | Add one deterministic offline fixture case without lowering the floor |
+| A8 | Test the exact incident-and-action gate; keep human action OPEN |
+| A9 | Propose a lesson, define the hackathon, review and save the handoff |
 
 The classroom goals and checks are in **[WORKSHOP.md](WORKSHOP.md)**. The exact
 Claude Code prompts, learner choices, and stop points are in

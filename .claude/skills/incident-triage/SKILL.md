@@ -5,8 +5,8 @@ description: The standing triage policy for the on-call agent — gather evidenc
 
 # Incident triage policy
 
-The policy the investigator follows lives in `skills/triage/SKILL.md` in this
-repository (same directory as this skill, one level up in `skills/`). Read it
+The policy the investigator follows lives in the repository-root
+`skills/triage/SKILL.md`. Read it
 and apply it: evidence before theory, two sources for a strong proposal, every
 claim carries a ref (`logs:<ts>`, `metrics:<ts>`, `deploys:<id>`,
 `lessons:<id>`), data gaps are stated, humans decide.

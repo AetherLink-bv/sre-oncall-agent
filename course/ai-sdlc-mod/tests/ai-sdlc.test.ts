@@ -51,7 +51,7 @@ test("shows all SOLO assignments and fills the selected prompt", async ($, on) =
   expect(await ui.find({ key: "assignment-A9" })).toBeDefined()
   await ui.press({ key: "assignment-A8" })
   expect(await ui.find({ type: "Text", text: /A8 · Gate · OPEN/ })).toBeDefined()
-  expect(await ui.find({ type: "Text", text: /Human gate: You give the named approval/ })).toBeDefined()
+  expect(await ui.find({ type: "Text", text: /Human gate: You decide whether to operate the local human controls/ })).toBeDefined()
   await ui.press({ key: "use-prompt" })
   expect(filled).toBe(parsed[7].prompt)
 })
