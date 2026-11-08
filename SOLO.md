@@ -28,26 +28,6 @@ Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
 The lesson only needs a terminal and browser. The repository already contains
 the project skills. You do not need the full skills pack.
 
-## Optional before A1: save the public skills pack
-
-Use the included project skills for A1–A9. For later reuse in the hackathon,
-open the public [Claude Code skills pack](https://github.com/AetherLink-bv/claude-code-skills-pack).
-Do not pause the core route for a bulk or global installation.
-
-After the core route, clone the pack into a separate folder:
-
-```sh
-git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
-cd claude-code-skills-pack
-claude
-```
-
-Choose one skill. Ask Claude to propose a project-local install:
-
-```text
-Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
-```
-
 Do not ask Claude Code to rebuild the whole app. The starter already supplies
 the local console, checkout shop, traffic, chaos, fictional fixtures, tests,
 Zod contracts, and read-only tool infrastructure. You build the missing A3,
@@ -351,6 +331,27 @@ Save the exact handoff text I just approved to HANDOFF.md. Ask before writing th
 Ask a partner to read only `HANDOFF.md` and name the next step. Stop when the
 partner can continue without guessing and every human action still appears as
 `HUMAN OPEN`.
+
+## After A9: choose one skill for the hackathon
+
+The repository already included every project skill used in A1–A9. Keep the
+reviewed handoff as your hackathon start point. Then open the public
+[Claude Code skills pack](https://github.com/AetherLink-bv/claude-code-skills-pack)
+for selective reuse. Do not bulk-install the pack or change global settings.
+
+Clone the pack into a separate folder:
+
+```sh
+git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
+cd claude-code-skills-pack
+claude
+```
+
+Choose one skill. Ask Claude to propose a project-local install:
+
+```text
+Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
+```
 
 ## Optional course mod
 

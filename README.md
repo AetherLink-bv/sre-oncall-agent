@@ -59,26 +59,6 @@ folder. Restart `claude` if project skills remain missing after trust.
 Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
 The lesson only needs a terminal and browser.
 
-### Optional skills pack for the hackathon
-
-The SRE repository already contains the project skills for A1–A9. Do not pause
-the core route for a bulk or global installation. For reuse after the lesson,
-open the public [Claude Code skills pack](https://github.com/AetherLink-bv/claude-code-skills-pack).
-
-Clone the pack into a separate folder. Start Claude Code there:
-
-```sh
-git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
-cd claude-code-skills-pack
-claude
-```
-
-Choose one skill. Ask Claude to propose a project-local install:
-
-```text
-Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
-```
-
 ### Optional live-model connection
 
 The required route stays scripted and offline. Claude Code is the builder; the
@@ -208,3 +188,24 @@ Claude Code prompts, learner choices, and stop points are in
   closes. The agent may not sign approvals, edit hooks, edit `.claude/`, or
   rewrite `PROGRESS.md`.
 - **No secrets in files.** You do not need an API key for this lab.
+
+## After A9: choose one skill for the hackathon
+
+The SRE repository already contains every project skill used in A1–A9. Finish
+the core route and its reviewed handoff before you add anything. Then open the
+public [Claude Code skills pack](https://github.com/AetherLink-bv/claude-code-skills-pack)
+for selective hackathon reuse.
+
+Clone the pack into a separate folder. Start Claude Code there:
+
+```sh
+git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
+cd claude-code-skills-pack
+claude
+```
+
+Choose one skill. Ask Claude to propose a project-local install:
+
+```text
+Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
+```
