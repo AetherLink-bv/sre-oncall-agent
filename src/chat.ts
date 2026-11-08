@@ -39,7 +39,10 @@ export const routeMessage = (text: string): Route => {
   const w = parseWatchCommand(t);
   if (w.ok) return { kind: "watch", command: w.value };
   if (/^(?:watch|monitor)\b/i.test(t)) return { kind: "refused", reason: w.errors.join("; ") };
-  if (MUTATION.test(t)) {
+  const mutationIntent = t
+    .replace(/^which evidence supports the proposed rollback\?/i, "")
+    .replace(/\bdo not approve or execute anything\b[.!]?/gi, "");
+  if (MUTATION.test(mutationIntent)) {
     return { kind: "refused", reason: "Rollbacks, approvals and resolution are buttons a named human clicks, not chat text the agent interprets. Use the Approve / Execute / Resolve controls on the incident." };
   }
   const inv = /^(?:investigate|triage|look into|something is (?:broken|wrong)|customers? (?:are|is) reporting)[:\s-]*(.*)$/i.exec(t);
