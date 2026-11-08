@@ -70,6 +70,9 @@ After A5, run one bounded fixture investigation first:
 npm run investigate -- fixtures/incidents/bad-deploy.json --model sonnet --max-turns 8 --max-budget-usd 0.30 --dry-run
 ```
 
+The SDK checks `--max-budget-usd` between model turns, so one turn can exceed
+it. Strict MCP isolation keeps this lab's model context limited to telemetry.
+
 Review the completed diagnosis, cost line, and tool trace. Only then may you
 stop the console process that you started and launch the optional console path:
 
