@@ -44,6 +44,53 @@ State the blocker and the next focused check.
 Do not run the full suite after every prompt. Run the checks named by the
 current assignment.
 
+## Optional before A1: prepare the live-model connection
+
+Claude Code is already your local builder. The product runtime stays scripted
+and offline for the required route. If your facilitator approves model usage,
+you may connect the product to the Claude Agent SDK after A5, when its read-only
+tool path is complete.
+
+Sign in on your own machine. Run `claude`, then use `/login` only when Claude
+Code asks you to authenticate. Do not copy a login, OAuth token, or API key to
+chat, Git, a browser field, a remote host, or another participant. The current
+Anthropic guidance says a local Agent SDK run can use your Claude Code login;
+it consumes your plan limits. An API key, when intentionally configured, uses
+the linked Console organization and may use paid API credits.
+
+Use this prompt now. It prepares the route without starting the product model:
+
+```text
+Read README.md, src/runtime.ts, src/e2e.ts, console/server.ts, and package.json. Explain the difference between my local Claude Code builder session and the optional Claude Agent SDK product runtime. Check only whether Claude Code is signed in and whether npm run doctor reports the Claude Code login path; never print, read, or copy credentials. Propose the smallest local activation plan that keeps the core lesson offline, waits until after A5, first runs one CLI investigation with max-turns 8 and max-budget-usd 0.30, and only then optionally restarts my own console with AGENT_MODEL=sonnet. Require one completed model diagnosis plus its tool trace. State that the console has no global model-budget guard. Include the usage/cost warning and the fallback that restarts without AGENT_MODEL. Do not run a paid model, edit files, or start processes. Stop for my review.
+```
+
+After A5, run one bounded fixture investigation first:
+
+```sh
+npm run investigate -- fixtures/incidents/bad-deploy.json --model sonnet --max-turns 8 --max-budget-usd 0.30 --dry-run
+```
+
+Review the completed diagnosis, cost line, and tool trace. Only then may you
+stop the console process that you started and launch the optional console path:
+
+```sh
+AGENT_MODEL=sonnet AGENT_LISTEN_WINDOW_MIN=1 npm run console
+```
+
+The console has no global model-budget guard. Open it and submit at most one
+approved `Investigate: ...` message. A model name in
+`/api/health` proves configuration only. A completed diagnosis plus a visible
+tool trace proves that this run used the model path. Stop after one accepted
+proof to control usage. If authentication, plan limits, cost approval, or the
+model run fails, stop your console and return to the required scripted route:
+
+```sh
+env -u AGENT_MODEL AGENT_LISTEN_WINDOW_MIN=1 npm run console
+```
+
+Official references: [Agent SDK quickstart](https://code.claude.com/docs/en/agent-sdk/quickstart)
+and [use the Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan).
+
 ## A1. Map the repo and prove setup
 
 Start with the project skill. The slash command must be the first text in the
@@ -268,7 +315,7 @@ The handoff skill normally creates a clipboard prompt. For this lesson, print
 the full text first and stop before a file edit.
 
 ```text
-/handoff Create a handoff prompt for the next teammate. Include the accepted intent, verified checks with evidence references, every HUMAN OPEN item, the hackathon intent, and one concrete next step. Do not claim that the incident was resolved, the lesson was promoted, or a human action happened. For this classroom run, do not copy to the clipboard. Print the full handoff here for my review. Stop before editing any file.
+/handoff Create a handoff prompt for the next teammate. Include the accepted intent, verified checks with evidence references, every HUMAN OPEN item, the hackathon intent, and one concrete next step. Do not claim that the incident was resolved, the lesson was promoted, or a human action happened. Distinguish forbidden service mutations from allowed local verification evidence writes under docs/verify/. For this classroom run, do not copy to the clipboard. Print the full handoff here for my review. Stop before editing any file.
 ```
 
 Review the full handoff. After you approve the text, save it in a separate

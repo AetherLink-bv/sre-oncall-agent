@@ -20,9 +20,24 @@ produce the evidence route. Do not spend class time regenerating the app.
 3. Run `claude` and review the displayed folder path.
 4. Accept trust only for the participant's own clone. Never bypass trust.
 5. Restart `claude` if project skills remain missing after trust.
-6. Reuse an existing console only when it belongs to this lab and its listener
+6. Explain that Claude Code is the builder. The product's optional Agent SDK
+   runtime is a separate connection.
+7. Keep the required route scripted and offline. Offer the live-model route
+   only after A5 and only with approved usage, cost, and local authentication.
+8. Reuse an existing console only when it belongs to this lab and its listener
    window is known. Do not start duplicates.
-7. Keep the full skills pack and `/sdlc` mod optional.
+9. Keep the full skills pack and `/sdlc` mod optional.
+
+For the optional route, participants authenticate Claude Code on their own
+machine. Never accept copied credentials or move authentication to a remote
+host. First require one bounded fixture run with `--max-turns 8` and
+`--max-budget-usd 0.30`. Review its completed diagnosis and tool trace. Only
+then may they restart their own console with
+`AGENT_MODEL=sonnet AGENT_LISTEN_WINDOW_MIN=1 npm run console`. The console has
+no global model-budget guard. A health label is readiness evidence, not model
+evidence. Allow at most one approved investigation, then stop to control usage.
+Restart with `env -u AGENT_MODEL AGENT_LISTEN_WINDOW_MIN=1 npm run console`
+when authentication, limits, cost approval, or the run fails.
 
 ## Time boxes
 
