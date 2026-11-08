@@ -9,7 +9,6 @@ test("watch commands route to the grammar, not the model", () => {
   assert.equal(routeMessage("Stop the deployment watch.").kind, "stop");
 });
 
-
 test("investigate phrasings start the triage loop with the alert text", () => {
   const r = routeMessage("Investigate: customers report checkout errors");
   assert.equal(r.kind, "investigate");
@@ -37,4 +36,18 @@ test("the offline A6 challenge answer cites replayable snapshot evidence", async
   assert.match(answer, /\[deploys:d-4821\]/);
   assert.match(answer, /\[logs:2026-10-05T03:45:03\.000Z\]/);
   assert.match(answer, /not a live current-health check/);
+});
+
+test("a question labels the saved diagnosis snapshot and avoids a stale version claim", async () => {
+  const telemetry = await loadTelemetry("fixtures/telemetry/bad-deploy.json");
+  assert.equal(telemetry.ok, true);
+  if (!telemetry.ok) throw new Error("unreachable");
+
+  const answer = await ask("What evidence did the diagnosis use?", {
+    telemetry: telemetry.value,
+    telemetryContext: "Diagnosis snapshot; current telemetry not checked",
+  });
+  assert.match(answer, /Diagnosis snapshot; current telemetry not checked \[metrics:/);
+  assert.match(answer, /bucket may span a deploy/);
+  assert.doesNotMatch(answer, / on v2\.14\.0/);
 });

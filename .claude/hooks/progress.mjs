@@ -26,7 +26,9 @@ function evidence() {
     .join("\n");
   const audit = read("approvals/audit.jsonl");
   const cases = (() => { try { return JSON.parse(read("bench/cases.json")); } catch { return []; } })();
-  const lessons = read("lessons/lessons.md");
+  const proposedLessons = existsSync("lessons/proposed")
+    ? readdirSync("lessons/proposed").some((f) => f.endsWith(".md"))
+    : false;
   return [
     {
       key: "A-1", name: "setup",
@@ -64,27 +66,28 @@ function evidence() {
       key: "A-6", name: "live diagnosis",
       done: existsSync("docs/diagnosis-live.md") && !read("docs/diagnosis-live.md").includes("<fill"),
       title: "Diagnose a live incident from the console",
-      hint: "npm run shop + traffic, then chaos deploy v2.15.0 --mode bad-deploy; save the diagnosis to docs/diagnosis-live.md",
+      hint: "npm run shop + traffic; keep healthy traffic running for two minutes, then chaos deploy v2.15.0 --mode bad-deploy; save the diagnosis to docs/diagnosis-live.md",
     },
     {
       key: "A-7", name: "eval + ratchet",
       done: Array.isArray(cases) && cases.length > 5,
       title: "Eval: bench + one new case + ratchet held",
-      hint: "npm run bench; add a case to bench/cases.json; try lowering bench/ratchet.json",
+      hint: "save the baseline; add one accepted case; rerun the bench with harmful 0 and both ratchet values unchanged",
     },
     {
       key: "A-8", name: "gate",
-      done: (existsSync("approvals") ? readdirSync("approvals") : []).some((f) => f.endsWith(".approval.json"))
+      done: !read("src/executor.ts").includes("TODO(A8)")
         && /isApproved\s*\(/.test(code("src/executor.ts")),
-      title: "Gate: executor verifies a NAMED approval before executing",
-      hint: "restore isApproved in src/executor.ts checkApproval; approve + execute in the console",
+      title: "Gate: executor checks the exact named approval",
+      hint: "run the focused A8 mismatch tests, then the main tests and typecheck; keep the console action HUMAN OPEN",
     },
     {
       key: "A-9", name: "maintain + hackathon",
-      done: (lessons.match(/^## INC-/gm) ?? []).length > 2
-        && existsSync("docs/hackathon-intent.md") && !read("docs/hackathon-intent.md").includes("<fill"),
-      title: "Maintain: resolution notes became a lesson + hackathon intent",
-      hint: "resolve the incident with notes; review lessons/proposed; write docs/hackathon-intent.md",
+      done: proposedLessons
+        && existsSync("docs/hackathon-intent.md") && !read("docs/hackathon-intent.md").includes("<fill")
+        && existsSync("HANDOFF.md") && read("HANDOFF.md").trim().length > 0,
+      title: "Maintain: proposed lesson + hackathon intent + handoff",
+      hint: "review the proposed lesson, docs/hackathon-intent.md, and HANDOFF.md; keep promotion and resolution HUMAN OPEN",
     },
   ];
 }

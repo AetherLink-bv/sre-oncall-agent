@@ -59,6 +59,45 @@ folder. Restart `claude` if project skills remain missing after trust.
 Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
 The lesson only needs a terminal and browser.
 
+### Optional live-model connection
+
+The required route stays scripted and offline. Claude Code is the builder; the
+product's separate live-model path uses the Claude Agent SDK. Prepare your own
+local Claude Code login before A1, but activate the product model only after A5
+and only when your facilitator approves usage and cost.
+
+Never copy credentials into chat, Git, browser fields, remote hosts, or another
+participant's machine. Current Anthropic guidance says the local Agent SDK can
+use your Claude Code login and then consumes your plan limits. An intentionally
+configured API key uses the linked Console organization and may consume paid
+API credits.
+
+After A5, prove the model path with one bounded fixture run:
+
+```sh
+npm run investigate -- fixtures/incidents/bad-deploy.json --model sonnet --max-turns 8 --max-budget-usd 0.30 --dry-run
+```
+
+Review the completed diagnosis, cost line, and tool trace. Only then may you
+stop your own console and restart it with:
+
+```sh
+AGENT_MODEL=sonnet AGENT_LISTEN_WINDOW_MIN=1 npm run console
+```
+
+The console has no global model-budget guard. Submit at most one approved
+`Investigate: ...` message. The health model name proves readiness only. Keep
+the completed diagnosis and visible tool trace as the model-path proof. Stop
+after one accepted proof. If authentication, plan limits, cost approval, or the
+run fails, clear any exported model override and restart the required route:
+
+```sh
+env -u AGENT_MODEL AGENT_LISTEN_WINDOW_MIN=1 npm run console
+```
+
+See Anthropic's [Agent SDK quickstart](https://code.claude.com/docs/en/agent-sdk/quickstart)
+and [Claude plan guidance](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan).
+
 Open [SOLO.md](SOLO.md#a1-map-the-repo-and-prove-setup). Start A1 with the
 explicit `/show-me` prompt. It creates a read-only text map of the fixture,
 runtime, trace, and console path. The second A1 prompt runs setup checks. The
