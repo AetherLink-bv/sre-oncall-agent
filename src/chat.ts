@@ -61,14 +61,17 @@ const offlineAnswer = (text: string, t: Telemetry): string => {
   const m = h.summarize_metrics({});
   const d = listDeploys(t).slice(0, 3); // A5 bypass: rebind in tools.ts
   const errs = h.search_logs({ level: "error", limit: 3 });
+  const bp = m.breakpoints[0];
+  const metricsRef = bp?.ts ?? m.last_ts ?? "window";
   const health = m.breakpoints.length === 0
-    ? `Production looks steady: error_rate ${m.error_rate_last}, p95 ${m.p95_ms_last} ms over ${m.points} buckets, no ≥2× jump.`
-    : `There is a breakpoint at ${m.breakpoints[0]?.ts}: ${m.breakpoints[0]?.what} ${m.breakpoints[0]?.from} → ${m.breakpoints[0]?.to} on ${m.breakpoints[0]?.version}. error_rate now ${m.error_rate_last}, p95 ${m.p95_ms_last} ms.`;
+    ? `Stored telemetry snapshot [metrics:${metricsRef}]: error_rate ${m.error_rate_last}, p95 ${m.p95_ms_last} ms over ${m.points} buckets, no ≥2× jump.`
+    : `Stored telemetry snapshot [metrics:${metricsRef}]: ${bp?.what} ${bp?.from} → ${bp?.to} on ${bp?.version}. Latest stored error_rate ${m.error_rate_last}, p95 ${m.p95_ms_last} ms.`;
   return [
     `(offline investigator — scripted, not model evidence)`,
     health,
-    `Latest deploys: ${d.map((x) => `${x.id} ${x.version} ${x.at.slice(11, 19)}`).join(" · ") || "none in telemetry"}.`,
-    errs.length ? `Latest errors: ${errs.map((e) => e.msg).join(" | ")}` : "No error-level log lines.",
+    `Latest deploys: ${d.map((x) => `[deploys:${x.id}] ${x.version} ${x.at.slice(11, 19)}`).join(" · ") || "none in telemetry"}.`,
+    errs.length ? `Latest errors: ${errs.map((e) => `[logs:${e.ts}] ${e.msg}`).join(" | ")}` : "No error-level log lines.",
+    `These references describe stored telemetry, not a live current-health check.`,
     `You asked: "${text}". For a full diagnosis with a proposal, send "Investigate: <what you see>".`,
   ].join("\n");
 };
