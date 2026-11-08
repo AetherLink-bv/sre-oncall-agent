@@ -28,6 +28,16 @@ produce the evidence route. Do not spend class time regenerating the app.
    window is known. Do not start duplicates.
 9. Keep the full skills pack and `/sdlc` mod optional.
 
+Share this text in participant chat before A1:
+
+```text
+Today's SRE repository already includes the project skills for A1–A9. Save the public Claude Code skills pack for selective reuse during the hackathon: https://github.com/AetherLink-bv/claude-code-skills-pack
+
+Do not bulk-install the pack or change global settings during the core route. After the lesson, clone the pack into a separate folder, choose one skill, and paste this prompt into Claude Code:
+
+Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
+```
+
 For the optional route, participants authenticate Claude Code on their own
 machine. Never accept copied credentials or move authentication to a remote
 host. First require one bounded fixture run with `--max-turns 8` and
