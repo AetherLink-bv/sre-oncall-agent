@@ -204,19 +204,28 @@ export const offlineQuery =
     }
     const h = handlers(t);
     const since = incident.fired_at ? minus(incident.fired_at, 60) : undefined;
-    const bp0 = h.summarize_metrics({ since, until: incident.fired_at }).breakpoints[0];
+    const windowInput = { since, until: incident.fired_at };
+    const bp0 = h.summarize_metrics(windowInput).breakpoints[0];
     const behind = bp0 ? deployBehind(t, bp0.ts) : undefined;
+    const diffInput = behind ? { deploy: behind.id } : undefined;
+    const logInput = { level: "error" as const, ...windowInput, limit: 5 };
+    const inputs: Record<ToolName, unknown> = {
+      summarize_metrics: windowInput,
+      list_deploys: windowInput,
+      get_diff: diffInput ?? {},
+      search_logs: logInput,
+    };
     const outputs: Record<ToolName, unknown> = {
-      summarize_metrics: h.summarize_metrics({ since, until: incident.fired_at }),
-      list_deploys: listDeploys(t, since, incident.fired_at), // A5 bypass: rebind in tools.ts
-      get_diff: behind ? h.get_diff({ deploy: behind.id }) : { error: "no deploy lines up with the breakpoint — not called in anger" },
-      search_logs: h.search_logs({ level: "error", since, until: incident.fired_at, limit: 5 }),
+      summarize_metrics: h.summarize_metrics(windowInput),
+      list_deploys: listDeploys(t, windowInput.since, windowInput.until), // A5 bypass: rebind in tools.ts
+      get_diff: diffInput ? h.get_diff(diffInput) : { error: "no deploy lines up with the breakpoint — not called in anger" },
+      search_logs: h.search_logs(logInput),
     };
     for (const name of steps) {
       yield {
         type: "assistant",
         parent_tool_use_id: null,
-        message: { content: [{ type: "tool_use", id: `offline-${name}`, name: qualified(name), input: { since, until: incident.fired_at } }] },
+        message: { content: [{ type: "tool_use", id: `offline-${name}`, name: qualified(name), input: inputs[name] }] },
       };
       yield {
         type: "user",
