@@ -52,11 +52,12 @@ export interface AskDeps {
   readonly telemetry: Telemetry;
   readonly model?: string | undefined; // only explicit offline uses the scripted summary
   readonly query?: QueryFn;
+  readonly telemetryContext?: string | undefined;
   readonly onEvent?: (e: AgentEvent) => void;
 }
 
 /** Offline: answer from the same tools, deterministically. Never pretends to be a model. */
-const offlineAnswer = (text: string, t: Telemetry): string => {
+const offlineAnswer = (text: string, t: Telemetry, telemetryContext: string): string => {
   const h = handlers(t);
   const m = h.summarize_metrics({});
   const d = h.list_deploys({}).slice(0, 3);
@@ -64,8 +65,8 @@ const offlineAnswer = (text: string, t: Telemetry): string => {
   const bp = m.breakpoints[0];
   const metricsRef = bp?.ts ?? m.last_ts ?? "window";
   const health = m.breakpoints.length === 0
-    ? `Stored telemetry snapshot [metrics:${metricsRef}]: error_rate ${m.error_rate_last}, p95 ${m.p95_ms_last} ms over ${m.points} buckets, no ≥2× jump.`
-    : `Stored telemetry snapshot [metrics:${metricsRef}]: ${bp?.what} ${bp?.from} → ${bp?.to} on ${bp?.version}. Latest stored error_rate ${m.error_rate_last}, p95 ${m.p95_ms_last} ms.`;
+    ? `${telemetryContext} [metrics:${metricsRef}]: error_rate ${m.error_rate_last}, p95 ${m.p95_ms_last} ms over ${m.points} buckets, no ≥2× jump.`
+    : `${telemetryContext} [metrics:${metricsRef}]: ${bp?.what} ${bp?.from} → ${bp?.to}; this bucket may span a deploy. Latest snapshot error_rate ${m.error_rate_last}, p95 ${m.p95_ms_last} ms.`;
   return [
     `(offline investigator — scripted, not model evidence)`,
     health,
@@ -79,14 +80,15 @@ const offlineAnswer = (text: string, t: Telemetry): string => {
 /** Real model: same read-only tools, same lessons, free-text answer, NO proposal field. */
 export const ask = async (text: string, deps: AskDeps): Promise<string> => {
   const rt = resolveRuntime(deps.telemetry, deps.model);
-  if (rt.model === undefined) return offlineAnswer(text, deps.telemetry);
+  const telemetryContext = deps.telemetryContext ?? "Stored telemetry snapshot";
+  if (rt.model === undefined) return offlineAnswer(text, deps.telemetry, telemetryContext);
   const query = deps.query ?? rt.query;
   const lessons = renderLessons(await loadLessons(lessonsStore()), guessTag(text));
   let answer = "";
   for await (const e of query({
     prompt: `${text}\n\n${lessons}`,
     options: {
-      systemPrompt: `${ONCALL_SYSTEM}\n\nMode: QUESTION. The operator asked a question. Answer in plain prose with evidence references. Do NOT return the JSON verdict and do NOT propose a mitigation; if they want one, tell them to send "Investigate: …".`,
+      systemPrompt: `${ONCALL_SYSTEM}\n\nMode: QUESTION. The operator asked a question. Answer in plain prose with evidence references. Telemetry context: ${telemetryContext}. Do NOT return the JSON verdict and do NOT propose a mitigation; if they want one, tell them to send "Investigate: …".`,
       mcpServers: { [SERVER_NAME]: createTelemetryServer(deps.telemetry) },
       tools: [...ALLOWED_TOOLS], allowedTools: [...ALLOWED_TOOLS],
       permissionMode: "dontAsk", settingSources: [], maxTurns: 8, maxBudgetUsd: 0.3,
