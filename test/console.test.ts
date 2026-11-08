@@ -150,3 +150,12 @@ test("console persists agent failures without fallback or approval", { timeout: 
     restore();
   }
 });
+
+test("the console distinguishes the scripted demo from offline services", async () => {
+  const html = await readFile("console/index.html", "utf8");
+  assert.match(html, /Scripted demo \(no model connection\)/);
+  assert.match(html, /listener.*active.*inactive/);
+  assert.match(html, /shop online/);
+  assert.match(html, /shop offline/);
+  assert.match(html, /h\.model === "offline"/);
+});
