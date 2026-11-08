@@ -23,9 +23,9 @@ produce the evidence route. Do not spend class time regenerating the app.
    product runtime ignores builder settings and uses only its explicit tools.
 4. Accept trust only for the participant's own clone. Never bypass trust.
 5. Restart the same command if project skills remain missing after trust.
-6. Explain that Claude Code is the builder. The product's optional Agent SDK
-   runtime is a separate connection.
-7. Keep the required route scripted and offline. Offer the live-model route
+6. Explain that Claude Code is the builder. Do not introduce the product's
+   optional Agent SDK connection yet.
+7. Keep the required route scripted and offline. Introduce the live-model route
    only after A5 and only with approved usage, cost, and local authentication.
 8. Reuse an existing console only when it belongs to this lab and its listener
    window is known. Do not start duplicates.
