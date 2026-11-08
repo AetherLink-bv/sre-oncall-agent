@@ -87,7 +87,8 @@ test("writes: secrets/outside denied, artefacts asked, agent dirs allowed", () =
   assert.equal(write(dir, `${P}bench/cases.json`), "ask", "SDLC artefact");
   assert.equal(write(dir, `${P}lessons/proposed/INC-1.md`), "allow", "agent artefact");
   assert.equal(write(dir, `${P}docs/diagnoses/INC-1.md`), "allow", "agent artefact");
-  assert.equal(write(dir, `${P}src/contract.ts`), "ask", "source edit needs human confirmation");
+  assert.equal(write(dir, `${P}src/contract.ts`), "allow", "ordinary source edit");
+  assert.equal(write(dir, `${P}test/helpers.ts`), "allow", "ordinary test helper edit");
 });
 
 test("PROGRESS.md: direct writes stay denied, npm run progress:note is the agent's append path", () => {
@@ -150,13 +151,13 @@ test("repo root comes from git, not the folder name: a clone in any folder works
   };
   const w = (file_path) => g({ tool_name: "Write", tool_input: { file_path } });
   for (const root of [dir, realpathSync(dir)]) {
-    assert.equal(w(`${root}/src/contract.ts`), "ask", "inside the renamed repo: not 'outside the repo'");
+    assert.equal(w(`${root}/src/contract.ts`), "allow", "ordinary edit inside the renamed repo");
     assert.equal(w(`${root}/docs/diagnoses/INC-1.md`), "allow", "agent artefact in the renamed repo");
     assert.equal(w(`${root}/.claude/settings.json`), "deny", ".claude stays human-owned");
     assert.equal(w(`${root}/PROGRESS.md`), "deny", "PROGRESS.md stays hook-owned");
     assert.equal(w(`${root}/approvals/approvals.jsonl`), "deny", "approvals stay human-owned");
   }
-  assert.equal(w("../x.ts"), "ask", "relative path resolves from the cwd, inside the repo");
+  assert.equal(w("../x.ts"), "allow", "relative path resolves from the cwd, inside the repo");
   assert.equal(w(`${base}/sre-oncall-agent/src/x.ts`), "deny", "a sibling folder named sre-oncall-agent is outside the repo");
   assert.equal(w(`${dir}-evil/src/x.ts`), "deny", "a prefix-sharing sibling is outside the repo");
   assert.equal(w("/etc/passwd"), "deny", "outside the repo");

@@ -17,26 +17,19 @@ produce the evidence route. Do not spend class time regenerating the app.
 
 1. Use a clean `workshop/start` clone for each participant.
 2. Open any terminal at the repository root. Cursor is optional.
-3. Run `claude` and review the displayed folder path.
+3. Run `claude --setting-sources project --strict-mcp-config --no-chrome` and review the
+   displayed folder path. This loads project context without user or global
+   settings. The repository disables auto memory for the lesson. The SRE
+   product runtime ignores builder settings and uses only its explicit tools.
 4. Accept trust only for the participant's own clone. Never bypass trust.
-5. Restart `claude` if project skills remain missing after trust.
-6. Explain that Claude Code is the builder. The product's optional Agent SDK
-   runtime is a separate connection.
-7. Keep the required route scripted and offline. Offer the live-model route
+5. Restart the same command if project skills remain missing after trust.
+6. Explain that Claude Code is the builder. Do not introduce the product's
+   optional Agent SDK connection yet.
+7. Keep the required route scripted and offline. Introduce the live-model route
    only after A5 and only with approved usage, cost, and local authentication.
 8. Reuse an existing console only when it belongs to this lab and its listener
    window is known. Do not start duplicates.
 9. Keep the full skills pack and `/sdlc` mod optional.
-
-Share this text in participant chat before A1:
-
-```text
-Today's SRE repository already includes the project skills for A1–A9. Save the public Claude Code skills pack for selective reuse during the hackathon: https://github.com/AetherLink-bv/claude-code-skills-pack
-
-Do not bulk-install the pack or change global settings during the core route. After the lesson, clone the pack into a separate folder, choose one skill, and paste this prompt into Claude Code:
-
-Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
-```
 
 For the optional route, participants authenticate Claude Code on their own
 machine. Never accept copied credentials or move authentication to a remote
@@ -157,6 +150,18 @@ that you started. Use Ctrl+C in their own terminals after validation.
 - The participant reviews the handoff before Claude saves it.
 
 Never fabricate a name, approval, execution, resolution, or accepted lesson.
+
+After A9, share this text in participant chat:
+
+```text
+You finished A1–A9 with the project skills already included in the SRE repository. Keep your reviewed HANDOFF.md as the hackathon start point.
+
+For selective reuse, open the public Claude Code skills pack: https://github.com/AetherLink-bv/claude-code-skills-pack
+
+Clone it into a separate folder after the lesson. Choose one skill, then paste this prompt into Claude Code:
+
+Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
+```
 
 Claude Code 2.1.319 can warn that a `Write(...)` permission rule never matches
 because that release uses the merged `Edit(...)` tool. Do not weaken project

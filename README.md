@@ -37,7 +37,8 @@ is never the detector.
 You need:
 
 - **Node.js 22 or newer** (check with `node --version`) and npm.
-- **Claude Code**, signed in with your own account (`claude`, then `/login`).
+- **Claude Code**, signed in with your own account
+  (`claude --setting-sources project --strict-mcp-config --no-chrome`, then `/login`).
   Claude Code is your builder.
 - **No API key.** The agent runs offline by default: a scripted investigator
   drives the same tools against the same data. Its output demonstrates the
@@ -51,40 +52,24 @@ cd sre-oncall-agent
 This command checks out the exercise branch directly. The current `main` branch
 contains a separate completed-runtime course.
 
-Review the current path and confirm it is your own clone. Run `claude` at the
-repository root. Accept Claude Code's folder-trust prompt only when the
+Review the current path and confirm it is your own clone. Run
+`claude --setting-sources project --strict-mcp-config --no-chrome` at the repository root.
+This workshop command loads project context without user or global settings.
+The repository disables Claude Code auto memory for this bounded lesson.
+The separate SRE product runtime ignores builder settings and exposes only its
+explicit telemetry tools.
+Accept Claude Code's folder-trust prompt only when the
 displayed path is your own trusted clone. Never bypass trust for an unfamiliar
-folder. Restart `claude` if project skills remain missing after trust.
+folder. Restart the same command if project skills remain missing after trust.
 
 Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
 The lesson only needs a terminal and browser.
 
-### Optional skills pack for the hackathon
-
-The SRE repository already contains the project skills for A1–A9. Do not pause
-the core route for a bulk or global installation. For reuse after the lesson,
-open the public [Claude Code skills pack](https://github.com/AetherLink-bv/claude-code-skills-pack).
-
-Clone the pack into a separate folder. Start Claude Code there:
-
-```sh
-git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
-cd claude-code-skills-pack
-claude
-```
-
-Choose one skill. Ask Claude to propose a project-local install:
-
-```text
-Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
-```
-
-### Optional live-model connection
+### Optional live-model connection after A5
 
 The required route stays scripted and offline. Claude Code is the builder; the
-product's separate live-model path uses the Claude Agent SDK. Prepare your own
-local Claude Code login before A1, but activate the product model only after A5
-and only when your facilitator approves usage and cost.
+product's separate live-model path uses the Claude Agent SDK. Introduce and
+activate this path only after A5, with approved usage and cost.
 
 Never copy credentials into chat, Git, browser fields, remote hosts, or another
 participant's machine. Current Anthropic guidance says the local Agent SDK can
@@ -208,3 +193,24 @@ Claude Code prompts, learner choices, and stop points are in
   closes. The agent may not sign approvals, edit hooks, edit `.claude/`, or
   rewrite `PROGRESS.md`.
 - **No secrets in files.** You do not need an API key for this lab.
+
+## After A9: choose one skill for the hackathon
+
+The SRE repository already contains every project skill used in A1–A9. Finish
+the core route and its reviewed handoff before you add anything. Then open the
+public [Claude Code skills pack](https://github.com/AetherLink-bv/claude-code-skills-pack)
+for selective hackathon reuse.
+
+Clone the pack into a separate folder. Start Claude Code there:
+
+```sh
+git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
+cd claude-code-skills-pack
+claude --setting-sources project --strict-mcp-config --no-chrome
+```
+
+Choose one skill. Ask Claude to propose a project-local install:
+
+```text
+Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
+```

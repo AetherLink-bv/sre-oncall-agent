@@ -18,35 +18,19 @@ promote a lesson, rewrite `PROGRESS.md`, or push.
    ```
 
 2. Review the current path and confirm that this is your own clone.
-3. Run `claude` at the repository root.
+3. Run `claude --setting-sources project --strict-mcp-config --no-chrome` at the repository
+   root. This workshop command loads project context without user or global
+   settings. The repository disables auto memory for this bounded lesson. The
+   separate SRE product runtime ignores builder settings and
+   exposes only its explicit telemetry tools.
 4. Review Claude Code's folder-trust prompt. Accept only when the displayed
    path is your own trusted clone. Never bypass trust for an unfamiliar folder.
-5. Check that the project skills are available. Restart `claude` at the
-   repository root if they remain missing after trust.
+5. Check that the project skills are available. Restart the same command if
+   they remain missing after trust.
 
 Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
 The lesson only needs a terminal and browser. The repository already contains
 the project skills. You do not need the full skills pack.
-
-## Optional before A1: save the public skills pack
-
-Use the included project skills for A1–A9. For later reuse in the hackathon,
-open the public [Claude Code skills pack](https://github.com/AetherLink-bv/claude-code-skills-pack).
-Do not pause the core route for a bulk or global installation.
-
-After the core route, clone the pack into a separate folder:
-
-```sh
-git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
-cd claude-code-skills-pack
-claude
-```
-
-Choose one skill. Ask Claude to propose a project-local install:
-
-```text
-Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
-```
 
 Do not ask Claude Code to rebuild the whole app. The starter already supplies
 the local console, checkout shop, traffic, chaos, fictional fixtures, tests,
@@ -64,63 +48,13 @@ State the blocker and the next focused check.
 Do not run the full suite after every prompt. Run the checks named by the
 current assignment.
 
-## Optional before A1: prepare the live-model connection
-
-Claude Code is already your local builder. The product runtime stays scripted
-and offline for the required route. If your facilitator approves model usage,
-you may connect the product to the Claude Agent SDK after A5, when its read-only
-tool path is complete.
-
-Sign in on your own machine. Run `claude`, then use `/login` only when Claude
-Code asks you to authenticate. Do not copy a login, OAuth token, or API key to
-chat, Git, a browser field, a remote host, or another participant. The current
-Anthropic guidance says a local Agent SDK run can use your Claude Code login;
-it consumes your plan limits. An API key, when intentionally configured, uses
-the linked Console organization and may use paid API credits.
-
-Use this prompt now. It prepares the route without starting the product model:
-
-```text
-Read README.md, src/runtime.ts, src/e2e.ts, console/server.ts, and package.json. Explain the difference between my local Claude Code builder session and the optional Claude Agent SDK product runtime. Check only whether Claude Code is signed in and whether npm run doctor reports the Claude Code login path; never print, read, or copy credentials. Propose the smallest local activation plan that keeps the core lesson offline, waits until after A5, first runs one CLI investigation with max-turns 8 and max-budget-usd 0.30, and only then optionally restarts my own console with AGENT_MODEL=sonnet. Require one completed model diagnosis plus its tool trace. State that the console has no global model-budget guard. Include the usage/cost warning and the fallback that restarts without AGENT_MODEL. Do not run a paid model, edit files, or start processes. Stop for my review.
-```
-
-After A5, run one bounded fixture investigation first:
-
-```sh
-npm run investigate -- fixtures/incidents/bad-deploy.json --model sonnet --max-turns 8 --max-budget-usd 0.30 --dry-run
-```
-
-The SDK checks `--max-budget-usd` between model turns, so one turn can exceed
-it. Strict MCP isolation keeps this lab's model context limited to telemetry.
-
-Review the completed diagnosis, cost line, and tool trace. Only then may you
-stop the console process that you started and launch the optional console path:
-
-```sh
-AGENT_MODEL=sonnet AGENT_LISTEN_WINDOW_MIN=1 npm run console
-```
-
-The console has no global model-budget guard. Open it and submit at most one
-approved `Investigate: ...` message. A model name in
-`/api/health` proves configuration only. A completed diagnosis plus a visible
-tool trace proves that this run used the model path. Stop after one accepted
-proof to control usage. If authentication, plan limits, cost approval, or the
-model run fails, stop your console and return to the required scripted route:
-
-```sh
-env -u AGENT_MODEL AGENT_LISTEN_WINDOW_MIN=1 npm run console
-```
-
-Official references: [Agent SDK quickstart](https://code.claude.com/docs/en/agent-sdk/quickstart)
-and [use the Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan).
-
 ## A1. Map the repo and prove setup
 
 Start with the project skill. The slash command must be the first text in the
 prompt.
 
 ```text
-/show-me Read README.md, WORKSHOP.md, CLAUDE.md, package.json, fixtures/incidents/bad-deploy.json, and the runtime entry points. Give me a shallow repository map of two intake paths: the fixture CLI for INC-1001 and the live console listener that creates a new incident id from shop telemetry. Show where both paths call the shared investigate flow. Stay read-only. Do not generate HTML. Name the four files I should inspect next, then stop.
+/show-me Read CLAUDE.md and fixtures/incidents/bad-deploy.json. Then inspect only src/cli.ts, console/server.ts, and src/agent.ts. Give me a shallow map of two intake paths: the fixture CLI for INC-1001 and the live console listener that creates a new incident id from shop telemetry. Show where both paths call the shared investigate flow. Stay read-only. Do not generate HTML. Name those three entry files and one shared runtime file I should inspect next, then stop.
 ```
 
 Review the map. You must be able to point to the fixture, runtime, trace, and
@@ -225,6 +159,53 @@ registration, tool result, and exact trace arguments.
 
 Stop when `list_deploys` is registered, read-only, tested, and visible in the
 offline trace. No rollback, approval, or mutation tool may exist.
+
+## Optional after A5: connect the product model
+
+Claude Code is already your local builder. The product runtime stays scripted
+and offline for the required route. Its read-only tool path now exists. Connect
+the product to the Claude Agent SDK only when your facilitator approves usage.
+
+Use your own local login. Never copy a login, OAuth token, or API key to chat,
+Git, a browser field, a remote host, or another participant. Current Anthropic
+guidance says a local Agent SDK run can use your Claude Code login and consumes
+your plan limits. An intentionally configured API key uses the linked Console
+organization and may use paid API credits.
+
+Use this prompt before starting the product model:
+
+```text
+Read README.md, src/runtime.ts, src/e2e.ts, console/server.ts, and package.json. Explain the difference between my local Claude Code builder session and the optional Claude Agent SDK product runtime. Check only whether Claude Code is signed in and whether npm run doctor reports the Claude Code login path; never print, read, or copy credentials. Propose the smallest local activation plan that keeps the core lesson offline, waits until after A5, first runs one CLI investigation with max-turns 8 and max-budget-usd 0.30, and only then optionally restarts my own console with AGENT_MODEL=sonnet. Require one completed model diagnosis plus its tool trace. State that the console has no global model-budget guard. Include the usage/cost warning and the fallback that restarts without AGENT_MODEL. Do not run a paid model, edit files, or start processes. Stop for my review.
+```
+
+Run one bounded fixture investigation first:
+
+```sh
+npm run investigate -- fixtures/incidents/bad-deploy.json --model sonnet --max-turns 8 --max-budget-usd 0.30 --dry-run
+```
+
+The SDK checks `--max-budget-usd` between model turns, so one turn can exceed
+it. Strict MCP isolation keeps this lab's model context limited to telemetry.
+
+Review the completed diagnosis, cost line, and tool trace. Only then may you
+stop the console process that you started and launch the optional console path:
+
+```sh
+AGENT_MODEL=sonnet AGENT_LISTEN_WINDOW_MIN=1 npm run console
+```
+
+The console has no global model-budget guard. Submit at most one approved
+`Investigate: ...` message. A model name in `/api/health` proves configuration
+only. A completed diagnosis plus a visible tool trace proves that this run used
+the model path. Stop after one accepted proof. If authentication, plan limits,
+cost approval, or the model run fails, return to the scripted route:
+
+```sh
+env -u AGENT_MODEL AGENT_LISTEN_WINDOW_MIN=1 npm run console
+```
+
+Official references: [Agent SDK quickstart](https://code.claude.com/docs/en/agent-sdk/quickstart)
+and [use the Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan).
 
 ## A6. Diagnose a live sample incident
 
@@ -351,6 +332,27 @@ Save the exact handoff text I just approved to HANDOFF.md. Ask before writing th
 Ask a partner to read only `HANDOFF.md` and name the next step. Stop when the
 partner can continue without guessing and every human action still appears as
 `HUMAN OPEN`.
+
+## After A9: choose one skill for the hackathon
+
+The repository already included every project skill used in A1–A9. Keep the
+reviewed handoff as your hackathon start point. Then open the public
+[Claude Code skills pack](https://github.com/AetherLink-bv/claude-code-skills-pack)
+for selective reuse. Do not bulk-install the pack or change global settings.
+
+Clone the pack into a separate folder:
+
+```sh
+git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
+cd claude-code-skills-pack
+claude --setting-sources project --strict-mcp-config --no-chrome
+```
+
+Choose one skill. Ask Claude to propose a project-local install:
+
+```text
+Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
+```
 
 ## Optional course mod
 

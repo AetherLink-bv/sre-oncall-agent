@@ -64,6 +64,12 @@ test("permission boundaries: secrets, approvals and bypass locked down", () => {
     assert.ok(deny.includes(p), `deny must cover ${p}`);
   }
   assert.equal(settings.disableBypassPermissionsMode, "disable");
+  assert.equal(settings.autoMemoryEnabled, false, "builder sessions must not load global auto memory");
+});
+
+test("the product SDK ignores builder context, auto memory and Claude in Chrome", () => {
+  const source = readFileSync("src/runtime.ts", "utf8");
+  assert.match(source, /settingSources: \[\],[\s\S]*strictMcpConfig: true,[\s\S]*CLAUDE_CODE_DISABLE_AUTO_MEMORY: "1"[\s\S]*"no-chrome": null/);
 });
 
 test("approve.mjs is not callable by the agent", () => {
@@ -71,10 +77,12 @@ test("approve.mjs is not callable by the agent", () => {
   assert.match(deny, /scripts\/approve|npm run approve/);
 });
 
-test("PROGRESS.md: the agent appends via npm run progress:note; Edit/Write stay denied", () => {
+test("PROGRESS.md stays denied while ordinary repo edits stay allowed", () => {
   const { allow, deny } = settings.permissions;
   assert.ok(allow.includes("Bash(npm run progress*)"), "progress:note is covered by the allow list");
   assert.ok(deny.includes("Edit(./PROGRESS.md)") && deny.includes("Write(./PROGRESS.md)"), "direct edits stay denied");
   const pkg = JSON.parse(readFileSync("package.json", "utf8"));
   assert.equal(pkg.scripts["progress:note"], "node scripts/progress-note.mjs");
+  const guard = readFileSync(".claude/hooks/guard.mjs", "utf8");
+  assert.ok(guard.includes('decide("allow", "ordinary repo edit")'));
 });
