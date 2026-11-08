@@ -1,138 +1,217 @@
 # SRE on-call lab — Workshop 5 (AI-native SDLC)
 
-This lab teaches the AI software delivery lifecycle by changing a local SRE
-first responder. Claude Code is the development assistant from the first
-minutes; it is distinct from the runtime SRE agent being built. That agent
-reads telemetry, forms an evidence-backed diagnosis and proposes one next
-step. Participants turn observed evidence into an accepted intent, review a
-plan, repair and test code, review the actual diff, make a human release
-decision (or record `RELEASE BLOCKED`), observe runtime results and propose a
-reviewed next task.
+In this lab you build an AI first responder for a small checkout service, with
+Claude Code as your builder. An alert fires. The agent reads the telemetry,
+the deploy history and the logs. It posts one diagnosis with a reference
+behind every claim, and it proposes ONE next step. A named human decides.
+After the human acts, the agent watches the metric and reports if the fix
+landed.
 
 The agent **cannot** roll back, scale, flip a flag or page anyone. That is the
 design: the agent gathers evidence, proposes, verifies and communicates;
 humans decide what to mitigate and when.
 
-The CLI, launcher, shop and console run locally; SDK model calls use your
-configured provider. All data is fictional.
+Everything runs on your own machine. All data is fictional.
 
 ![The on-call loop: alert → investigation → recovery](docs/diagrams/01-architecture.svg)
 
 ## The scenario
 
-| Part | What it is | Where |
+| Part | Command | Where |
 | --- | --- | --- |
-| **Checkout shop** | a mock checkout API with a demo storefront and fault buttons | `http://127.0.0.1:4310` (health: `/health`) |
-| **Traffic** | steady checkouts against the shop | the lab terminal |
-| **Console** | the on-call desk: incidents, chat with the agent, approve/execute/resolve buttons, a JSON API | `http://127.0.0.1:4320` |
-| **Hub** | the participant card with the live next step | `http://127.0.0.1:4320/hub` |
-| **Chaos** | your lever to break the shop: a bad deploy, slow latency or errors | `npm run chaos -- deploy v2.15.0 --mode bad-deploy`, or a fault button in the shop |
-
-`npm start` runs the shop, the traffic and the console together. Breaking the
-shop is always a separate action: you choose when.
+| **Checkout shop** — a mock checkout service that writes its own telemetry | `npm run shop` | `http://localhost:4310` |
+| **Traffic** — steady checkouts against the shop | `npm run traffic` | — |
+| **Chaos** — your lever to break the shop: a bad deploy, slow latency or errors | `npm run chaos -- deploy v2.15.0 --mode bad-deploy` | modes: `healthy`, `bad-deploy`, `slow`, `errors` |
+| **Console** — the on-call desk: incidents, chat with the agent, approve/execute/resolve buttons, and a JSON API | `npm run console` | `http://localhost:4320` (health: `/api/health`) |
 
 The reference incident is **INC-1001** (`fixtures/incidents/bad-deploy.json`):
-the checkout error rate jumps after a deploy. The tests and the bench replay
-it from fixtures. When you break the live shop, the console's listener opens a
-new incident (`INC-<number>`) after the error rate stays above 2% or p95 above
-2000 ms for about 5 minutes (1 minute with `npm start -- --fast`). The agent is
-never the detector.
+the checkout error rate jumps after a deploy. The tutorial, the tests and the
+bench replay it from fixtures. When you break the live shop, the console's
+listener opens a new incident with its own id (`INC-<number>`). The listener
+uses fixed criteria (error rate above 2% or p95 above 2000 ms, sustained for
+about 5 minutes; set `AGENT_LISTEN_WINDOW_MIN=1` for a faster demo). The agent
+is never the detector.
 
-## Set up and run
+## Participant start
 
-You need **Git** and **Node.js 22 or newer**. Install Claude Code using the
-[official setup instructions](https://code.claude.com/docs/en/setup); the
-[setup guide](docs/claude-code.md) includes platform commands and explains
-separate Agent SDK authentication.
+You need:
 
-**Terminal 1 — start Claude Code in the starter**
-```bash
-git clone https://github.com/RyanLisse/sre-oncall-agent.git
+- **Node.js 22 or newer** (check with `node --version`) and npm.
+- **Claude Code**, signed in with your own account
+  (`claude --setting-sources project --strict-mcp-config --no-chrome`, then `/login`).
+  Claude Code is your builder.
+- **No API key.** The agent runs offline by default: a scripted investigator
+  drives the same tools against the same data. Its output demonstrates the
+  pipeline; it is not model evidence.
+
+```sh
+git clone --branch workshop/start --single-branch https://github.com/AetherLink-bv/sre-oncall-agent.git
 cd sre-oncall-agent
-npm run checkpoint -- start                    # current committed starter copy
-cd .lab/checkpoints/start
-claude
 ```
 
-Submit the read-only assistant prompt in [CARD.md](CARD.md) after the
-lifecycle introduction and before code edits.
+This command checks out the exercise branch directly. The current `main` branch
+contains a separate completed-runtime course.
 
-**Terminal 2 — configure SDK access and start the lab**
+Review the current path and confirm it is your own clone. Run
+`claude --setting-sources project --strict-mcp-config --no-chrome` at the repository root.
+This workshop command loads project context without user or global settings.
+The repository disables Claude Code auto memory for this bounded lesson.
+The separate SRE product runtime ignores builder settings and exposes only its
+explicit telemetry tools.
+Accept Claude Code's folder-trust prompt only when the
+displayed path is your own trusted clone. Never bypass trust for an unfamiliar
+folder. Restart the same command if project skills remain missing after trust.
 
-From the original clone root, configure a supported SDK provider in the shell
-as described in the setup guide, then run:
+Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
+The lesson only needs a terminal and browser.
+
+### Optional live-model connection
+
+The required route stays scripted and offline. Claude Code is the builder; the
+product's separate live-model path uses the Claude Agent SDK. Prepare your own
+local Claude Code login before A1, but activate the product model only after A5
+and only when your facilitator approves usage and cost.
+
+Never copy credentials into chat, Git, browser fields, remote hosts, or another
+participant's machine. Current Anthropic guidance says the local Agent SDK can
+use your Claude Code login and then consumes your plan limits. An intentionally
+configured API key uses the linked Console organization and may consume paid
+API credits.
+
+After A5, prove the model path with one bounded fixture run:
+
+```sh
+npm run investigate -- fixtures/incidents/bad-deploy.json --model sonnet --max-turns 8 --max-budget-usd 0.30 --dry-run
+```
+
+The SDK checks `--max-budget-usd` between model turns, so one turn can exceed
+it. Strict MCP isolation keeps this lab's model context limited to telemetry.
+
+Review the completed diagnosis, cost line, and tool trace. Only then may you
+stop your own console and restart it with:
+
+```sh
+AGENT_MODEL=sonnet AGENT_LISTEN_WINDOW_MIN=1 npm run console
+```
+
+The console has no global model-budget guard. Submit at most one approved
+`Investigate: ...` message. The health model name proves readiness only. Keep
+the completed diagnosis and visible tool trace as the model-path proof. Stop
+after one accepted proof. If authentication, plan limits, cost approval, or the
+run fails, clear any exported model override and restart the required route:
+
+```sh
+env -u AGENT_MODEL AGENT_LISTEN_WINDOW_MIN=1 npm run console
+```
+
+See Anthropic's [Agent SDK quickstart](https://code.claude.com/docs/en/agent-sdk/quickstart)
+and [Claude plan guidance](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan).
+
+Open [SOLO.md](SOLO.md#a1-map-the-repo-and-prove-setup). Start A1 with the
+explicit `/show-me` prompt. It creates a read-only text map of the fixture,
+runtime, trace, and console path. The second A1 prompt runs setup checks. The
+main suite must pass. Only the A3, A4, A5, and A8 workshop tests must fail on
+their exercise TODOs. `npm run workshop:check` locates unfinished markers. It
+is not a completion gate.
+
+Facilitators use [`FACILITATOR.md`](FACILITATOR.md) for the schedule, expected
+starter failures and the manual fallback.
+
+For a visual route through the AI-SDLC, start Claude Code with
+`claude --plugin-dir ./course/ai-sdlc-mod` and run `/sdlc`. The optional mod
+reads the first prompt from each A1–A9 section in `SOLO.md` and leaves every
+human gate intact. Use the remaining copy prompts from `SOLO.md` or the slides.
+
+## Run it
+
+Use four separate terminals. Keep the console, shop, and traffic running.
+Run the chaos command once in the fourth terminal.
+
+| Terminal | Command |
+| --- | --- |
+| 1 | `AGENT_LISTEN_WINDOW_MIN=1 npm run console` |
+| 2 | `npm run shop` |
+| 3 | `npm run traffic` |
+| 4 | `npm run chaos -- deploy v2.15.0 --mode bad-deploy` |
+
+The one-minute listener setting belongs on the console process. Production
+uses the default five-minute window. Stop only processes that you started.
+
+Other useful commands:
 
 ```bash
-cd .lab/checkpoints/start
-npm ci
-npm run fixtures
-npm run model:check                           # must pass before fault injection
-npm start -- --fast                           # starts the real-model lab
+npm run demo                 # the whole loop on a bad deploy, about 2 minutes
+npm run doctor               # preflight check
+npm run progress             # which assignments have local signals; validation stays OPEN
+npm run workshop:check       # locate unfinished markers; not a completion gate
+npm run investigate -- fixtures/incidents/bad-deploy.json --dry-run   # INC-1001 from fixtures
 ```
-
-Keep terminal 2 open; Ctrl+C stops only processes it started. Use `/login`
-only for the interactive CLI if needed; inspect
-`.claude/settings.json` to verify hooks. `/status` is not SDK proof.
-
-| Command | What it does |
-| --- | --- |
-| `npm run hub` | open the participant card (live when the lab runs) |
-| `npm run chaos -- deploy v2.15.0 --mode bad-deploy` | break the shop on purpose |
-| `npm run checkpoint -- core-2` | tool-solved copy with the A8 gate still cut; intermediate Core 2 catch-up |
-| `npm run checkpoint -- core-3` | solved reference with no exercise cuts |
-| `npm run doctor` | preflight check |
-| `npm run demo` | legacy auto-approving script; do not use for the human-gated route |
-| `npm run progress` | which assignments already have file evidence |
-
-## The assignment: three core tasks
-
-| Core | You do |
-| --- | --- |
-| **1 · Specify from evidence** | Verify the diagnosis and its references, then draft and human-accept an intent from the observed data. |
-| **2 · Design, build and verify** | Create a human-owned baseline. Review a plan before each repair, restore `list_deploys`, check the same incident, repair `checkApproval`, then run full verification. |
-| **3 · Review, release and learn** | Review the actual diff first. Make a human PR/release decision or record `RELEASE BLOCKED`, observe runtime evidence and recovery, then review one next task. |
-
-Neither checkpoint proves participant-authored work. `core-2` is an
-intermediate catch-up point with the tool solved and the A8 gate still cut;
-`core-3` is the solved reference. The canonical actions, prompts and proof for
-each core are on **[CARD.md](CARD.md)**. The facilitator run sheet is
-**[FACILITATOR.md](FACILITATOR.md)**; **[WORKSHOP.md](WORKSHOP.md)** is the
-overview. Working alone? Follow **[SOLO.md](SOLO.md)**. Intent, planning,
-diff review and release decisions are required, not optional depth. Skills,
-hooks, subagents and adding a bench case are optional extensions. Human-only
-baseline, approval and learner-repository steps are in
-**[docs/sdlc-git.md](docs/sdlc-git.md)**.
-
-The solo route does not require slides or a facilitator. It includes setup,
-self-review, pause/resume guidance and a blocked-release outcome when access
-or independent review is missing. The [concept course](course/index.html)
-is optional background, not a replacement for the three-core assignment.
-The old [runtime explainer](docs/video/README.md) and dated verification
-records are historical evidence, not instructions for the current workshop.
-
-Historical `w5-core-*` tags are archived references only. The current
-safety-tested starter is generated from committed `HEAD` by `npm run checkpoint`.
 
 ## The file flow
 
-The required evidence trail includes `docs/diagnosis-live.md`, accepted
-`intent.md`, reviewed `docs/plan.md`, actual checks and review in
-`docs/verify/sdlc.md`, and an append-only `PROGRESS.md` note
-(`npm run progress:note -- "…"`). `docs/spec.md` records the existing
-diagnosis contract; it constrains the plan.
+Each step of the AI SDLC leaves one file behind. Write them in this order:
+
+1. **`intent.md`** — who the agent serves, the boundary, and three checks a
+   stranger can verify.
+2. **`docs/spec.md`** — the contract the code must meet.
+3. **`docs/plan.md`** — the steps, smallest first, and the checks.
+4. **`PROGRESS.md`** — the build log: append-only. The progress hook appends
+   an entry when it sees a local signal for an assignment. Validation stays
+   OPEN until the actual checks are reviewed separately. You add your own lines
+   at the bottom. Nobody rewrites old lines.
+5. **`REVIEW.md`** — the review checklist you run before you share a change.
+
+## The assignment
+
+Build the agent piece by piece, test first: **Intent → Spec → Design/controls
+→ Build → Test/evals → Gate → Maintain.** The `workshop/start` branch has
+four pieces removed (`TODO(A3/A4/A5/A8)`); the red tests in `test/workshop/`
+turn green as you rebuild them.
+
+| # | Assignment |
+| --- | --- |
+| A1 | Map the repo and prove setup |
+| A2 | Write a reviewed `intent.md` with three repeatable checks |
+| A3 | Accept, build, and verify the `customer_impact` verdict contract; `/verify-this` returns `VERIFIED`, `NOT VERIFIED`, or `INCONCLUSIVE` |
+| A4 | Build chat refusal; add the protected-file hook rule by hand |
+| A5 | Build `list_deploys` and remove the starter bypasses |
+| A6 | Start a sample incident and trace every diagnosis claim |
+| A7 | Add one deterministic offline fixture case without lowering the floor |
+| A8 | Test the exact incident-and-action gate; keep human action OPEN |
+| A9 | Propose a lesson, define the hackathon, review and save the handoff |
+
+The classroom goals and checks are in **[WORKSHOP.md](WORKSHOP.md)**. The exact
+Claude Code prompts, learner choices, and stop points are in
+**[SOLO.md](SOLO.md)**. Use the same SOLO prompts in a team or alone.
 
 ## The rules
 
-- **Local boundary.** The CLI, launcher, shop and console run on your machine.
-  A real SDK call uses your configured provider; the guard still denies
-  unrelated network calls.
-- **Human-owned release.** Use your own fork or a facilitator-provided learner
-  repository for the required PR exercise. A human reviews, commits, approves,
-  pushes, opens the PR and makes the merge decision. Follow
-  [docs/sdlc-git.md](docs/sdlc-git.md); never push the training baseline to
-  upstream.
+- **Local only.** Everything runs on your machine. The agent has no network
+  access: the guard hook denies network calls.
+- **Push nothing.** Commit locally if you like, but do not push branches, open
+  pull requests or deploy anything. The guard hook denies `git push`.
 - **Humans decide.** The agent proposes; a named human approves, executes and
   closes. The agent may not sign approvals, edit hooks, edit `.claude/`, or
   rewrite `PROGRESS.md`.
-- **No secrets in files.** Configure an SDK key or supported provider in the
-  shell only. A Claude Code login does not prove SDK access.
+- **No secrets in files.** You do not need an API key for this lab.
+
+## After A9: choose one skill for the hackathon
+
+The SRE repository already contains every project skill used in A1–A9. Finish
+the core route and its reviewed handoff before you add anything. Then open the
+public [Claude Code skills pack](https://github.com/AetherLink-bv/claude-code-skills-pack)
+for selective hackathon reuse.
+
+Clone the pack into a separate folder. Start Claude Code there:
+
+```sh
+git clone https://github.com/AetherLink-bv/claude-code-skills-pack.git
+cd claude-code-skills-pack
+claude --setting-sources project --strict-mcp-config --no-chrome
+```
+
+Choose one skill. Ask Claude to propose a project-local install:
+
+```text
+Read README.md and inspect the skill I choose. Explain what it does and its requirements. Propose installing only that skill in my chosen project's .claude/skills folder. Check for an existing skill with that name and preserve it. Show the source and target paths. Ask for my approval before copying or replacing anything. Do not install the full pack, change global settings, or run the skill yet.
+```

@@ -114,7 +114,7 @@ test("the required route teaches delivery artifacts before optional depth", () =
   assert.match(core, /not a production deployment/);
 });
 
-test("the lifecycle introduction precedes setup in both participant views", () => {
+test("the completed-runtime course introduces its lifecycle before setup", () => {
   for (const file of ["CARD.md", "hub/index.html"]) {
     const text = readFileSync(file, "utf8");
     const introduction = text.indexOf("Start with the AI SDLC");
@@ -126,7 +126,4 @@ test("the lifecycle introduction precedes setup in both participant views", () =
     assert.match(opening, /practice systems, not the learning goal/);
     assert.doesNotMatch(text, /before theory/);
   }
-  const facilitator = readFileSync("FACILITATOR.md", "utf8");
-  assert.match(facilitator, /Start with the AI SDLC/);
-  assert.doesNotMatch(facilitator, /Start with the shop|before theory/);
 });

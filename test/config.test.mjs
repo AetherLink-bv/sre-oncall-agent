@@ -7,15 +7,14 @@ const settings = JSON.parse(readFileSync(".claude/settings.json", "utf8"));
 
 test("solo participants have a complete route without a facilitator", () => {
   const solo = readFileSync("SOLO.md", "utf8");
-  const route = solo.split("## Optional legacy offline reference")[0];
-  for (const section of ["Before you start", "Core 1", "Core 2", "Core 3", "Completion checklist", "Review when you are the only participant", "Pause, resume or get unstuck"]) {
+  const route = solo.split("## Optional course mod")[0];
+  for (const section of ["Open the project in a terminal", ...Array.from({ length: 9 }, (_, index) => `A${index + 1}.`), "After A9: choose one skill for the hackathon"]) {
     assert.ok(route.includes(section), section);
   }
-  assert.match(route, /without a facilitator or a presentation/);
-  assert.match(route, /self-review; no independent\s+reviewer/);
-  assert.match(route, /RELEASE BLOCKED/);
-  assert.match(route, /restart archives old telemetry/);
-  assert.match(solo, /Step 0 expects solved code/);
+  assert.match(route, /one assignment at a time/i);
+  assert.match(route, /Stop at each review point/);
+  assert.match(route, /project skills are available/);
+  assert.match(route, /full skills pack.*After A9/is);
   for (const file of ["PARTICIPANT.md", "WORKSHOP.md", "AGENTS.md", "CLAUDE.md", "CARD.md", "hub/index.html"]) {
     assert.ok(readFileSync(file, "utf8").includes("SOLO.md"), file);
   }
@@ -74,6 +73,7 @@ test("permission boundaries: secrets, approvals and bypass locked down", () => {
     assert.ok(deny.includes(p), `deny must cover ${p}`);
   }
   assert.equal(settings.disableBypassPermissionsMode, "disable");
+  assert.equal(settings.autoMemoryEnabled, false, "builder sessions must not load global auto memory");
 });
 
 test("approve.mjs is not callable by the agent", () => {

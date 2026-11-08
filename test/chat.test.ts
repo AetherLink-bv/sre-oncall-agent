@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { ask, routeMessage } from "../src/chat.js";
+import type { QueryFn } from "../src/runtime.js";
 import { loadTelemetry } from "../src/telemetry.js";
 
 test("watch commands route to the grammar, not the model", () => {
@@ -39,7 +40,7 @@ test("the offline A6 challenge answer cites replayable snapshot evidence", async
   assert.equal(telemetry.ok, true);
   if (!telemetry.ok) throw new Error("unreachable");
 
-  const answer = await ask("Could this be something other than the deployment?", { telemetry: telemetry.value });
+  const answer = await ask("Could this be something other than the deployment?", { telemetry: telemetry.value, model: "offline" });
   assert.match(answer, /^\(offline investigator — scripted, not model evidence\)/);
   assert.match(answer, /Stored telemetry snapshot \[metrics:2026-10-05T03:45:00\.000Z\]/);
   assert.match(answer, /\[deploys:d-4821\]/);
@@ -55,8 +56,21 @@ test("a question labels the saved diagnosis snapshot and avoids a stale version 
   const answer = await ask("What evidence did the diagnosis use?", {
     telemetry: telemetry.value,
     telemetryContext: "Diagnosis snapshot; current telemetry not checked",
+    model: "offline",
   });
   assert.match(answer, /Diagnosis snapshot; current telemetry not checked \[metrics:/);
   assert.match(answer, /bucket may span a deploy/);
   assert.doesNotMatch(answer, / on v2\.14\.0/);
+});
+
+test("product model questions ignore builder settings", async () => {
+  const telemetry = await loadTelemetry("fixtures/telemetry/bad-deploy.json");
+  assert.equal(telemetry.ok, true);
+  if (!telemetry.ok) throw new Error("unreachable");
+  const query: QueryFn = async function* ({ options }) {
+    assert.deepEqual(options.settingSources, []);
+    yield { type: "result", subtype: "success", result: "explicit tools only" };
+  };
+  const answer = await ask("What changed?", { telemetry: telemetry.value, model: "sonnet", query });
+  assert.equal(answer, "explicit tools only");
 });

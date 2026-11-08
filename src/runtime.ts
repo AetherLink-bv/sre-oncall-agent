@@ -60,7 +60,16 @@ const KNOWN = new Set(["assistant", "user", "result", "system"]);
 export const sdkQuery: QueryFn = async function* ({ prompt, options }) {
   let sawResult = false;
   try {
-    for await (const message of query({ prompt, options: { ...options, strictMcpConfig: true } })) {
+    for await (const message of query({
+      prompt,
+      options: {
+        ...options,
+        settingSources: [],
+        strictMcpConfig: true,
+        env: { ...process.env, ...options.env, CLAUDE_CODE_DISABLE_AUTO_MEMORY: "1" },
+        extraArgs: { ...options.extraArgs, "no-chrome": null },
+      },
+    })) {
       sawResult ||= message.type === "result";
       yield (KNOWN.has(message.type) ? message : { type: "other" }) as AgentEvent;
     }
@@ -104,17 +113,24 @@ export const offlineVerdict = (incident: Incident, t: Telemetry): Verdict => {
   const stillPresent = metrics.breakpoints.length > 0 && (metrics.error_rate_last >= 0.01 || metrics.p95_ms_last >= 1000);
 
   if (!bp) {
+    const hasMetrics = metrics.points > 0;
     return {
       ...base,
       tag: "noise",
       severity: "morning-log",
-      confidence: "medium",
-      hypothesis: "No breakpoint in error_rate or p95 in the hour before the alert. The alert may be a threshold too tight for this traffic pattern.",
-      customer_impact: "None observed in the data: error rate and latency are within their thresholds.",
+      confidence: hasMetrics ? "medium" : "low",
+      hypothesis: hasMetrics
+        ? "No breakpoint in error_rate or p95 in the hour before the alert. The alert may be a threshold too tight for this traffic pattern."
+        : "OPEN — no metric points were available, so the alert cause and current condition cannot be assessed.",
+      customer_impact: hasMetrics
+        ? "None observed in the available aggregate metrics: error rate and latency are within their thresholds."
+        : "OPEN — no metric points were available to assess customer impact.",
       evidence: [{ source: "metrics", ref: metrics.last_ts ?? "window", note: `error_rate_max ${metrics.error_rate_max}, p95_max ${metrics.p95_ms_max} ms, no ≥2× jump` }],
-      blast_radius: "none observed — no customer-facing metric moved",
-      proposal: "no-action",
-      ruled_out: [`bad deploy: ${deploys.length} deploy(s) in window, none followed by a breakpoint`],
+      blast_radius: hasMetrics
+        ? "none observed in the available aggregate metrics"
+        : "OPEN — no metric points were available to assess affected traffic, versions, regions, or customer segments",
+      proposal: hasMetrics ? "no-action" : "investigate-more",
+      ruled_out: deploys.length > 0 ? [`bad deploy: ${deploys.length} deploy(s) in window, none followed by a breakpoint`] : [],
       would_change_my_mind: "a ≥2× jump in error_rate or p95 inside the window",
       data_gaps: gaps,
       watch_metric: "error_rate",
@@ -165,10 +181,10 @@ export const offlineVerdict = (incident: Incident, t: Telemetry): Verdict => {
       tag: "latency",
       severity: paging ? "page" : "morning-log",
       confidence: "medium",
-      hypothesis: `p95 doubled at ${bp.ts} with no deploy in the window. Latency without errors or a change points at load or a dependency.`,
-      customer_impact: `Customers on ${t.service} wait roughly twice as long since ${bp.ts}; no failures seen yet.`,
+      hypothesis: `p95 doubled at ${bp.ts}. ${deploys.length > 0 ? "No listed deploy is close enough to explain the breakpoint." : "Deployment evidence is unavailable, so deployment causality remains OPEN."} The cause remains OPEN.`,
+      customer_impact: `${t.service} aggregate p95 increased from ${bp.from} to ${bp.to} ms; affected endpoints, regions, and traffic share remain OPEN.`,
       evidence: [{ source: "metrics", ref: bp.ts, note: `p95 ${bp.from} → ${bp.to} ms` }, ...logEvidence],
-      blast_radius: `every ${t.service} request slower; nothing failing (error_rate ${metrics.error_rate_last})`,
+      blast_radius: `${t.service} aggregate p95 is ${metrics.p95_ms_last} ms; affected endpoints, regions, and traffic share remain OPEN`,
       proposal: logEvidence.length > 0 ? "scale" : "investigate-more",
       ruled_out: noDeployBehind,
       would_change_my_mind: "a deploy or config change in the window, or latency confined to one endpoint",
@@ -182,10 +198,10 @@ export const offlineVerdict = (incident: Incident, t: Telemetry): Verdict => {
     tag: "errors",
     severity: paging ? "page" : "morning-log",
     confidence: "low",
-    hypothesis: `error_rate jumped at ${bp.ts} with no deploy in the window. Cause not yet found.`,
-    customer_impact: `Some customers on ${t.service} are hitting errors since ${bp.ts}; blast radius not yet quantified.`,
+    hypothesis: `error_rate jumped at ${bp.ts}. ${deploys.length > 0 ? "No listed deploy is close enough to explain the breakpoint." : "Deployment evidence is unavailable, so deployment causality remains OPEN."} Cause not yet found.`,
+    customer_impact: `${t.service} aggregate error_rate increased from ${bp.from} to ${bp.to}; affected customers, regions, versions, and traffic share remain OPEN.`,
     evidence: [{ source: "metrics", ref: bp.ts, note: `error_rate ${bp.from} → ${bp.to}` }, ...logEvidence],
-    blast_radius: `error_rate ${metrics.error_rate_last} on ${t.service}; cause unknown`,
+    blast_radius: `${t.service} aggregate error_rate is ${metrics.error_rate_last}; affected customers, regions, versions, and traffic share remain OPEN`,
     proposal: "investigate-more",
     ruled_out: [...noDeployBehind, "latency: p95 flat"],
     would_change_my_mind: "an error log line naming the failing dependency or endpoint",
