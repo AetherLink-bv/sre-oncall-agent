@@ -11,7 +11,7 @@ or deploy from this lab. The agent may not approve, execute, resolve, edit
 ## Start on the exercise branch
 
 ```bash
-git clone https://github.com/RyanLisse/sre-oncall-agent.git
+git clone https://github.com/AetherLink-bv/sre-oncall-agent.git
 cd sre-oncall-agent
 git switch workshop/start
 claude
