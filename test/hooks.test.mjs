@@ -151,7 +151,7 @@ test("repo root comes from git, not the folder name: a clone in any folder works
   };
   const w = (file_path) => g({ tool_name: "Write", tool_input: { file_path } });
   for (const root of [dir, realpathSync(dir)]) {
-    assert.equal(w(`${root}/src/contract.ts`), "allow", "ordinary edit inside the renamed repo");
+    assert.equal(w(`${root}/src/contract.ts`), "allow", `ordinary edit inside the renamed repo (${root})`);
     assert.equal(w(`${root}/docs/diagnoses/INC-1.md`), "allow", "agent artefact in the renamed repo");
     assert.equal(w(`${root}/.claude/settings.json`), "deny", ".claude stays human-owned");
     assert.equal(w(`${root}/PROGRESS.md`), "deny", "PROGRESS.md stays hook-owned");
