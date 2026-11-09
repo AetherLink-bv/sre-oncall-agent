@@ -8,6 +8,19 @@ import { join, sep } from "node:path";
 
 const settings = JSON.parse(readFileSync(".claude/settings.json", "utf8"));
 
+test("solo route has six required assignments and optional depth", () => {
+  const solo = readFileSync("SOLO.md", "utf8");
+  const route = solo.split("## Optional A7.")[0];
+  for (const section of ["## Set up once", ...Array.from({ length: 6 }, (_, index) => `## A${index + 1}.`)]) {
+    assert.ok(route.includes(section), section);
+  }
+  assert.equal([...route.matchAll(/^## A\d+\./gm)].length, 6);
+  assert.match(solo, /^## Optional A7\./m);
+  assert.match(solo, /^## Optional A9\./m);
+  assert.match(solo, /^## Appendix: public skills pack/m);
+  for (const tag of ["day5-after-a3", "day5-after-a5", "day5-after-a6"]) assert.match(route, new RegExp(tag));
+});
+
 test("every configured hook is a quoted node command on a committed file", () => {
   const groups = ["PreToolUse", "PostToolUse", "SessionStart", "Stop"];
   const seen = new Set();
