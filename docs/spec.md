@@ -1,6 +1,6 @@
 # Spec — the diagnosis contract (A3)
 
-<fill in as part of A3: the verdict shape the console and the executor rely on>
+The console and the executor rely on the verdict shape above. A verdict is accepted only when these five rules hold; `parseVerdict` enforces them and `test/workshop/contract.test.ts` checks them.
 
 ## Verdict contract
 
@@ -22,4 +22,8 @@ Every diagnosis is one JSON object (`src/contract.ts` `parseVerdict`):
 | `draft_only`, `human_approval_required` | literal `true` |
 
 ## Rules worth writing down
-- <fill in>
+1. `customer_impact` is required and non-empty.
+2. A rollback proposal needs a `deploys` evidence line.
+3. A strong proposal needs at least two evidence sources: one signal is a hunch.
+4. Low confidence cannot carry a strong proposal.
+5. A missing signal is unknown, not healthy: `high` confidence is refused while `data_gaps` exist.

@@ -179,6 +179,7 @@ const main = async (): Promise<number> => {
   console.log(`What's happening:        ${rec.hypothesis}`);
   console.log(`Root cause (${rec.confidence}):`);
   rec.evidence.forEach((e) => console.log(`  - ${e.source}:${e.ref} — ${e.note}`));
+  console.log(`Customer impact:         ${rec.customer_impact}`);
   console.log(`Blast radius:            ${rec.blast_radius}`);
   console.log(`Proposed fix:            ${rec.proposal} → ${rec.owner}; watch ${rec.watch_metric} afterwards`);
   console.log(`Ruled out:               ${rec.ruled_out.length > 0 ? rec.ruled_out.join(" | ") : "(nothing)"}`);

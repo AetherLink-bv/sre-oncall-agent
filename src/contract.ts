@@ -57,6 +57,8 @@ export interface Verdict {
   readonly confidence: Confidence;
   /** "What's happening" — one sentence that passes the fresh-reader test. */
   readonly hypothesis: string;
+  /** What users see, in one sentence, or "none observed". Must be non-empty. */
+  readonly customer_impact: string;
   readonly evidence: readonly EvidenceRef[];
   readonly blast_radius: string;
   readonly proposal: Proposal;
@@ -89,6 +91,7 @@ export const VERDICT_SCHEMA = {
     "severity",
     "confidence",
     "hypothesis",
+    "customer_impact",
     "evidence",
     "blast_radius",
     "proposal",
@@ -105,6 +108,7 @@ export const VERDICT_SCHEMA = {
     severity: { type: "string", enum: [...SEVERITIES] },
     confidence: { type: "string", enum: [...CONFIDENCES] },
     hypothesis: { type: "string", minLength: 1 },
+    customer_impact: { type: "string", minLength: 1 },
     evidence: {
       type: "array",
       minItems: 1,
@@ -199,7 +203,7 @@ const parseEvidence = (raw: unknown, i: number): string[] => {
 export const parseVerdict = (raw: unknown): Result<Verdict> => {
   if (!isObject(raw)) return fail(["verdict: expected a JSON object"]);
   const errors = [
-    ...["incident_id", "hypothesis", "blast_radius", "would_change_my_mind", "watch_metric"].flatMap((k) => nonEmpty(raw, k)),
+    ...["incident_id", "hypothesis", "customer_impact", "blast_radius", "would_change_my_mind", "watch_metric"].flatMap((k) => nonEmpty(raw, k)),
     ...oneOf(raw, "tag", TAGS),
     ...oneOf(raw, "severity", SEVERITIES),
     ...oneOf(raw, "confidence", CONFIDENCES),
@@ -222,13 +226,21 @@ export const parseVerdict = (raw: unknown): Result<Verdict> => {
   if (errors.length > 0) return fail(errors);
 
   const verdict = raw as unknown as Verdict;
-  // TODO(A3): rebuild the evidence rules. test/workshop/contract.test.ts is red:
-  //   - a strong proposal needs evidence from at least 2 sources,
-  //   - rollback needs a deploys evidence line,
-  //   - low confidence cannot carry a strong proposal,
-  //   - high confidence is refused while data_gaps is non-empty
-  //     (a missing signal is unknown, not healthy),
-  //   - and the verdict must carry a non-empty `customer_impact`
-  //     (schema + interface + nonEmpty — the console renders it).
-  return ok(verdict);
+  const strong = verdict.proposal !== "investigate-more" && verdict.proposal !== "no-action";
+  const sources = new Set(verdict.evidence.map((e) => e.source));
+  const ruleErrors = [
+    ...(strong && sources.size < 2
+      ? [`proposal ${verdict.proposal}: a strong action needs evidence from at least 2 sources, got ${sources.size}`]
+      : []),
+    ...(verdict.proposal === "rollback" && !sources.has("deploys")
+      ? ["proposal rollback requires a deploys evidence line"]
+      : []),
+    ...(strong && verdict.confidence === "low"
+      ? [`proposal ${verdict.proposal}: low confidence cannot carry a strong action`]
+      : []),
+    ...(verdict.confidence === "high" && verdict.data_gaps.length > 0
+      ? ["confidence: high is refused while data_gaps is non-empty (a missing signal is unknown, not healthy)"]
+      : []),
+  ];
+  return ruleErrors.length > 0 ? fail(ruleErrors) : ok(verdict);
 };

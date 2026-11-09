@@ -11,6 +11,7 @@ const base = {
   severity: "page",
   confidence: "high",
   hypothesis: "x",
+  customer_impact: "checkout fails for paying customers",
   evidence: [
     { source: "metrics", ref: "t1", note: "n" },
     { source: "deploys", ref: "d-1", note: "n" },
