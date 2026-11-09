@@ -56,7 +56,8 @@ export const isApproved = (record: ApprovalRecord, incidentId: string, proposal:
   record.incident_id === incidentId &&
   record.proposal === proposal &&
   record.decision === "approved" &&
-  record.decided_by !== "OPEN";
+  record.decided_by.trim().length > 0 &&
+  record.decided_by.trim() !== "OPEN";
 
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 
