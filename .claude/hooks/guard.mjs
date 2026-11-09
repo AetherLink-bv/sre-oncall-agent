@@ -26,7 +26,7 @@ function repoRoot() {
   }
 }
 const ROOT = repoRoot();
-const real = (p) => { try { return realpathSync(p); } catch { return p; } };
+const real = (p) => { try { return realpathSync.native(p); } catch { return p; } };
 const withoutWindowsNamespace = (p) => process.platform === "win32"
   ? p.replace(/^\\\\\?\\UNC\\/i, "\\\\").replace(/^\\\\\?\\/, "")
   : p;
