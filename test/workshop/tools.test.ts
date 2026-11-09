@@ -5,6 +5,7 @@ import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { createTelemetryServer, handlers } from "../../src/tools.js";
 import { loadTelemetry } from "../../src/telemetry.js";
+import { offlineVerdict } from "../../src/runtime.js";
 
 test("A5: list_deploys is bound to telemetry.listDeploys and returns deploys", async () => {
   const t = await loadTelemetry("fixtures/telemetry/bad-deploy.json");
@@ -12,6 +13,36 @@ test("A5: list_deploys is bound to telemetry.listDeploys and returns deploys", a
   const deploys = handlers(t.value).list_deploys({});
   assert.ok(Array.isArray(deploys), "handler must return the deploy list");
   assert.ok(deploys.length >= 1, "fixture has at least one deploy");
+});
+
+test("A5 edge: an empty time window returns [] and is unknown, never healthy", async () => {
+  const t = await loadTelemetry("fixtures/telemetry/bad-deploy.json");
+  if (!t.ok) throw new Error("fixture telemetry missing");
+  const at = "2000-01-01T00:00:00.000Z";
+  const empty = handlers(t.value).list_deploys({ since: at, until: at });
+  assert.deepEqual([...empty], [], "an empty window must return []");
+
+  const verdict = offlineVerdict(
+    { incident_id: "INC-EMPTY", service: t.value.service, alert: "empty window", fired_at: at },
+    t.value,
+  );
+  assert.ok(
+    verdict.data_gaps.includes("list_deploys: no deploys in the window"),
+    "an empty deploy window must be recorded as a data gap",
+  );
+  assert.notEqual(verdict.confidence, "high", "no deploy data must never support high confidence");
+  assert.equal(verdict.confidence, "low", "no metric points must remain low confidence");
+  assert.equal(verdict.proposal, "investigate-more", "unknown telemetry must request more investigation");
+  assert.match(verdict.customer_impact, /^OPEN/, "customer impact must remain OPEN");
+  assert.match(verdict.blast_radius, /^OPEN/, "blast radius must remain OPEN");
+  assert.ok(
+    !verdict.ruled_out.some((reason) => reason.startsWith("bad deploy")),
+    "an empty window must not rule out a bad deploy",
+  );
+  assert.ok(
+    !verdict.customer_impact.includes("none observed"),
+    "missing telemetry must not be described as no impact",
+  );
 });
 
 test("A5: list_deploys is registered on the telemetry MCP server", async () => {

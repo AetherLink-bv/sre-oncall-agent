@@ -11,7 +11,7 @@
 import { query, type Options } from "@anthropic-ai/claude-agent-sdk";
 import type { Incident, Verdict } from "./contract.js";
 import { handlers, qualified, type ToolName } from "./tools.js";
-import { listDeploys, deployBehind, getDiff, previousVersion, type Telemetry } from "./telemetry.js";
+import { deployBehind, getDiff, previousVersion, type Telemetry } from "./telemetry.js";
 
 // ── Port: the slice of SDK messages the agent reads ──────────────────────
 export interface ContentBlock {
@@ -102,8 +102,7 @@ export const offlineVerdict = (incident: Incident, t: Telemetry): Verdict => {
   const h = handlers(t);
   const since = minus(incident.fired_at, 60);
   const metrics = h.summarize_metrics({ since, until: incident.fired_at });
-  // A5 bypass: until the list_deploys binding is rebuilt, read deploys directly
-  const deploys = listDeploys(t, since, incident.fired_at);
+  const deploys = h.list_deploys({ since, until: incident.fired_at });
   const bp = metrics.breakpoints[0];
   const gaps = [
     ...(metrics.points === 0 ? ["summarize_metrics: no metric points in the window"] : []),
@@ -112,6 +111,25 @@ export const offlineVerdict = (incident: Incident, t: Telemetry): Verdict => {
   const base = { incident_id: incident.incident_id, draft_only: true as const, human_approval_required: true as const };
 
   const stillPresent = metrics.breakpoints.length > 0 && (metrics.error_rate_last >= 0.01 || metrics.p95_ms_last >= 1000);
+
+  // Fail closed: no metric points means unknown, never healthy. Cause and impact stay OPEN.
+  if (metrics.points === 0) {
+    return {
+      ...base,
+      tag: "noise",
+      severity: "morning-log",
+      confidence: "low",
+      hypothesis: "No metric points exist in the alert window, so the cause is unknown. Telemetry is unavailable for this incident; a bad deploy is not ruled out.",
+      evidence: [{ source: "metrics", ref: metrics.last_ts ?? "window", note: "summarize_metrics returned 0 points in the window" }],
+      customer_impact: "OPEN — no metric points in the window, so customer impact cannot be assessed",
+      blast_radius: "OPEN — no metric points in the window, so blast radius cannot be assessed",
+      proposal: "investigate-more",
+      ruled_out: [],
+      would_change_my_mind: "metric points for the alert window showing an error_rate or p95 movement, or a deploy in the window",
+      data_gaps: gaps,
+      watch_metric: "error_rate",
+    };
+  }
 
   if (!bp) {
     return {
@@ -227,7 +245,7 @@ export const offlineQuery =
     };
     const outputs: Record<ToolName, unknown> = {
       summarize_metrics: h.summarize_metrics(windowInput),
-      list_deploys: listDeploys(t, windowInput.since, windowInput.until), // A5 bypass: rebind in tools.ts
+      list_deploys: h.list_deploys(windowInput),
       get_diff: diffInput ? h.get_diff(diffInput) : { error: "no deploy lines up with the breakpoint — not called in anger" },
       search_logs: h.search_logs(logInput),
     };

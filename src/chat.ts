@@ -22,7 +22,7 @@ import { guessTag, lessonsStore, loadLessons, renderLessons } from "./lessons.js
 import { ONCALL_SYSTEM } from "./prompts.js";
 import { resolveRuntime, type AgentEvent } from "./runtime.js";
 import { ALLOWED_TOOLS, SERVER_NAME, createTelemetryServer, handlers } from "./tools.js";
-import { listDeploys, type Telemetry } from "./telemetry.js";
+import { type Telemetry } from "./telemetry.js";
 
 export type Route =
   | { kind: "watch"; command: WatchCommand }
@@ -31,11 +31,22 @@ export type Route =
   | { kind: "refused"; reason: string }
   | { kind: "question"; text: string };
 
-// TODO(A4): rebuild the mutation refusal. test/workshop/chat.test.ts is red:
-//   mutation requests in chat ("roll back", "approve", "resolve", "scale up")
-//   must be refused here — they are buttons a named human clicks, never chat
-//   text the agent interprets. Keep it a grammar (a regex is fine), routed
-//   BEFORE the investigate/question branches.
+// Mutation requests are refused in chat: they are buttons a named human clicks,
+// never chat text the agent interprets. A fixed grammar, checked before the
+// investigate/question branches. Read-only questions (e.g. "Was the deploy the
+// cause?") do not match.
+export const MUTATION = /\b(?:roll[\s-]?back|approv(?:e|es|ed|al)|resolve[sd]?|scale|(?:flip|set|toggle)\s+(?:the\s+)?flag|close\s+(?:the\s+|this\s+)?incident|deploy\s+version\s+now)\b/i;
+
+// Intent-aware exemptions, removed before MUTATION is tested. They never widen MUTATION:
+//  - a blanket disclaimer ("Do not approve or execute anything.") states no request;
+//  - the evidence question "Which evidence supports the (proposed) rollback?" names a
+//    rollback as the thing examined, it does not ask for one.
+// Anything else still hits MUTATION, e.g. "Do not approve and roll back now." or
+// "Which evidence supports the rollback, then roll back now?".
+const BLANKET_DISCLAIMER = /\bdo not (?:approve|execute|roll[\s-]?back|resolve|scale|close)(?: or (?:approve|execute|roll[\s-]?back|resolve|scale|close))* anything\b\.?/gi;
+const EVIDENCE_QUESTION = /^(?:which|what) evidence (?:supports?|backs?|shows?) (?:the )?(?:proposed )?rollback\?/i;
+const isMutationRequest = (t: string): boolean =>
+  MUTATION.test(t.replace(BLANKET_DISCLAIMER, " ").replace(EVIDENCE_QUESTION, " "));
 
 export const routeMessage = (text: string): Route => {
   const t = text.trim();
@@ -43,6 +54,7 @@ export const routeMessage = (text: string): Route => {
   const w = parseWatchCommand(t);
   if (w.ok) return { kind: "watch", command: w.value };
   if (/^(?:watch|monitor)\b/i.test(t)) return { kind: "refused", reason: w.errors.join("; ") };
+  if (isMutationRequest(t)) return { kind: "refused", reason: "mutations are buttons for a named human, not chat requests" };
   const inv = /^(?:investigate|triage|look into|something is (?:broken|wrong)|customers? (?:are|is) reporting)[:\s-]*(.*)$/i.exec(t);
   if (inv) return { kind: "investigate", alert: (inv[1] ?? "").trim() || t };
   return { kind: "question", text: t };
@@ -60,7 +72,7 @@ export interface AskDeps {
 const offlineAnswer = (text: string, t: Telemetry, telemetryContext: string): string => {
   const h = handlers(t);
   const m = h.summarize_metrics({});
-  const d = listDeploys(t).slice(0, 3); // A5 bypass: rebind in tools.ts
+  const d = h.list_deploys({}).slice(0, 3);
   const errs = h.search_logs({ level: "error", limit: 3 });
   const bp = m.breakpoints[0];
   const metricsRef = bp?.ts ?? m.last_ts ?? "window";
