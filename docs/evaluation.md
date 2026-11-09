@@ -1,4 +1,7 @@
-# Grading real runs
+# Optional A7 evaluation
+
+This document is optional depth for the completed-runtime course. The
+deterministic bench uses fixtures. It does not prove live model behavior.
 
 For each investigation on real (or demo) traffic, record one row. Grade
 independently of the agent, after you know the outcome. Do not put the
