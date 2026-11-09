@@ -26,7 +26,10 @@ function repoRoot() {
   }
 }
 const ROOT = repoRoot();
-const real = (p) => { try { return realpathSync(p); } catch { return p; } };
+const real = (p) => { try { return realpathSync.native(p); } catch { return p; } };
+const withoutWindowsNamespace = (p) => process.platform === "win32"
+  ? p.replace(/^\\\\\?\\UNC\\/i, "\\\\").replace(/^\\\\\?\\/, "")
+  : p;
 // Resolve symlinks (e.g. macOS /var -> /private/var) via the nearest existing ancestor.
 function realish(p) {
   let head = p;
@@ -38,7 +41,7 @@ function repoRelative(p) {
   if (!p) return "";
   const abs = resolve(process.cwd(), p);
   for (const [root, target] of [[ROOT, abs], [real(ROOT), realish(abs)]]) {
-    const r = relative(root, target).replace(/\\/g, "/");
+    const r = relative(withoutWindowsNamespace(root), withoutWindowsNamespace(target)).replace(/\\/g, "/");
     if (r === "") return "";
     if (!r.startsWith("../") && r !== ".." && !isAbsolute(r)) return r;
   }
@@ -84,8 +87,9 @@ function approvalFor(ref) {
 
 const tool = input.tool_name ?? "";
 const cmd = input.tool_input?.command ?? "";
-const path = (input.tool_input?.file_path ?? input.tool_input?.path ?? "").replace(/\\/g, "/");
-const inside = repoRelative(path);
+const rawPath = input.tool_input?.file_path ?? input.tool_input?.path ?? "";
+const path = rawPath.replace(/\\/g, "/");
+const inside = repoRelative(rawPath);
 const rel = inside ?? path;
 
 if (tool === "Bash" || tool === "PowerShell") {

@@ -22,11 +22,6 @@ if (!["report", "--expect-start", "--expect-solved", "--self-test"].includes(mod
   process.exit(2);
 }
 
-const slug = (value) => value
-  .toLowerCase()
-  .replace(/[^a-z0-9]+/g, "-")
-  .replace(/^-|-$/g, "");
-
 function validateWorkshopDocs(solo, workshop, readme) {
   const problems = [];
   let assignments = [];
@@ -36,15 +31,17 @@ function validateWorkshopDocs(solo, workshop, readme) {
     problems.push(error instanceof Error ? error.message : String(error));
   }
 
-  if (assignments.length === 9) {
-    const links = assignments.map((assignment, index) =>
-      `SOLO.md#a${index + 1}-${slug(assignment.title)}`);
-    if (!readme.includes(links[0])) problems.push("README does not link to the A1 SOLO section");
+  if (assignments.length === 6) {
+    if (!readme.includes("SOLO.md#a1-map-the-repo-and-prove-setup")) problems.push("README does not link to the A1 SOLO section");
     if (!workshop.includes("[SOLO.md](SOLO.md)")) problems.push("WORKSHOP does not link to SOLO.md");
-    for (const [index, link] of links.entries()) {
-      if (!workshop.includes(`](${link})`)) problems.push(`WORKSHOP route is missing the A${index + 1} SOLO link`);
+    for (const assignment of assignments) {
+      if (!workshop.includes(`| ${assignment.id} |`)) problems.push(`WORKSHOP route is missing the ${assignment.id} core row`);
     }
   }
+
+  if (!/^## Optional A7\./m.test(solo)) problems.push("SOLO is missing optional A7");
+  if (!/^## Optional A9\./m.test(solo)) problems.push("SOLO is missing optional A9");
+  if (!/A7 and A9\s+remain optional\./m.test(readme)) problems.push("README does not keep A7 and A9 optional");
 
   const docs = `${solo}\n${workshop}\n${readme}`;
   if (/\bgit\s+(?:checkout|switch|diff)\s+[^\n]*(?:w5-step|solved)/i.test(docs)) {
@@ -52,12 +49,12 @@ function validateWorkshopDocs(solo, workshop, readme) {
   }
 
   const boundaries = [
-    [/Edit `\.claude\/hooks\/guard\.mjs` yourself/, "A4 human hook edit"],
-    [/Claude Code may not perform this edit/, "A4 agent edit prohibition"],
-    [/I will start the console with AGENT_LISTEN_WINDOW_MIN=1/, "A6 human process start"],
-    [/Do not run chaos or stop processes yourself/, "A6 agent process prohibition"],
-    [/Do not create an approval, click Approve, Execute, or Resolve/, "A8 human action boundary"],
-    [/Do not claim that the incident was resolved/, "A9 honest handoff boundary"],
+    [/Human review\.\*\* Edit `\.claude\/hooks\/guard\.mjs` by hand\./, "A4 human hook edit"],
+    [/Do not inspect approvals\/audit\.jsonl or edit \.claude\//, "A4 agent edit prohibition"],
+    [/Run the approved four-window sequence/, "A6 human process start"],
+    [/Do not run or stop processes\./, "A6 agent process prohibition"],
+    [/Do not create an approval or click Approve, Execute, or Resolve\./, "A8 human action boundary"],
+    [/Do not edit lessons\/lessons\.md or claim that the lesson was promoted\./, "A9 human promotion boundary"],
   ];
   for (const [pattern, label] of boundaries) if (!pattern.test(solo)) problems.push(`missing ${label}`);
   if (/Resolve the sample incident yourself/.test(solo)) problems.push("docs require a human resolution to complete the workshop");
@@ -77,15 +74,15 @@ const solo = readFileSync("SOLO.md", "utf8");
 const workshop = readFileSync("WORKSHOP.md", "utf8");
 const readme = readFileSync("README.md", "utf8");
 const docs = validateWorkshopDocs(solo, workshop, readme);
-console.log(`${docs.ok ? "ok  " : "MISS"}  prompt-first docs    9 SOLO sections + route links + human gates`);
+console.log(`${docs.ok ? "ok  " : "MISS"}  prompt-first docs    6 core SOLO sections + optional depth + human gates`);
 for (const problem of docs.problems) console.log(`      - ${problem}`);
 
 if (mode === "--self-test") {
   assert.equal(docs.ok, true, "current workshop docs must be valid");
   assert.equal(validateWorkshopDocs(`${solo}\ngit checkout w5-step-4`, workshop, readme).ok, false);
-  assert.equal(validateWorkshopDocs(solo.replace("Claude Code may not perform this edit.", ""), workshop, readme).ok, false);
-  assert.equal(validateWorkshopDocs(solo.replace(/^## A9\.[\s\S]*$/m, ""), workshop, readme).ok, false);
-  assert.equal(validateWorkshopDocs(solo, workshop.replace("(SOLO.md#a5-build-a-read-only-deploy-tool)", "(SOLO.md)"), readme).ok, false);
+  assert.equal(validateWorkshopDocs(solo.replace("Do not run or stop processes.", ""), workshop, readme).ok, false);
+  assert.equal(validateWorkshopDocs(solo.replace(/^## Optional A9\.[\s\S]*?(?=^## Hackathon handoff recap)/m, ""), workshop, readme).ok, false);
+  assert.equal(validateWorkshopDocs(solo, workshop.replace("| A5 |", "| Missing |"), readme).ok, false);
   console.log("\nworkshop:check self-test PASS");
   process.exit(0);
 }

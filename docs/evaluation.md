@@ -1,4 +1,8 @@
-# Grading real runs
+# Optional A7 evaluation
+
+This document is optional after the six required assignments. The deterministic
+bench uses fixtures, which are fictional test data. It does not prove live
+model or prompt-injection behavior.
 
 For each investigation on real (or demo) traffic, record one row. Grade
 independently of the agent, after you know the outcome. Do not put the
