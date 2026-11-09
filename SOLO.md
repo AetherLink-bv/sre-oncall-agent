@@ -168,7 +168,7 @@ selected files. Do not overwrite the A4 human hook rule.
 ```
 
 ```text
-Use the incident path we reviewed. Propose the local demo order, risks, proof, rollback, and one alternative cause. Wait for my approval. Reuse running processes. After I approve, give exact commands for separate terminals. I will start the console, start the shop, keep healthy traffic running for two minutes, and run the one-shot bad-deploy command. Do not run chaos or stop processes yourself. When the incident exists, trace each claim to a stable source:ref label. Keep diagnosis-snapshot evidence separate from current telemetry. Mark missing evidence OPEN. Do not approve, execute, resolve, or push.
+Use the incident path we reviewed. Propose the demo order, risks, proof, rollback, and one alternative cause. Reuse owned processes. Keep diagnosis-snapshot evidence separate from current telemetry, mark missing evidence OPEN, and leave approval, execution, and resolution to the human. Do not run or stop processes. Wait for my approval.
 ```
 
 Use three Git Bash windows for the long-running processes:
