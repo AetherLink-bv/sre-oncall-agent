@@ -12,7 +12,7 @@ const git = (cwd, ...args) => execFileSync("git", args, { cwd, encoding: "utf8" 
 const seedFixture = (fixture, corruptFile) => {
   mkdirSync(join(fixture, "src"), { recursive: true });
   mkdirSync(join(fixture, "scripts"), { recursive: true });
-  for (const file of ["src/tools.ts", "src/telemetry.ts", "src/contract.ts", "src/executor.ts", "workshop.json", "scripts/checkpoint.mjs"]) {
+  for (const file of [".gitattributes", "src/tools.ts", "src/telemetry.ts", "src/contract.ts", "src/executor.ts", "workshop.json", "scripts/checkpoint.mjs"]) {
     cpSync(join(root, file), join(fixture, file));
   }
   if (corruptFile) {

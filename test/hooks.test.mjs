@@ -143,15 +143,17 @@ test("repo root comes from git, not the folder name: a clone in any folder works
   assert.equal(spawnSync("git", ["init", "-q"], { cwd: dir }).status, 0, "git init");
   cpSync(join(ROOT, ".claude/hooks/guard.mjs"), join(dir, ".claude/hooks/guard.mjs"));
   const sub = join(dir, "src/deep");
-  const g = (payload) => {
+  const inspect = (payload) => {
     const r = spawnSync("node", [join(dir, ".claude/hooks/guard.mjs")], {
       input: JSON.stringify(payload), encoding: "utf8", cwd: sub,
     });
-    return JSON.parse(r.stdout.trim().split("\n").at(-1)).hookSpecificOutput?.permissionDecision;
+    return JSON.parse(r.stdout.trim().split("\n").at(-1)).hookSpecificOutput;
   };
+  const g = (payload) => inspect(payload)?.permissionDecision;
   const w = (file_path) => g({ tool_name: "Write", tool_input: { file_path } });
   for (const root of [dir, realpathSync(dir)]) {
-    assert.equal(w(`${root}/src/contract.ts`), "allow", "ordinary edit inside the renamed repo");
+    const ordinary = inspect({ tool_name: "Write", tool_input: { file_path: `${root}/src/contract.ts` } });
+    assert.equal(ordinary?.permissionDecision, "allow", `ordinary edit inside the renamed repo (${root}); reason: ${ordinary?.permissionDecisionReason}`);
     assert.equal(w(`${root}/docs/diagnoses/INC-1.md`), "allow", "agent artefact in the renamed repo");
     assert.equal(w(`${root}/.claude/settings.json`), "deny", ".claude stays human-owned");
     assert.equal(w(`${root}/PROGRESS.md`), "deny", "PROGRESS.md stays hook-owned");

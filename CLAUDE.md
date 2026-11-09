@@ -15,6 +15,11 @@ and `bench/cases.json` before changing behaviour.
 | Start the lab | `npm start` (Ctrl+C stops all). Breaking the shop is `npm run chaos …`, never part of start. |
 | A solved state without touching the working tree | `npm run checkpoint -- <start|core-2|core-3>` → `.lab/checkpoints/<id>` |
 
+This branch is the completed-runtime checkpoint course. The slide-aligned
+six-assignment lesson, including its red A3, A4, A5, and A8 cuts, lives on
+`workshop/start`. Do not describe this solved branch as that starter. Stable
+A1 through A9 test ids remain unchanged.
+
 ## The division of labour (fixed, non-negotiable)
 
 The agent gathers evidence, proposes, verifies and communicates.
@@ -61,5 +66,7 @@ release blocker; another agent is not a human reviewer.
 - Functional style: pure functions, `readonly` data, `Result` instead of throwing across modules. File I/O only in `src/lessons.ts`, `src/approval.ts`, `src/telemetry.ts` (load), `src/cli.ts`, `src/bench.ts`.
 - Strict types: no `any`, no non-null assertions in `src/`.
 - Never put credentials in files or commands. `ANTHROPIC_API_KEY` is exported in the shell only.
-- Write only under `src/`, `test/`, `docs/`, `fixtures/`, `bench/`, `lessons/proposed/`, `approvals/`, `course/`, `scripts/`, `.claude/`, `LICENSES/`, and the markdown files at the root.
+- Project settings and the guard hook decide whether a write is allowed. Ordinary source, test, fixture, bench, course, script, root-markdown, and `console/` edits are allowed unless a narrower rule applies.
+- Ask the human before changing an SDLC artifact named by `.claude/hooks/guard.mjs`. Write agent-generated evidence only under `docs/diagnoses/`, `docs/verify/`, `docs/show-me/`, `docs/pr/`, `docs/handoff/`, or `lessons/proposed/`.
+- Never edit `approvals/`, `.claude/`, `PROGRESS.md`, `lessons/lessons.md`, or secret paths. The named participant performs any `.claude/hooks/guard.mjs` edit by hand.
 - Two gates, do not confuse them: the **runtime gate** (`npm run approve`, the console buttons, `approvals/*.approval.json`) signs a diagnosis so the executor may run; the **SDLC gate** (`npm run approve:git`, `approvals/approvals.jsonl` + `.claude/hooks/guard.mjs`) signs a `fix/*` branch so a human may push it. The agent may run neither.

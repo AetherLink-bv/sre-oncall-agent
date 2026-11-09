@@ -7,14 +7,17 @@ const settings = JSON.parse(readFileSync(".claude/settings.json", "utf8"));
 
 test("solo participants have a complete route without a facilitator", () => {
   const solo = readFileSync("SOLO.md", "utf8");
-  const route = solo.split("## Optional course mod")[0];
-  for (const section of ["Open the project in a terminal", ...Array.from({ length: 9 }, (_, index) => `A${index + 1}.`), "After A9: choose one skill for the hackathon"]) {
+  const route = solo.split("## Optional A7.")[0];
+  for (const section of ["## Set up once", ...Array.from({ length: 6 }, (_, index) => `## A${index + 1}.`)]) {
     assert.ok(route.includes(section), section);
   }
-  assert.match(route, /one assignment at a time/i);
-  assert.match(route, /Stop at each review point/);
-  assert.match(route, /project skills are available/);
-  assert.match(route, /full skills pack.*After A9/is);
+  assert.equal([...route.matchAll(/^## A\d+\./gm)].length, 6);
+  assert.match(solo, /^## Optional A7\./m);
+  assert.match(solo, /^## Optional A9\./m);
+  assert.match(solo, /^## Appendix: public skills pack/m);
+  assert.match(route, /day5-after-a3/);
+  assert.match(route, /day5-after-a5/);
+  assert.match(route, /day5-after-a6/);
   for (const file of ["PARTICIPANT.md", "WORKSHOP.md", "AGENTS.md", "CLAUDE.md", "CARD.md", "hub/index.html"]) {
     assert.ok(readFileSync(file, "utf8").includes("SOLO.md"), file);
   }

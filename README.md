@@ -1,4 +1,8 @@
-# SRE on-call lab — Workshop 5 (AI-native SDLC)
+# SRE on-call lab: Day 5 AI-native SDLC
+
+This `main` branch is the completed-runtime checkpoint course. The six required
+assignments below run on `workshop/start`, which contains the red A3, A4, A5,
+and A8 cuts. Use `CARD.md` and `WORKSHOP.md` for the solved runtime route.
 
 In this lab you build an AI first responder for a small checkout service, with
 Claude Code as your builder. An alert fires. The agent reads the telemetry,
@@ -45,15 +49,25 @@ You need:
   pipeline; it is not model evidence.
 
 ```sh
-git clone --branch workshop/start --single-branch https://github.com/AetherLink-bv/sre-oncall-agent.git
+node --version
+git clone --branch workshop/start https://github.com/AetherLink-bv/sre-oncall-agent.git
 cd sre-oncall-agent
+claude --setting-sources project --strict-mcp-config --no-chrome
 ```
+
+Run `node --version` before cloning. Continue only on v22 or newer. Stop on
+v21.6 and use the approved Node 22 setup for this laptop.
+
+Run every shown POSIX command in Terminal 2. On Windows, use Git Bash. The
+GitHub Actions smoke checks Node 22, `npm ci`, typecheck, and hooks under Git
+Bash on GitHub-hosted Windows. A
+Worldline-managed laptop and proxy still need a real participant dry run.
 
 This command checks out the exercise branch directly. The current `main` branch
 contains a separate completed-runtime course.
 
-Review the current path and confirm it is your own clone. Run
-`claude --setting-sources project --strict-mcp-config --no-chrome` at the repository root.
+Review the current path and confirm it is your own clone. The final command
+starts Claude Code at the repository root.
 This workshop command loads project context without user or global settings.
 The repository disables Claude Code auto memory for this bounded lesson.
 The separate SRE product runtime ignores builder settings and exposes only its
@@ -65,46 +79,15 @@ folder. Restart the same command if project skills remain missing after trust.
 Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
 The lesson only needs a terminal and browser.
 
-### Optional live-model connection after A5
+## Shared terms
 
-The required route stays scripted and offline. Claude Code is the builder; the
-product's separate live-model path uses the Claude Agent SDK. Introduce and
-activate this path only after A5, with approved usage and cost.
+- An **incident** is a detected service problem with an id, state, and evidence.
+- A **fixture** is fictional test data that makes one case repeatable.
+- A **proposal** is the agent's suggested next step. It is not an action.
+- An **approval** is a named human decision for one exact incident and proposal.
 
-Never copy credentials into chat, Git, browser fields, remote hosts, or another
-participant's machine. Current Anthropic guidance says the local Agent SDK can
-use your Claude Code login and then consumes your plan limits. An intentionally
-configured API key uses the linked Console organization and may consume paid
-API credits.
-
-After A5, prove the model path with one bounded fixture run:
-
-```sh
-npm run investigate -- fixtures/incidents/bad-deploy.json --model sonnet --max-turns 8 --max-budget-usd 0.30 --dry-run
-```
-
-The SDK checks `--max-budget-usd` between model turns, so one turn can exceed
-it. Strict MCP isolation keeps this lab's model context limited to telemetry.
-
-Review the completed diagnosis, cost line, and tool trace. Only then may you
-stop your own console and restart it with:
-
-```sh
-AGENT_MODEL=sonnet AGENT_LISTEN_WINDOW_MIN=1 npm run console
-```
-
-The console has no global model-budget guard. Submit at most one approved
-`Investigate: ...` message. The health model name proves readiness only. Keep
-the completed diagnosis and visible tool trace as the model-path proof. Stop
-after one accepted proof. If authentication, plan limits, cost approval, or the
-run fails, clear any exported model override and restart the required route:
-
-```sh
-env -u AGENT_MODEL AGENT_LISTEN_WINDOW_MIN=1 npm run console
-```
-
-See Anthropic's [Agent SDK quickstart](https://code.claude.com/docs/en/agent-sdk/quickstart)
-and [Claude plan guidance](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan).
+`INC-1001` is the fixture incident. The A6 listener creates a different live
+incident id.
 
 Open [SOLO.md](SOLO.md#a1-map-the-repo-and-prove-setup). Start A1 with the
 explicit `/show-me` prompt. It creates a read-only text map of the fixture,
@@ -116,10 +99,11 @@ is not a completion gate.
 Facilitators use [`FACILITATOR.md`](FACILITATOR.md) for the schedule, expected
 starter failures and the manual fallback.
 
-For a visual route through the AI-SDLC, start Claude Code with
+For a visual route through the AI-native SDLC, start Claude Code with
 `claude --plugin-dir ./course/ai-sdlc-mod` and run `/sdlc`. The optional mod
-reads the first prompt from each A1–A9 section in `SOLO.md` and leaves every
-human gate intact. Use the remaining copy prompts from `SOLO.md` or the slides.
+reads the first prompt from each assignment section in `SOLO.md`. A7 and A9
+remain optional. The mod leaves every human gate intact. Use the remaining copy
+prompts from `SOLO.md` or the slides.
 
 ## Run it
 
@@ -174,10 +158,10 @@ turn green as you rebuild them.
 | A3 | Accept, build, and verify the `customer_impact` verdict contract; `/verify-this` returns `VERIFIED`, `NOT VERIFIED`, or `INCONCLUSIVE` |
 | A4 | Build chat refusal; add the protected-file hook rule by hand |
 | A5 | Build `list_deploys` and remove the starter bypasses |
-| A6 | Start a sample incident and trace every diagnosis claim |
-| A7 | Add one deterministic offline fixture case without lowering the floor |
-| A8 | Test the exact incident-and-action gate; keep human action OPEN |
-| A9 | Propose a lesson, define the hackathon, review and save the handoff |
+| A6 | Run the live counterpart, challenge its evidence, and prove the existing A8 human-approval gate |
+
+A7 is an optional deterministic fixture evaluation. A9 is an optional lesson.
+The hackathon handoff is a recap, not a seventh required assignment.
 
 The classroom goals and checks are in **[WORKSHOP.md](WORKSHOP.md)**. The exact
 Claude Code prompts, learner choices, and stop points are in
@@ -194,9 +178,20 @@ Claude Code prompts, learner choices, and stop points are in
   rewrite `PROGRESS.md`.
 - **No secrets in files.** You do not need an API key for this lab.
 
-## After A9: choose one skill for the hackathon
+## Optional appendices
 
-The SRE repository already contains every project skill used in A1–A9. Finish
+The required route stays scripted and offline. The optional live product model
+uses the Claude Agent SDK after the six required assignments. Use Git Bash on
+Windows for `AGENT_MODEL=...` and `env -u ...` commands. Treat authentication,
+usage, and cost as separate human approvals. A configured model name is not
+evidence of a completed model run.
+
+The public skills pack is also appendix material. The repository already
+contains every project skill needed for the six required assignments.
+
+### Choose one skill for the hackathon
+
+The SRE repository already contains every project skill used in A1 through A6. Finish
 the core route and its reviewed handoff before you add anything. Then open the
 public [Claude Code skills pack](https://github.com/AetherLink-bv/claude-code-skills-pack)
 for selective hackathon reuse.
