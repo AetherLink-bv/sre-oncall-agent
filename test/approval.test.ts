@@ -40,4 +40,8 @@ test("a named human can approve once", () => {
 
 test("an anonymous approval is refused", () => {
   assert.equal(decide(draftApproval(rec, "t0"), "approved", "  ", "t1").ok, false);
+  for (const decided_by of ["", "  ", "OPEN", " OPEN "]) {
+    const forged = { ...draftApproval(rec, "t0"), decision: "approved" as const, decided_by };
+    assert.equal(isApproved(forged, "INC-1", "rollback"), false, JSON.stringify(decided_by));
+  }
 });
