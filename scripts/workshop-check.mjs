@@ -50,7 +50,7 @@ function validateWorkshopDocs(solo, workshop, readme) {
 
   const boundaries = [
     [/Human review\.\*\* Edit `\.claude\/hooks\/guard\.mjs` by hand\./, "A4 human hook edit"],
-    [/Do not edit \.claude\//, "A4 agent edit prohibition"],
+    [/Do not inspect approvals\/audit\.jsonl or edit \.claude\//, "A4 agent edit prohibition"],
     [/Run the approved four-window sequence/, "A6 human process start"],
     [/Do not run or stop processes\./, "A6 agent process prohibition"],
     [/Do not create an approval or click Approve, Execute, or Resolve\./, "A8 human action boundary"],

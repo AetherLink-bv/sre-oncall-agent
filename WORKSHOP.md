@@ -19,10 +19,14 @@ Use Terminal 2 for commands. On Windows, use Git Bash for every shown POSIX
 command, including `AGENT_MODEL=...`, `env -u ...`, and multiline shell blocks.
 
 ```sh
+node --version
 git clone --branch workshop/start https://github.com/AetherLink-bv/sre-oncall-agent.git
 cd sre-oncall-agent
 claude --setting-sources project --strict-mcp-config --no-chrome
 ```
+
+Check Node before cloning. Continue only on v22 or newer. Stop on v21.6 and
+use the approved Node 22 setup for this laptop.
 
 Accept folder trust only for your own clone. Open
 `http://localhost:4320` when an assignment says to use the browser.
@@ -37,7 +41,7 @@ That real participant dry run remains `OPEN`.
 | --- | --- | --- |
 | A1 | Map the fixture and live intake paths. Prove setup. | Main checks pass. Only A3, A4, A5, and A8 are red. |
 | A2 | Write a reviewed operator intent. | One outcome, three repeatable checks, and human boundaries. |
-| A3 | Build and verify `customer_impact`. | Red-to-green contract proof and a read-only verification verdict. |
+| A3 | Apply five verdict rules across about nine bounded files. | Red-to-green contract proof and a read-only verification verdict. |
 | A4 | Refuse mutations in chat. Add one human-owned file guard. | Chat stays read-only and the focused guard test records denial. |
 | A5 | Build `list_deploys` and remove bypasses. | Read-only tool output and exact trace arguments. |
 | A6 | Run the live counterpart, challenge evidence, and prove the A8 gate. | Stable refs, snapshot/current separation, refusal, and a real approval marked `HUMAN OPEN`. |

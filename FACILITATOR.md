@@ -9,16 +9,18 @@ listener incident are different records.
 Use this exact setup in Terminal 2. On Windows, use Git Bash:
 
 ```sh
+node --version
 git clone --branch workshop/start https://github.com/AetherLink-bv/sre-oncall-agent.git
 cd sre-oncall-agent
 claude --setting-sources project --strict-mcp-config --no-chrome
 ```
 
-1. Give each participant a clean `workshop/start` clone.
-2. Use Terminal 2 for commands. On Windows, use Git Bash.
-3. Start Claude Code with project settings and review folder trust.
-4. Keep the required route scripted and offline.
-5. Open `http://localhost:4320` only when the current step requires it.
+1. Check Node before cloning. Stop on v21.6 and use the approved Node 22 setup.
+2. Give each participant a clean `workshop/start` clone.
+3. Use Terminal 2 for commands. On Windows, use Git Bash.
+4. Start Claude Code with project settings and review folder trust.
+5. Keep the required route scripted and offline.
+6. Open `http://localhost:4320` only when the current step requires it.
 
 Do not claim a Worldline laptop result. Before class, a named human must still
 prove Node 22, `npm ci` behind the proxy, the project hooks, and the Git Bash
@@ -31,9 +33,14 @@ happens. GitHub-hosted Windows CI checks Node 22, `npm ci`, typecheck, and hooks
 | --- | --- | --- |
 | 10:00–10:28 | Story, roles, glossary, setup | Builder and product are distinct. Setup route is visible. |
 | 10:28–10:50 | A1 | Repo map, health, main green, four expected red cuts. |
-| 10:50–11:10 | A2 | Reviewed intent with three repeatable checks. |
-| 11:10–11:25 | Break | Preserve current work. |
-| 11:25–12:00 | A3 and quiz | Accepted contract, focused red, focused green, verification verdict. |
+| 10:50–10:54 | A2 concept and example | The reviewed intent target is visible. |
+| 10:54–11:05 | A2 assignment | Reviewed intent with three repeatable checks. |
+| 11:05–11:20 | Break | Preserve current work. |
+| 11:20–11:23 | A3 concept | Five verdict rules and about nine files are explicit. |
+| 11:23–11:25 | A3 example | The red-to-green target is visible. |
+| 11:25–11:50 | A3 build | Accepted scope, focused red, then focused green. |
+| 11:50–11:57 | A3 verification | Main tests, typecheck, CLI, browser, and verdict are checked. |
+| 11:57–12:00 | Quiz | The room names the contract and human boundary. |
 | 12:00–13:00 | Lunch | Preserve participant work. |
 | 13:00–13:10 | Restart and settle | Everyone returns before the recap. |
 | 13:10–13:18 | Morning recap and A4 context | The room reconnects the map, intent, contract, and control boundary. |
@@ -42,12 +49,15 @@ happens. GitHub-hosted Windows CI checks Node 22, `npm ci`, typecheck, and hooks
 | 14:05–14:16 | A5 catch-up and A6 context | Recovery keeps local work intact. |
 | 14:16–15:00 | A6 plus human gate check A8 | Live evidence challenged and real approval remains `HUMAN OPEN`. |
 | 15:00–15:15 | Break | Stop only processes the participant owns. |
-| 15:15–15:20 | A6 catch-up | Partner can resume without guessing. |
+| 15:15–15:20 | A6 catch-up | Each participant can resume without guessing. |
 | 15:20–15:50 | Hackathon intent studio | Each learner drafts a bounded starting point. |
 | 15:50–16:00 | Six-assignment recap | Each learner names the next hackathon step. |
 
 A7 evaluation and A9 lesson work are optional after the scheduled route. The
 live product model and public skills pack stay in the appendix.
+
+Each participant follows the core route individually. Online assignments do
+not require collaboration.
 
 ## Assignment rhythm
 
@@ -83,5 +93,5 @@ use a blind checkout or reset. A checkpoint proves only the reference state.
 
 ## No-Claude fallback
 
-Pair the participant or complete the same small TypeScript TODO by hand. Run
-the same focused check. Keep all evidence and human boundaries unchanged.
+Guide the participant through the same small TypeScript TODO by hand. Run the
+same focused check. Keep all evidence and human boundaries unchanged.
