@@ -4,15 +4,12 @@ const FLOW = [
   ["Contract", "The accepted A3 contract goes red, then green with customer impact", "You accept the contract before implementation"],
   ["Controls", "Chat refuses mutation and the focused hook test records a denial", "You make the human-owned hook edit"],
   ["Tool", "The read-only deploy result and exact trace arguments are visible", "You choose and review the edge case"],
-  ["Evidence", "Every diagnosis claim has a stable source:ref", "You start the sample scenario and keep human actions OPEN"],
-  ["Offline bench", "The fixture adds policy coverage, harmful stays zero, and the floor stays fixed", "You choose the deterministic incident variation"],
-  ["Gate", "The exact mismatch stays blocked and no approval is fabricated", "You decide whether to operate the local human controls"],
-  ["Maintain", "The lesson stays proposed and the approved handoff preserves OPEN work", "You review the handoff text before a separate save"],
+  ["Evidence + gate", "Every diagnosis claim has a stable source:ref and an approval mismatch stays blocked", "You start the sample scenario and keep approval, execution, and resolution OPEN"],
 ]
 
 export function parseSolo(markdown) {
-  const headings = [...markdown.matchAll(/^## A([1-9])\. ([^\n]+)$/gm)]
-  if (headings.length !== FLOW.length) throw new Error(`Expected 9 SOLO assignments, found ${headings.length}`)
+  const headings = [...markdown.matchAll(/^## A(\d+)\. ([^\n]+)$/gm)]
+  if (headings.length !== FLOW.length) throw new Error(`Expected 6 core SOLO assignments, found ${headings.length}`)
   return headings.map((heading, index) => {
     if (Number(heading[1]) !== index + 1) throw new Error(`Expected A${index + 1}, found A${heading[1]}`)
     const body = markdown.slice(heading.index + heading[0].length, headings[index + 1]?.index)

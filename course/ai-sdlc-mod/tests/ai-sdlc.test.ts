@@ -17,12 +17,13 @@ const PANE = {
 } as const
 
 const soloFixture = Array.from(
-  { length: 9 },
+  { length: 6 },
   (_, index) => `## A${index + 1}. Assignment ${index + 1}\n\nPaste this prompt into Claude Code.\n\n\`\`\`text\nprompt-${index + 1}\n\`\`\``,
-).join("\n\n")
+).join("\n\n") + "\n\n## Optional A7. Extra evaluation\n\n```text\noptional-7\n```\n\n## Optional A9. Extra maintenance\n\n```text\noptional-9\n```"
 
 test("rejects an assignment without its own prompt", () => {
   expect(() => parseSolo(soloFixture.replace("```text\nprompt-4\n```", "No prompt"))).toThrow()
+  expect(() => parseSolo(soloFixture.replace("## Optional A7.", "## A7."))).toThrow()
 })
 
 test("shows a loading state while SOLO is reloading", async ($) => {
@@ -47,11 +48,11 @@ test("shows all SOLO assignments and fills the selected prompt", async ($, on) =
   await $.command.run({ command: "sdlc", args: "" })
   const ui = await $.ui.mount({ ...PANE, surface: "terminal" })
 
-  expect(parsed.length).toBe(9)
-  expect(await ui.find({ key: "assignment-A9" })).toBeDefined()
-  await ui.press({ key: "assignment-A8" })
-  expect(await ui.find({ type: "Text", text: /A8 · Gate · OPEN/ })).toBeDefined()
-  expect(await ui.find({ type: "Text", text: /Human gate: You decide whether to operate the local human controls/ })).toBeDefined()
+  expect(parsed.length).toBe(6)
+  expect(await ui.find({ key: "assignment-A6" })).toBeDefined()
+  await ui.press({ key: "assignment-A6" })
+  expect(await ui.find({ type: "Text", text: /A6 · Evidence \+ gate · OPEN/ })).toBeDefined()
+  expect(await ui.find({ type: "Text", text: /Human gate: You start the sample scenario and keep approval, execution, and resolution OPEN/ })).toBeDefined()
   await ui.press({ key: "use-prompt" })
-  expect(filled).toBe(parsed[7].prompt)
+  expect(filled).toBe(parsed[5].prompt)
 })

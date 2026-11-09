@@ -39,7 +39,7 @@ export function register(on) {
     return Box({
       flexDirection: "column",
       children: [
-        Text({ bold: true, children: ["Setup → Intent → Contract → Controls → Tool → Evidence → Offline bench → Gate → Maintain"] }),
+        Text({ bold: true, children: ["Setup → Intent → Contract → Controls → Tool → Evidence + gate"] }),
         Box({
           flexDirection: "row",
           columnGap: 1,
