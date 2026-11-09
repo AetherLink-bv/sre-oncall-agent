@@ -15,9 +15,11 @@ human decision for one exact incident and proposal. Fixture incident
 ## Set up once
 
 Use Terminal 2 for commands. On Windows, use Git Bash for every shown POSIX
-command.
+command. Check Node before cloning. Continue only on v22 or newer. If it is
+v21.6, stop and use the approved Node 22 setup for this laptop.
 
 ```sh
+node --version
 git clone --branch workshop/start https://github.com/AetherLink-bv/sre-oncall-agent.git
 cd sre-oncall-agent
 claude --setting-sources project --strict-mcp-config --no-chrome
@@ -69,7 +71,7 @@ Use the accepted field map. Propose an exact intent.md diff with one operator ou
 ## A3. Build and verify the verdict contract
 
 1. **Type this in: Claude Code.** Paste the contract prompt. **After:** one invalid verdict must fail.
-2. **Type this in: Claude Code.** Paste the scope prompt. **After:** the red assertion and required files are visible before editing.
+2. **Type this in: Claude Code.** Paste the scope prompt. **After:** five verdict rules and about nine required files are visible before editing.
 3. **Type this in: Claude Code.** Paste the implementation prompt. **After:** the focused test turns green and the diff stays bounded.
 4. **Type this in: Claude Code.** Paste the proof and verification prompts. **After:** customer impact is visible and the verdict is evidence-backed.
 5. **Human review.** Inspect the contract, diff, and outputs. **After:** unsupported customer claims remain `OPEN`.
@@ -110,13 +112,13 @@ selected files. Never use a blind checkout or reset.
 
 ## A4. Refuse unsafe chat actions and prove the human guard
 
-1. **Type this in: Claude Code.** Paste the chat prompt. **After:** the chosen mutation is refused and the read-only question still passes.
+1. **Type this in: Claude Code.** Paste the chat prompt. **After:** the full A6 evidence question passes and “Do not approve and roll back now.” is refused.
 2. **Human review.** Edit `.claude/hooks/guard.mjs` by hand. **After:** `bench/ratchet.json` is human-owned.
 3. **Type this in: Claude Code.** Paste the guard-review prompt. **After:** the focused test records Edit and Write denial.
 4. **Human review.** Inspect the audit result. **After:** no one claims full shell protection.
 
 ```text
-Read intent.md, src/chat.ts, and test/workshop/chat.test.ts. Explain the chat-refusal contract. Add a named MUTATION regex constant. Add a negative test that the read-only question "Was the deploy the cause?" remains a question. Ask me for one extra operational mutation phrase. Add that phrase to the focused test, show the test red, then implement only TODO(A4) in src/chat.ts. Rerun the focused chat test and show the diff. Do not edit .claude/, approvals/, lessons/lessons.md, PROGRESS.md, or bench/ratchet.json. Stop before the human hook step.
+Read intent.md, src/chat.ts, and test/workshop/chat.test.ts. Explain the chat-refusal contract. Add a named MUTATION regex constant. Keep the full A6 evidence question ending with "Do not approve or execute anything." read-only. Refuse "Do not approve and roll back now." as a mutation. Show the focused chat test red, then implement only TODO(A4) in src/chat.ts. Rerun the focused chat test and show its output and the diff. Do not inspect approvals/audit.jsonl or edit .claude/, approvals/, lessons/lessons.md, PROGRESS.md, or bench/ratchet.json. Stop before the human hook step.
 ```
 
 The named participant replaces the `TODO(A4)` comment immediately before
@@ -160,7 +162,7 @@ selected files. Do not overwrite the A4 human hook rule.
 1. **Type this in: Claude Code.** Paste the route-map prompt. **After:** fixture and live incident paths stay separate.
 2. **Type this in: Claude Code.** Paste the demo-plan prompt. **After:** Claude gives commands but starts no process.
 3. **Type this in: Terminal 2 (Git Bash on Windows).** Run the approved four-window sequence. **After:** a new listener incident exists.
-4. **Open in browser: http://localhost:4320.** Ask the three challenge prompts. **After:** refs stay stable, alternatives stay `OPEN`, and rollback chat is refused.
+4. **Open in browser: http://localhost:4320.** Ask the three challenge prompts. **After:** refs stay stable, the offline alternative answer is labelled scripted fixture output, and rollback chat is refused.
 5. **Human review.** Run the A8 gate checkpoint. **After:** a mismatch stays blocked and real approval remains `HUMAN OPEN`.
 
 ```text
@@ -185,12 +187,15 @@ After two healthy minutes, use Window 4 once:
 npm run chaos -- deploy v2.15.0 --mode bad-deploy
 ```
 
+Allow about three minutes total: two healthy minutes before chaos, then about
+one minute for the listener to create the incident.
+
 ```text
 Which evidence supports the proposed rollback? Show stable source:ref labels. Separate the diagnosis snapshot from current telemetry. Do not approve or execute anything.
 ```
 
 ```text
-Could this be something other than the deployment?
+Could this be something other than the deployment? Label the repeated offline snapshot summary as scripted fixture output, not alternative reasoning or model evidence.
 ```
 
 ```text
@@ -203,7 +208,7 @@ Keep the stable A8 test and TODO id. This is a required A6 checkpoint, not an
 eighth assignment.
 
 ```text
-Read intent.md, src/executor.ts, approvals/README.md, and the A8 workshop test. Explain the exact incident-and-action match that a valid approval requires. Show the focused A8 test red. After my approval, implement only TODO(A8) and add one wrong-incident or wrong-action case. Rerun the focused test, the main tests, and typecheck. Show why the mismatch stays blocked. Do not create an approval or click Approve, Execute, or Resolve. Stop with the real console action marked HUMAN OPEN.
+Read intent.md, src/executor.ts, approvals/README.md, and the A8 workshop test. Explain the exact incident-and-action match. Show the focused test red. After my approval, implement only TODO(A8). Keep the existing wrong-incident and wrong-action cases. Rerun the focused test, main tests, and typecheck. Show both mismatches blocked. Do not create an approval or click Approve, Execute, or Resolve. Stop with the console action HUMAN OPEN.
 ```
 
 ### A6 catch-up
@@ -224,7 +229,7 @@ selected files. The checkpoint creates no approval and executes no action.
 This proves fixture policy only. It does not prove live model behavior.
 
 ```text
-Read bench/cases.json, bench/ratchet.json, and the current bench results. Explain what the offline bench proves and what it does not prove. Save a baseline. Propose one deterministic incident case and wait for approval. Add the case without weakening existing cases or lowering the score floor. Save the treatment result and rerun one neighboring case. Show the diff, case count, pass result, and harmful count. Do not claim live model resistance or push.
+Read bench/cases.json, bench/ratchet.json, and the current bench results. Explain what the offline bench proves and what it does not prove. Save a baseline. Propose one deterministic case that reuses the bad-deploy data with the alert text "Customers report checkout problems" and wait for approval. Add the case without weakening existing cases or lowering the score floor. Save the treatment result and rerun one neighboring case. Show the diff, case count, pass result, and harmful count. Do not claim live model resistance or push.
 ```
 
 ```text

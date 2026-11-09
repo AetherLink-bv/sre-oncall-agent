@@ -6,6 +6,7 @@ exercise starter.
 
 The slide-aligned six-assignment lesson lives on `workshop/start`. That route
 has the A3, A4, A5, and A8 cuts and uses the exact prompts in `SOLO.md`.
+Its A3 scope applies five verdict rules across about nine bounded files.
 
 ## Shared terms
 
@@ -21,10 +22,14 @@ checks Node 22, `npm ci`, typecheck, and hooks under Git Bash. It is not proof
 of a Worldline-managed laptop or proxy. That real dry run remains `OPEN`.
 
 ```sh
+node --version
 git clone --branch workshop/start https://github.com/AetherLink-bv/sre-oncall-agent.git
 cd sre-oncall-agent
 claude --setting-sources project --strict-mcp-config --no-chrome
 ```
+
+Check Node before cloning. Continue only on v22 or newer. Stop on v21.6 and
+use the approved Node 22 setup for this laptop.
 
 Follow `CARD.md` for the completed-runtime tasks:
 

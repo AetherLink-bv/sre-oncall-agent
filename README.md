@@ -49,10 +49,14 @@ You need:
   pipeline; it is not model evidence.
 
 ```sh
+node --version
 git clone --branch workshop/start https://github.com/AetherLink-bv/sre-oncall-agent.git
 cd sre-oncall-agent
 claude --setting-sources project --strict-mcp-config --no-chrome
 ```
+
+Run `node --version` before cloning. Continue only on v22 or newer. Stop on
+v21.6 and use the approved Node 22 setup for this laptop.
 
 Run every shown POSIX command in Terminal 2. On Windows, use Git Bash. The
 GitHub Actions smoke checks Node 22, `npm ci`, typecheck, and hooks under Git
