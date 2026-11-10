@@ -32,8 +32,8 @@ off auto memory. A real Worldline-managed laptop and proxy dry run remains
 1. **Type this in: Claude Code.** Paste the map prompt. **After:** both intake paths and the shared runtime are named.
 2. **Type this in: Claude Code.** Paste the environment prompt. **After:** Node, dependencies, fixtures, and the diff are checked.
 3. **Type this in: Claude Code.** Paste the test prompt. **After:** main passes and only A3, A4, A5, and A8 remain expected-red.
-4. **Type this in: Claude Code.** Paste the console prompt. **After:** port ownership, health, and the local URL are visible.
-5. **Open in browser: http://localhost:4320.** Review the console. **After:** the setup proof belongs to this clone.
+4. **Type this in: two new Git Bash windows.** Start the shop and the traffic (commands below), then paste the console prompt in Claude Code. Keep all three running all day. **After:** port ownership, health, and the local URL are visible.
+5. **Open in browser: http://localhost:4320.** Review the console. **After:** the header shows `shop online · v2.14.0 healthy` and there are no incidents yet: the shop is healthy.
 
 ```text
 /show-me Read CLAUDE.md and fixtures/incidents/bad-deploy.json. Inspect only src/cli.ts, console/server.ts, and src/agent.ts. Map the fixture CLI for INC-1001 and the live console listener. Show where both call the shared investigate flow. Stay read-only. Name the three entry files and one shared runtime file, then stop.
@@ -45,6 +45,13 @@ Use the repository map we reviewed. Require Node 22 or newer. Check the current 
 
 ```text
 Run the main tests and the workshop tests. Explain why A3, A4, A5, and A8 are expected to fail. Do not solve them. Show the exact pass and expected-red counts, then stop for my test review.
+```
+
+The console reads its live telemetry from the shop (`demo/data/telemetry.json`, written by `npm run shop`). Start the shop and the traffic first, each in its own window:
+
+```sh
+npm run shop
+npm run traffic
 ```
 
 ```text
@@ -71,8 +78,10 @@ Use the accepted field map. Propose an exact intent.md diff with one operator ou
 1. **Type this in: Claude Code.** Paste the contract prompt. **After:** one invalid verdict must fail.
 2. **Type this in: Claude Code.** Paste the scope prompt. **After:** five verdict rules and about nine required files are visible before editing.
 3. **Type this in: Claude Code.** Paste the implementation prompt. **After:** the focused test turns green and the diff stays bounded.
-4. **Type this in: Claude Code.** Paste the proof and verification prompts. **After:** customer impact is visible and the verdict is evidence-backed.
-5. **Human review.** Inspect the contract, diff, and outputs. **After:** unsupported customer claims remain `OPEN`.
+4. **Type this in: Claude Code.** Paste the proof and verification prompts. **After:** customer impact is visible in the CLI output and the verdict is evidence-backed.
+5. **Type this in: the console window.** Press Ctrl+C and start the console again, so it loads the new contract. **After:** the shop and traffic keep running.
+6. **Open in browser: http://localhost:4320.** Click “+ New investigation”, then “Investigate: customers report checkout errors”. **After:** the diagnosis shows a Customer impact row. The live shop is healthy, so it says `none observed` (INC-1001 is the fixture; the console investigates the live shop).
+7. **Human review.** Inspect the contract, diff, and outputs. **After:** unsupported customer claims remain `OPEN`.
 
 ```text
 Read the accepted intent.md, docs/spec.md, src/contract.ts, src/runtime.ts, src/prompts.ts, and the A3 workshop test. Explain the verdict contract in plain English. Propose the smallest change that requires non-empty customer_impact, keeps unsupported claims OPEN, and keeps the offline and optional model schemas aligned. Keep versions, regions, and customer segments OPEN unless the cited metric establishes them. Do not edit. Stop for my contract review.
@@ -87,7 +96,7 @@ Implement the accepted A3 scope. Update TODO(A3), docs/spec.md, the contract and
 ```
 
 ```text
-Run the main tests, typecheck, and the offline investigation. Show customer_impact in the exact CLI output and at http://localhost:4320. Keep unsupported versions, regions, and customer segments OPEN. Report any failure before editing again. Do not push.
+Run the main tests, typecheck, and the offline investigation. Show customer_impact in the exact CLI output. Keep unsupported versions, regions, and customer segments OPEN. Report any failure before editing again. Do not push.
 ```
 
 ```text
@@ -159,7 +168,7 @@ selected files. Do not overwrite the A4 human hook rule.
 
 1. **Type this in: Claude Code.** Paste the route-map prompt. **After:** fixture and live incident paths stay separate.
 2. **Type this in: Claude Code.** Paste the demo-plan prompt. **After:** Claude gives commands but starts no process.
-3. **Type this in: Terminal 2 (Git Bash on Windows).** Run the approved four-window sequence. **After:** a new listener incident exists.
+3. **Type this in: the console window and Window 4.** The shop and traffic run since A1. Restart only the console, then run chaos once. **After:** a new listener incident exists.
 4. **Open in browser: http://localhost:4320.** Ask the three challenge prompts. **After:** refs stay stable, the offline alternative answer is labelled scripted fixture output, and rollback chat is refused.
 5. **Human review.** Run the A8 gate checkpoint. **After:** a mismatch stays blocked and real approval remains `HUMAN OPEN`.
 
@@ -171,22 +180,19 @@ selected files. Do not overwrite the A4 human hook rule.
 Use the incident path we reviewed. Propose the demo order, risks, proof, rollback, and one alternative cause. Reuse owned processes. Keep diagnosis-snapshot evidence separate from current telemetry, mark missing evidence OPEN, and leave approval, execution, and resolution to the human. Do not run or stop processes. Wait for my approval.
 ```
 
-Use three Git Bash windows for the long-running processes:
+The console, shop, and traffic already run since A1. Restart only the console (Ctrl+C first), so it loads your A4 and A5 code:
 
 ```sh
 AGENT_LISTEN_WINDOW_MIN=1 npm run console
-npm run shop
-npm run traffic
 ```
 
-After two healthy minutes, use Window 4 once:
+The shop has been healthy since A1, so that is your healthy baseline. Use Window 4 once:
 
 ```sh
 npm run chaos -- deploy v2.15.0 --mode bad-deploy
 ```
 
-Allow about three minutes total: two healthy minutes before chaos, then about
-one minute for the listener to create the incident.
+Allow about one minute for the listener to create the incident.
 
 ```text
 Which evidence supports the proposed rollback? Show stable source:ref labels. Separate the diagnosis snapshot from current telemetry. Do not approve or execute anything.
