@@ -16,7 +16,7 @@
  * commands, not general natural-language planning." Same here.
  */
 import { VERDICT_SCHEMA, type Incident } from "./contract.js";
-import { investigate, type AgentRun } from "./agent.js";
+import { investigate, modelErrorText, type AgentRun } from "./agent.js";
 import { parseStopCommand, parseWatchCommand, type WatchCommand } from "./deployWatch.js";
 import { guessTag, lessonsStore, loadLessons, renderLessons } from "./lessons.js";
 import { ONCALL_SYSTEM } from "./prompts.js";
@@ -94,12 +94,12 @@ export const ask = async (text: string, deps: AskDeps): Promise<string> => {
       systemPrompt: `${ONCALL_SYSTEM}\n\nMode: QUESTION. The operator asked a question. Inspect this snapshot with summarize_metrics and list_deploys before answering. Use search_logs and get_diff if needed. Report unavailable tools as OPEN. Answer in plain prose with evidence references. Telemetry context: ${telemetryContext}. Do NOT return the JSON verdict and do NOT propose a mitigation; if they want one, tell them to send "Investigate: …".`,
       mcpServers: { [SERVER_NAME]: createTelemetryServer(deps.telemetry) },
       tools: [...ALLOWED_TOOLS], allowedTools: [...ALLOWED_TOOLS],
-      permissionMode: "dontAsk", settingSources: [], maxTurns: 8, maxBudgetUsd: 0.3,
+      permissionMode: "dontAsk", settingSources: [], maxTurns: 8, maxBudgetUsd: 3,
       ...(rt.model ? { model: rt.model } : {}),
     },
   })) {
     deps.onEvent?.(e);
-    if (e.type === "result" && e.subtype === "success") answer = e.result ?? "";
+    if (e.type === "result" && e.subtype === "success") answer = e.is_error ? modelErrorText(e.result ?? "") : e.result ?? "";
   }
   return answer || "(no answer)";
 };
