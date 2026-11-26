@@ -4,9 +4,10 @@ AI SRE first responder on the Claude Agent SDK. Start with `SOLO.md` and
 `README.md`. Read `fixtures/incidents/*.json` and `bench/cases.json` before
 changing behaviour.
 
-The classroom route has six required assignments, A1 through A6. A6 includes
-the existing A8 human-approval gate as a required checkpoint. A7 and A9 are
-optional. Keep the stable A1 through A9 test ids and `TODO(...)` ids unchanged.
+The classroom route has six required assignments, A1 through A6. A6 uses the
+console buttons for a named human to approve, execute and resolve. A8 is an
+optional extra after A6; A7 and A9 are also optional after the close. Keep the
+stable A1 through A9 test ids and `TODO(...)` ids unchanged.
 
 ## The division of labour (fixed, non-negotiable)
 

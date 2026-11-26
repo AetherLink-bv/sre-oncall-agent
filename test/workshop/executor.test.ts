@@ -1,5 +1,6 @@
-// Workshop A8 — the gate: the executor refuses to act without a NAMED approval
-// for this incident and this proposal. Red on workshop/start; rebuild in
+// Optional A8 after A6 — the executor refuses to act without a NAMED approval
+// for this incident and this proposal. Red on workshop/start until the extra;
+// rebuild in
 // src/executor.ts checkApproval.
 import assert from "node:assert/strict";
 import { test } from "node:test";

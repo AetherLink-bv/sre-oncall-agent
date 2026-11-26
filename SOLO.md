@@ -12,7 +12,7 @@ human decision for one exact incident and proposal. Fixture incident
 
 ## Set up once
 
-Use Terminal 2 for commands. On Windows, use Git Bash for every shown POSIX
+Use Window 2 for commands. On Windows, use Git Bash for every shown POSIX
 command. Check Node before cloning. Continue only on v22 or newer. If it is
 v21.6, stop and use the approved Node 22 setup for this laptop.
 
@@ -31,12 +31,11 @@ off auto memory. A real Worldline-managed laptop and proxy dry run remains
 
 1. **Type this in: Claude Code.** Paste the map prompt. **After:** both intake paths and the shared runtime are named.
 2. **Type this in: Claude Code.** Paste the environment prompt. **After:** Node, dependencies, fixtures, and the diff are checked.
-3. **Type this in: Claude Code.** Paste the test prompt. **After:** main passes and only A3, A4, A5, and A8 remain expected-red.
-4. **Type this in: Claude Code.** Paste the console prompt. **After:** port ownership, health, and the local URL are visible.
-5. **Open in browser: http://localhost:4320.** Review the console. **After:** the setup proof belongs to this clone.
+3. **Type this in: Claude Code.** Paste the test prompt. **After:** main passes and only A3, A4, A5, and A8 are expected to fail. Do not solve them. A8 is an optional extra after A6.
+4. **Open in browser: http://localhost:4320.** Review the console. **After:** the setup proof belongs to this clone.
 
 ```text
-/show-me Read CLAUDE.md and fixtures/incidents/bad-deploy.json. Inspect only src/cli.ts, console/server.ts, and src/agent.ts. Map the fixture CLI for INC-1001 and the live console listener. Show where both call the shared investigate flow. Stay read-only. Name the three entry files and one shared runtime file, then stop.
+/show-me How does an incident reach the agent in this project? Read CLAUDE.md and fixtures/incidents/bad-deploy.json first. Then look only at src/cli.ts, console/server.ts, src/chat.ts and src/agent.ts. Draw two routes: the saved incident INC-1001 started with a command, and a live alert picked up by the console. Show where both reach the same investigate function. Only read, change nothing, then stop.
 ```
 
 ```text
@@ -45,10 +44,6 @@ Use the repository map we reviewed. Require Node 22 or newer. Check the current 
 
 ```text
 Run the main tests and the workshop tests. Explain why A3, A4, A5, and A8 are expected to fail. Do not solve them. Show the exact pass and expected-red counts, then stop for my test review.
-```
-
-```text
-Check port 4320. If it is free, start the console with AGENT_LISTEN_WINDOW_MIN=1. If it is occupied, identify the process without stopping it. Show the console health and local URL. Do not stop or replace an existing process. Stop for my setup review.
 ```
 
 ## A2. Write a reviewed operator intent
@@ -75,7 +70,7 @@ Use the accepted field map. Propose an exact intent.md diff with one operator ou
 5. **Human review.** Inspect the contract, diff, and outputs. **After:** unsupported customer claims remain `OPEN`.
 
 ```text
-Read the accepted intent.md, docs/spec.md, src/contract.ts, src/runtime.ts, src/prompts.ts, and the A3 workshop test. Explain the verdict contract in plain English. Propose the smallest change that requires non-empty customer_impact, keeps unsupported claims OPEN, and keeps the offline and optional model schemas aligned. Keep versions, regions, and customer segments OPEN unless the cited metric establishes them. Do not edit. Stop for my contract review.
+Read the accepted intent.md, docs/spec.md, src/contract.ts, src/runtime.ts, src/prompts.ts, and the A3 workshop test. Explain the verdict contract in plain English. Propose the smallest change for all five rules in TODO(A3): customer_impact is required and non-empty, rollback needs a deploys evidence line, a strong proposal needs at least two sources, low confidence cannot carry a strong proposal, and high confidence is refused while data_gaps exist. The change keeps unsupported claims OPEN and keeps the offline and optional model schemas aligned. Keep versions, regions, and customer segments OPEN unless the cited metric establishes them. Do not edit. Stop for my contract review.
 ```
 
 ```text
@@ -87,7 +82,7 @@ Implement the accepted A3 scope. Update TODO(A3), docs/spec.md, the contract and
 ```
 
 ```text
-Run the main tests, typecheck, and the offline investigation. Show customer_impact in the exact CLI output and at http://localhost:4320. Keep unsupported versions, regions, and customer segments OPEN. Report any failure before editing again. Do not push.
+Run the main tests, typecheck, and the offline investigation. Show customer_impact in the exact CLI output. Keep unsupported versions, regions, and customer segments OPEN. Report any failure before editing again. Do not push.
 ```
 
 ```text
@@ -111,12 +106,17 @@ selected files. Never use a blind checkout or reset.
 ## A4. Refuse unsafe chat actions and prove the human guard
 
 1. **Type this in: Claude Code.** Paste the chat prompt. **After:** the full A6 evidence question passes and “Do not approve and roll back now.” is refused.
-2. **Human review.** Edit `.claude/hooks/guard.mjs` by hand. **After:** `bench/ratchet.json` is human-owned.
-3. **Type this in: Claude Code.** Paste the guard-review prompt. **After:** the focused test records Edit and Write denial.
-4. **Human review.** Inspect the audit result. **After:** no one claims full shell protection.
+2. **Type this in: Claude Code.** Paste the guard-before prompt. **After:** the focused guard test records the missing `bench/ratchet.json` protection.
+3. **Human review.** Edit `.claude/hooks/guard.mjs` by hand. **After:** `bench/ratchet.json` is human-owned.
+4. **Type this in: Claude Code.** Paste the guard-review prompt. **After:** the focused test records Edit and Write denial.
+5. **Human review.** Inspect the audit result. **After:** no one claims full shell protection.
 
 ```text
 Read intent.md, src/chat.ts, and test/workshop/chat.test.ts. Explain the chat-refusal contract. Add a named MUTATION regex constant. Keep the full A6 evidence question ending with "Do not approve or execute anything." read-only. Refuse "Do not approve and roll back now." as a mutation. Show the focused chat test red, then implement only TODO(A4) in src/chat.ts. Rerun the focused chat test and show its output and the diff. Do not inspect approvals/audit.jsonl or edit .claude/, approvals/, lessons/lessons.md, PROGRESS.md, or bench/ratchet.json. Stop before the human hook step.
+```
+
+```text
+Run only the focused guard test: npx tsx --test test/workshop/guard.test.ts. Do not edit any file. Explain in plain words which test is red and what it means for bench/ratchet.json. Stop for my review.
 ```
 
 The named participant replaces the `TODO(A4)` comment immediately before
@@ -133,14 +133,53 @@ Read the human edit in .claude/hooks/guard.mjs and test/workshop/guard.test.ts. 
 
 ## A5. Build one read-only deploy tool
 
-1. **Type this in: Claude Code.** Paste the A5 prompt. **After:** the handler, bypasses, and focused red test are visible.
-2. **Human review.** Choose the empty-window or missing-deploy case. **After:** the edge case is explicit.
-3. **Type this in: Claude Code.** Continue after approval. **After:** focused, main, typecheck, and offline results are visible.
-4. **Human review.** Inspect exact trace arguments. **After:** no mutation tool exists.
+A5 has two parts. In **A5A** you remove the three shortcuts, so Sonny has to ask
+the empty `list_deploys` tool and goes blind. In **A5B** you build the tool, so
+Sonny sees again.
+
+### A5A. Remove the shortcuts: Sonny goes blind
+
+1. **Check the mode.** The bottom of Claude Code says "manual mode on". **After:** not there? Press Shift+Tab until it is.
+2. **Type this in: Window 2.** Run the search. **After:** 3 lines: `src/chat.ts` once, `src/runtime.ts` twice.
+3. **Type this in: Claude Code.** Paste the see prompt. **After:** what the tool should do, the 3 shortcuts, and the A5 test red (0 of 3). Nothing changes.
+4. **Human review.** The tool may only read. **After:** you agree. Do not type "accepted": the prompt in step 5 is your yes.
+5. **Type this in: Claude Code.** Paste the cut prompt. **After:** Claude Code asks per file (2 files). The A5 test is 1 of 3.
+6. **Type this in: Window 2.** Run the same search as step 2. **After:** nothing found.
+7. **Type this in: Window 2.** Run Sonny. **After:** trace line 2 is `list_deploys → []`, and `FAIL contract` follows the trace.
+
+```sh
+git grep -n "A5 bypass" -- src
+```
 
 ```text
-Read intent.md, src/tools.ts, src/runtime.ts, src/chat.ts, and test/workshop/tools.test.ts. Explain how list_deploys stays read-only and where its trace arguments are recorded. Show the three starter bypasses. Show the focused A5 test red. After my approval, implement TODO(A5) in src/tools.ts and remove the bypasses from src/runtime.ts and src/chat.ts. Add either an empty-window or missing-deploy case. Rerun the focused test, the main tests, typecheck, and the offline investigation. Show the tool result and exact trace arguments. Do not add a mutation tool or push.
+Read intent.md, src/tools.ts, src/runtime.ts, src/chat.ts, and test/workshop/tools.test.ts. Explain in plain words what the list_deploys tool should do and why it may only read. Show every place where the code grabs the update list itself, past the tool (the “A5 bypass” comments). Run only the focused A5 test and show it red. Do not edit anything. Stop for my review.
 ```
+
+```text
+Remove only the three A5 bypasses in src/runtime.ts and src/chat.ts, including their “A5 bypass” comments, so both ask the list_deploys tool (h.list_deploys) instead of reading the update list directly. Do not build the tool yet: leave list_deploys in src/tools.ts as it is. Run the focused A5 test and show which parts pass and which fail. Do not push.
+```
+
+```sh
+npm run investigate -- fixtures/incidents/bad-deploy.json
+```
+
+Four main tests are red until A5B, because Sonny's run needs the update list.
+
+### A5B. Build the tool: Sonny sees again
+
+1. **Type this in: Claude Code.** Paste the build prompt. **After:** Claude Code asks for 1 file, `src/tools.ts`. The A5 test is 3 of 3, the main tests are 56, and the type check is clean.
+2. **Type this in: Window 2.** Run Sonny again. **After:** trace line 2 shows the deploy `d-4821` (v2.15.0), and the last line says `PASS contract`.
+
+```text
+Now build the tool. In src/tools.ts, bind list_deploys to listDeploys from src/telemetry.ts and register it on the telemetry server, read-only, cited as deploys:<id>. Change nothing else. Rerun the focused A5 test, the main tests and typecheck, and show the diff. Do not add a tool that changes anything. Do not push.
+```
+
+```sh
+npm run investigate -- fixtures/incidents/bad-deploy.json
+```
+
+The tool only reads. What it shows informs a decision; a person still makes it.
+No mutation tool exists.
 
 ### A5 catch-up
 
@@ -157,21 +196,14 @@ selected files. Do not overwrite the A4 human hook rule.
 
 ## A6. Run the live counterpart and prove the human gate
 
-1. **Type this in: Claude Code.** Paste the route-map prompt. **After:** fixture and live incident paths stay separate.
-2. **Type this in: Claude Code.** Paste the demo-plan prompt. **After:** Claude gives commands but starts no process.
-3. **Type this in: Terminal 2 (Git Bash on Windows).** Run the approved four-window sequence. **After:** a new listener incident exists.
+1. **Human review.** Read the fixture and live incident paths before the live run. **After:** the two paths stay separate.
+2. **Human review.** Agree on the demo order, risks, proof, rollback, and alternative cause. Do not run or stop processes. **After:** the live run keeps diagnosis, approval, execution, and resolution with the human.
+3. **Type this in: Window 2 (Git Bash on Windows).** Run the approved four-window sequence. **After:** a new listener incident exists.
 4. **Open in browser: http://localhost:4320.** Ask the three challenge prompts. **After:** refs stay stable, the offline alternative answer is labelled scripted fixture output, and rollback chat is refused.
-5. **Human review.** Run the A8 gate checkpoint. **After:** a mismatch stays blocked and real approval remains `HUMAN OPEN`.
+5. **Human review.** Use the console buttons to approve, execute, and resolve the live incident with your name. **After:** the shop is healthy and the incident is resolved by the named human. A8 is an optional extra after A6.
 
-```text
-/show-me Read docs/plan.md, fixtures/incidents/bad-deploy.json, and the shop, traffic, chaos, and console scripts. Map the fixture CLI for INC-1001 and the listener-created live incident. Show where both use the shared investigate flow and tool trace. Stay read-only. Separate fixture output from optional model output, then stop.
-```
-
-```text
-Use the incident path we reviewed. Propose the demo order, risks, proof, rollback, and one alternative cause. Reuse owned processes. Keep diagnosis-snapshot evidence separate from current telemetry, mark missing evidence OPEN, and leave approval, execution, and resolution to the human. Do not run or stop processes. Wait for my approval.
-```
-
-Use three Git Bash windows for the long-running processes:
+Use the four Git Bash windows from the lab route; keep Windows 1, 3, and 4
+running while you use Window 2 for the chaos command:
 
 ```sh
 AGENT_LISTEN_WINDOW_MIN=1 npm run console
@@ -200,10 +232,10 @@ Could this be something other than the deployment? Label the repeated offline sn
 Roll back now.
 ```
 
-### Human gate check (A8)
+### Optional A8. Human gate check
 
-Keep the stable A8 test and TODO id. This is a required A6 checkpoint, not an
-eighth assignment.
+Keep the stable A8 test and TODO id. This is an optional extra after A6, not a
+required part of the six-assignment route.
 
 ```text
 Read intent.md, src/executor.ts, approvals/README.md, and the A8 workshop test. Explain the exact incident-and-action match. Show the focused test red. After my approval, implement only TODO(A8). Keep the existing wrong-incident and wrong-action cases. Rerun the focused test, main tests, and typecheck. Show both mismatches blocked. Do not create an approval or click Approve, Execute, or Resolve. Stop with the console action HUMAN OPEN.

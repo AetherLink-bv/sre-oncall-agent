@@ -18,11 +18,18 @@ const PANE = {
 
 const soloFixture = Array.from(
   { length: 6 },
-  (_, index) => `## A${index + 1}. Assignment ${index + 1}\n\nPaste this prompt into Claude Code.\n\n\`\`\`text\nprompt-${index + 1}\n\`\`\``,
+  (_, index) => index === 5
+    ? `## A${index + 1}. Assignment ${index + 1}\n\nThis section has no Claude Code prompt.`
+    : index === 0
+      ? `## A${index + 1}. Assignment ${index + 1}\n\n**Type this in: Claude Code.** Paste this prompt.\n\n\`\`\`text\nprompt-${index + 1}\n\`\`\`\n\n**Type this in: Claude Code.** Paste another prompt.\n\n\`\`\`text\nprompt-${index + 1}-second\n\`\`\``
+      : `## A${index + 1}. Assignment ${index + 1}\n\n**Type this in: Claude Code.** Paste this prompt.\n\n\`\`\`text\nprompt-${index + 1}\n\`\`\``,
 ).join("\n\n") + "\n\n## Optional A7. Extra evaluation\n\n```text\noptional-7\n```\n\n## Optional A9. Extra maintenance\n\n```text\noptional-9\n```"
 
-test("rejects an assignment without its own prompt", () => {
-  expect(() => parseSolo(soloFixture.replace("```text\nprompt-4\n```", "No prompt"))).toThrow()
+test("allows an assignment without a Claude Code prompt", () => {
+  const parsed = parseSolo(soloFixture)
+  expect(parsed[5].prompt).toBeUndefined()
+  expect(parsed[5].prompts).toEqual([])
+  expect(parsed[0].prompts).toEqual(["prompt-1", "prompt-1-second"])
   expect(() => parseSolo(soloFixture.replace("## Optional A7.", "## A7."))).toThrow()
 })
 
@@ -52,7 +59,10 @@ test("shows all SOLO assignments and fills the selected prompt", async ($, on) =
   expect(await ui.find({ key: "assignment-A6" })).toBeDefined()
   await ui.press({ key: "assignment-A6" })
   expect(await ui.find({ type: "Text", text: /A6 · Evidence \+ gate · OPEN/ })).toBeDefined()
-  expect(await ui.find({ type: "Text", text: /Human gate: You start the sample scenario and keep approval, execution, and resolution OPEN/ })).toBeDefined()
+  expect(await ui.find({ type: "Text", text: /Human gate: You use the console buttons to approve, execute and resolve the live incident/ })).toBeDefined()
+  expect(await ui.find({ key: "use-prompt" })).toBeUndefined()
+  await ui.press({ key: "assignment-A5" })
+  expect(await ui.find({ key: "use-prompt" })).toBeDefined()
   await ui.press({ key: "use-prompt" })
-  expect(filled).toBe(parsed[5].prompt)
+  expect(filled).toBe(parsed[4].prompt)
 })

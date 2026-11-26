@@ -41,7 +41,7 @@ function validateWorkshopDocs(solo, workshop, readme) {
 
   if (!/^## Optional A7\./m.test(solo)) problems.push("SOLO is missing optional A7");
   if (!/^## Optional A9\./m.test(solo)) problems.push("SOLO is missing optional A9");
-  if (!/A7 and A9\s+remain optional\./m.test(readme)) problems.push("README does not keep A7 and A9 optional");
+  if (!/A7, A8 and A9\s+remain optional after the close\./m.test(readme)) problems.push("README does not keep A7, A8 and A9 optional after the close");
 
   const docs = `${solo}\n${workshop}\n${readme}`;
   if (/\bgit\s+(?:checkout|switch|diff)\s+[^\n]*(?:w5-step|solved)/i.test(docs)) {
@@ -53,12 +53,12 @@ function validateWorkshopDocs(solo, workshop, readme) {
     [/Do not inspect approvals\/audit\.jsonl or edit \.claude\//, "A4 agent edit prohibition"],
     [/Run the approved four-window sequence/, "A6 human process start"],
     [/Do not run or stop processes\./, "A6 agent process prohibition"],
+    [/Use the console buttons to approve, execute, and resolve the live incident with your name\./, "A6 console human gate"],
+    [/A8 is an optional extra after A6\./, "A8 optional after A6"],
     [/Do not create an approval or click Approve, Execute, or Resolve\./, "A8 human action boundary"],
     [/Do not edit lessons\/lessons\.md or claim that the lesson was promoted\./, "A9 human promotion boundary"],
   ];
   for (const [pattern, label] of boundaries) if (!pattern.test(solo)) problems.push(`missing ${label}`);
-  if (/Resolve the sample incident yourself/.test(solo)) problems.push("docs require a human resolution to complete the workshop");
-
   return { ok: problems.length === 0, problems, assignments };
 }
 

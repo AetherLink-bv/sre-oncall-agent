@@ -12,5 +12,6 @@ A pending draft is not an approval. `decided_by: "OPEN"` means the decision is
 still `HUMAN OPEN`. Claude Code must not create, sign, or edit a human decision
 record.
 
-The A8 checkpoint inside Assignment A6 proves this gate with deterministic
-fixtures. It does not approve or execute an action in the live console.
+The optional A8 extra after Assignment A6 proves this gate with deterministic
+fixtures. It does not approve or execute an action in the live console; the
+required A6 route uses the console buttons for those human actions.

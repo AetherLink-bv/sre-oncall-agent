@@ -54,11 +54,11 @@ export function register(on) {
         Text({ bold: true, children: [`${assignment.id} · ${assignment.phase} · OPEN · ${assignment.title}`] }),
         Text({ children: [`Evidence to verify: ${assignment.evidence}`] }),
         Text({ color: "yellow", children: [`Human gate: ${assignment.humanGate}`] }),
-        Button({
-          key: "use-prompt",
-          label: "Put prompt in input",
-          onPress: () => $.prompt.fill({ text: assignment.prompt }),
-        }),
+        ...assignment.prompts.map((prompt, index) => Button({
+          key: index === 0 ? "use-prompt" : `use-prompt-${assignment.id}-${index + 1}`,
+          label: `Put prompt ${index + 1} in input`,
+          onPress: () => $.prompt.fill({ text: prompt }),
+        })),
       ],
     })
   })
