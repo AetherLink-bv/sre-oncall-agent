@@ -13,11 +13,14 @@ export function parseSolo(markdown) {
   return headings.map((heading, index) => {
     if (Number(heading[1]) !== index + 1) throw new Error(`Expected A${index + 1}, found A${heading[1]}`)
     const body = markdown.slice(heading.index + heading[0].length, headings[index + 1]?.index)
-    const prompt = body.match(/\*\*Type this in: Claude Code\.\*\*[\s\S]*?```text\n([\s\S]*?)\n```/)?.[1]
+    const prompts = body.includes("**Type this in: Claude Code.**")
+      ? [...body.matchAll(/```text\n([\s\S]*?)\n```/g)].map((match) => match[1])
+      : []
     return {
       id: `A${heading[1]}`,
       title: heading[2],
-      prompt,
+      prompt: prompts[0],
+      prompts,
       phase: FLOW[index][0],
       evidence: FLOW[index][1],
       humanGate: FLOW[index][2],

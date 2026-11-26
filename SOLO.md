@@ -31,7 +31,7 @@ off auto memory. A real Worldline-managed laptop and proxy dry run remains
 
 1. **Type this in: Claude Code.** Paste the map prompt. **After:** both intake paths and the shared runtime are named.
 2. **Type this in: Claude Code.** Paste the environment prompt. **After:** Node, dependencies, fixtures, and the diff are checked.
-3. **Type this in: Claude Code.** Paste the test prompt. **After:** main passes and only A3, A4, and A5 remain expected-red; A8 is an optional extra after A6.
+3. **Type this in: Claude Code.** Paste the test prompt. **After:** main passes and only A3, A4, A5, and A8 are expected to fail. Do not solve them. A8 is an optional extra after A6.
 4. **Open in browser: http://localhost:4320.** Review the console. **After:** the setup proof belongs to this clone.
 
 ```text
@@ -43,7 +43,7 @@ Use the repository map we reviewed. Require Node 22 or newer. Check the current 
 ```
 
 ```text
-Run the main tests and the workshop tests. Explain why A3, A4, and A5 are expected to fail; A8 is an optional extra after A6 and may remain red. Do not solve them. Show the exact pass and expected-red counts, then stop for my test review.
+Run the main tests and the workshop tests. Explain why A3, A4, A5, and A8 are expected to fail. Do not solve them. Show the exact pass and expected-red counts, then stop for my test review.
 ```
 
 ## A2. Write a reviewed operator intent
@@ -82,7 +82,7 @@ Implement the accepted A3 scope. Update TODO(A3), docs/spec.md, the contract and
 ```
 
 ```text
-Run the main tests, typecheck, and the offline investigation. Show customer_impact in the exact CLI output and at http://localhost:4320. Keep unsupported versions, regions, and customer segments OPEN. Report any failure before editing again. Do not push.
+Run the main tests, typecheck, and the offline investigation. Show customer_impact in the exact CLI output. Keep unsupported versions, regions, and customer segments OPEN. Report any failure before editing again. Do not push.
 ```
 
 ```text
@@ -106,12 +106,17 @@ selected files. Never use a blind checkout or reset.
 ## A4. Refuse unsafe chat actions and prove the human guard
 
 1. **Type this in: Claude Code.** Paste the chat prompt. **After:** the full A6 evidence question passes and “Do not approve and roll back now.” is refused.
-2. **Human review.** Edit `.claude/hooks/guard.mjs` by hand. **After:** `bench/ratchet.json` is human-owned.
-3. **Type this in: Claude Code.** Paste the guard-review prompt. **After:** the focused test records Edit and Write denial.
-4. **Human review.** Inspect the audit result. **After:** no one claims full shell protection.
+2. **Type this in: Claude Code.** Paste the guard-before prompt. **After:** the focused guard test records the missing `bench/ratchet.json` protection.
+3. **Human review.** Edit `.claude/hooks/guard.mjs` by hand. **After:** `bench/ratchet.json` is human-owned.
+4. **Type this in: Claude Code.** Paste the guard-review prompt. **After:** the focused test records Edit and Write denial.
+5. **Human review.** Inspect the audit result. **After:** no one claims full shell protection.
 
 ```text
 Read intent.md, src/chat.ts, and test/workshop/chat.test.ts. Explain the chat-refusal contract. Add a named MUTATION regex constant. Keep the full A6 evidence question ending with "Do not approve or execute anything." read-only. Refuse "Do not approve and roll back now." as a mutation. Show the focused chat test red, then implement only TODO(A4) in src/chat.ts. Rerun the focused chat test and show its output and the diff. Do not inspect approvals/audit.jsonl or edit .claude/, approvals/, lessons/lessons.md, PROGRESS.md, or bench/ratchet.json. Stop before the human hook step.
+```
+
+```text
+Run only the focused guard test: npx tsx --test test/workshop/guard.test.ts. Do not edit any file. Explain in plain words which test is red and what it means for bench/ratchet.json. Stop for my review.
 ```
 
 The named participant replaces the `TODO(A4)` comment immediately before
@@ -197,7 +202,8 @@ selected files. Do not overwrite the A4 human hook rule.
 4. **Open in browser: http://localhost:4320.** Ask the three challenge prompts. **After:** refs stay stable, the offline alternative answer is labelled scripted fixture output, and rollback chat is refused.
 5. **Human review.** Use the console buttons to approve, execute, and resolve the live incident with your name. **After:** the shop is healthy and the incident is resolved by the named human. A8 is an optional extra after A6.
 
-Use three Git Bash windows for the long-running processes:
+Use the four Git Bash windows from the lab route; keep Windows 1, 3, and 4
+running while you use Window 2 for the chaos command:
 
 ```sh
 AGENT_LISTEN_WINDOW_MIN=1 npm run console

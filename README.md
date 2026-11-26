@@ -72,8 +72,8 @@ Accept Claude Code's folder-trust prompt only when the
 displayed path is your own trusted clone. Never bypass trust for an unfamiliar
 folder. Restart the same command if project skills remain missing after trust.
 
-Cursor is optional. If it opens **Agents**, choose **IDE** and use its terminal.
-The lesson only needs a terminal and browser.
+Cursor is optional. If it opens **Agents**, choose **IDE** and use its window.
+The lesson needs the four lab windows and a browser.
 
 ## Shared terms
 
@@ -104,7 +104,7 @@ human gate intact. Use the remaining copy prompts from `SOLO.md` or the slides.
 
 ## Run it
 
-Use four separate terminals. Keep the console, shop, and traffic running.
+Use four separate windows. Keep the console, shop, and traffic running.
 Run the chaos command once in Window 2.
 
 | Window | Command |

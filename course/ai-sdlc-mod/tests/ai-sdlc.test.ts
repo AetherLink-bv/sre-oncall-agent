@@ -20,12 +20,16 @@ const soloFixture = Array.from(
   { length: 6 },
   (_, index) => index === 5
     ? `## A${index + 1}. Assignment ${index + 1}\n\nThis section has no Claude Code prompt.`
-    : `## A${index + 1}. Assignment ${index + 1}\n\n**Type this in: Claude Code.** Paste this prompt.\n\n\`\`\`text\nprompt-${index + 1}\n\`\`\``,
+    : index === 0
+      ? `## A${index + 1}. Assignment ${index + 1}\n\n**Type this in: Claude Code.** Paste this prompt.\n\n\`\`\`text\nprompt-${index + 1}\n\`\`\`\n\n**Type this in: Claude Code.** Paste another prompt.\n\n\`\`\`text\nprompt-${index + 1}-second\n\`\`\``
+      : `## A${index + 1}. Assignment ${index + 1}\n\n**Type this in: Claude Code.** Paste this prompt.\n\n\`\`\`text\nprompt-${index + 1}\n\`\`\``,
 ).join("\n\n") + "\n\n## Optional A7. Extra evaluation\n\n```text\noptional-7\n```\n\n## Optional A9. Extra maintenance\n\n```text\noptional-9\n```"
 
 test("allows an assignment without a Claude Code prompt", () => {
   const parsed = parseSolo(soloFixture)
   expect(parsed[5].prompt).toBeUndefined()
+  expect(parsed[5].prompts).toEqual([])
+  expect(parsed[0].prompts).toEqual(["prompt-1", "prompt-1-second"])
   expect(() => parseSolo(soloFixture.replace("## Optional A7.", "## A7."))).toThrow()
 })
 
