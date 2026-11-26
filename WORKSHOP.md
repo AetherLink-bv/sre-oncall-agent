@@ -43,7 +43,7 @@ That real participant dry run remains `OPEN`.
 | A2 | Write a reviewed operator intent. | One outcome, three repeatable checks, and human boundaries. |
 | A3 | Apply five verdict rules across about nine bounded files. | Red-to-green contract proof and a read-only verification verdict. |
 | A4 | Refuse mutations in chat. Add one human-owned file guard. | Chat stays read-only and the focused guard test records denial. |
-| A5 | Build `list_deploys` and remove bypasses. | Read-only tool output and exact trace arguments. |
+| A5 | A5A: remove the three shortcuts, so Sonny goes blind. A5B: build the read-only `list_deploys` tool, so he sees again. | `list_deploys → []` with `FAIL contract`, then the deploy `d-4821` (v2.15.0) in the trace with `PASS contract`. |
 | A6 | Run the live counterpart, challenge evidence, and prove the A8 gate. | Stable refs, snapshot/current separation, refusal, and a real approval marked `HUMAN OPEN`. |
 
 Use the exact prompts and five-step checkpoints in [SOLO.md](SOLO.md). The A8

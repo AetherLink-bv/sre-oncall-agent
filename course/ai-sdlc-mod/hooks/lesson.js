@@ -3,7 +3,7 @@ const FLOW = [
   ["Intent", "intent.md has three repeatable checks and a read-only boundary", "You choose and accept the operator outcome"],
   ["Contract", "The accepted A3 contract goes red, then green with customer impact", "You accept the contract before implementation"],
   ["Controls", "Chat refuses mutation and the focused hook test records a denial", "You make the human-owned hook edit"],
-  ["Tool", "The read-only deploy result and exact trace arguments are visible", "You choose and review the edge case"],
+  ["Tool", "Without the tool Sonny goes blind (FAIL contract); with the read-only tool the deploy is in the trace (PASS contract)", "You check that the tool may only read"],
   ["Evidence + gate", "Every diagnosis claim has a stable source:ref and an approval mismatch stays blocked", "You start the sample scenario and keep approval, execution, and resolution OPEN"],
 ]
 

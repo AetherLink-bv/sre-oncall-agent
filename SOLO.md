@@ -133,14 +133,53 @@ Read the human edit in .claude/hooks/guard.mjs and test/workshop/guard.test.ts. 
 
 ## A5. Build one read-only deploy tool
 
-1. **Type this in: Claude Code.** Paste the A5 prompt. **After:** the handler, bypasses, and focused red test are visible.
-2. **Human review.** Choose the empty-window or missing-deploy case. **After:** the edge case is explicit.
-3. **Type this in: Claude Code.** Continue after approval. **After:** focused, main, typecheck, and offline results are visible.
-4. **Human review.** Inspect exact trace arguments. **After:** no mutation tool exists.
+A5 has two parts. In **A5A** you remove the three shortcuts, so Sonny has to ask
+the empty `list_deploys` tool and goes blind. In **A5B** you build the tool, so
+Sonny sees again.
+
+### A5A. Remove the shortcuts: Sonny goes blind
+
+1. **Check the mode.** The bottom of Claude Code says "manual mode on". **After:** not there? Press Shift+Tab until it is.
+2. **Type this in: Window 2.** Run the search. **After:** 3 lines: `src/chat.ts` once, `src/runtime.ts` twice.
+3. **Type this in: Claude Code.** Paste the see prompt. **After:** what the tool should do, the 3 shortcuts, and the A5 test red (0 of 3). Nothing changes.
+4. **Human review.** The tool may only read. **After:** you agree. Do not type "accepted": the prompt in step 5 is your yes.
+5. **Type this in: Claude Code.** Paste the cut prompt. **After:** Claude Code asks per file (2 files). The A5 test is 1 of 3.
+6. **Type this in: Window 2.** Run the same search as step 2. **After:** nothing found.
+7. **Type this in: Window 2.** Run Sonny. **After:** trace line 2 is `list_deploys → []`, and `FAIL contract` follows the trace.
+
+```sh
+git grep -n "A5 bypass" -- src
+```
 
 ```text
-Read intent.md, src/tools.ts, src/runtime.ts, src/chat.ts, and test/workshop/tools.test.ts. Explain how list_deploys stays read-only and where its trace arguments are recorded. Show the three starter bypasses. Show the focused A5 test red. After my approval, implement TODO(A5) in src/tools.ts and remove the bypasses from src/runtime.ts and src/chat.ts. Add either an empty-window or missing-deploy case. Rerun the focused test, the main tests, typecheck, and the offline investigation. Show the tool result and exact trace arguments. Do not add a mutation tool or push.
+Read intent.md, src/tools.ts, src/runtime.ts, src/chat.ts, and test/workshop/tools.test.ts. Explain in plain words what the list_deploys tool should do and why it may only read. Show every place where the code grabs the update list itself, past the tool (the “A5 bypass” comments). Run only the focused A5 test and show it red. Do not edit anything. Stop for my review.
 ```
+
+```text
+Remove only the three A5 bypasses in src/runtime.ts and src/chat.ts, including their “A5 bypass” comments, so both ask the list_deploys tool (h.list_deploys) instead of reading the update list directly. Do not build the tool yet: leave list_deploys in src/tools.ts as it is. Run the focused A5 test and show which parts pass and which fail. Do not push.
+```
+
+```sh
+npm run investigate -- fixtures/incidents/bad-deploy.json
+```
+
+Four main tests are red until A5B, because Sonny's run needs the update list.
+
+### A5B. Build the tool: Sonny sees again
+
+1. **Type this in: Claude Code.** Paste the build prompt. **After:** Claude Code asks for 1 file, `src/tools.ts`. The A5 test is 3 of 3, the main tests are 56, and the type check is clean.
+2. **Type this in: Window 2.** Run Sonny again. **After:** trace line 2 shows the deploy `d-4821` (v2.15.0), and the last line says `PASS contract`.
+
+```text
+Now build the tool. In src/tools.ts, bind list_deploys to listDeploys from src/telemetry.ts and register it on the telemetry server, read-only, cited as deploys:<id>. Change nothing else. Rerun the focused A5 test, the main tests and typecheck, and show the diff. Do not add a tool that changes anything. Do not push.
+```
+
+```sh
+npm run investigate -- fixtures/incidents/bad-deploy.json
+```
+
+The tool only reads. What it shows informs a decision; a person still makes it.
+No mutation tool exists.
 
 ### A5 catch-up
 
