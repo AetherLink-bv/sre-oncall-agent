@@ -12,7 +12,7 @@ human decision for one exact incident and proposal. Fixture incident
 
 ## Set up once
 
-Use Terminal 2 for commands. On Windows, use Git Bash for every shown POSIX
+Use Window 2 for commands. On Windows, use Git Bash for every shown POSIX
 command. Check Node before cloning. Continue only on v22 or newer. If it is
 v21.6, stop and use the approved Node 22 setup for this laptop.
 
@@ -31,12 +31,11 @@ off auto memory. A real Worldline-managed laptop and proxy dry run remains
 
 1. **Type this in: Claude Code.** Paste the map prompt. **After:** both intake paths and the shared runtime are named.
 2. **Type this in: Claude Code.** Paste the environment prompt. **After:** Node, dependencies, fixtures, and the diff are checked.
-3. **Type this in: Claude Code.** Paste the test prompt. **After:** main passes and only A3, A4, A5, and A8 remain expected-red.
-4. **Type this in: Claude Code.** Paste the console prompt. **After:** port ownership, health, and the local URL are visible.
-5. **Open in browser: http://localhost:4320.** Review the console. **After:** the setup proof belongs to this clone.
+3. **Type this in: Claude Code.** Paste the test prompt. **After:** main passes and only A3, A4, and A5 remain expected-red; A8 is an optional extra after A6.
+4. **Open in browser: http://localhost:4320.** Review the console. **After:** the setup proof belongs to this clone.
 
 ```text
-/show-me Read CLAUDE.md and fixtures/incidents/bad-deploy.json. Inspect only src/cli.ts, console/server.ts, and src/agent.ts. Map the fixture CLI for INC-1001 and the live console listener. Show where both call the shared investigate flow. Stay read-only. Name the three entry files and one shared runtime file, then stop.
+/show-me How does an incident reach the agent in this project? Read CLAUDE.md and fixtures/incidents/bad-deploy.json first. Then look only at src/cli.ts, console/server.ts, src/chat.ts and src/agent.ts. Draw two routes: the saved incident INC-1001 started with a command, and a live alert picked up by the console. Show where both reach the same investigate function. Only read, change nothing, then stop.
 ```
 
 ```text
@@ -44,11 +43,7 @@ Use the repository map we reviewed. Require Node 22 or newer. Check the current 
 ```
 
 ```text
-Run the main tests and the workshop tests. Explain why A3, A4, A5, and A8 are expected to fail. Do not solve them. Show the exact pass and expected-red counts, then stop for my test review.
-```
-
-```text
-Check port 4320. If it is free, start the console with AGENT_LISTEN_WINDOW_MIN=1. If it is occupied, identify the process without stopping it. Show the console health and local URL. Do not stop or replace an existing process. Stop for my setup review.
+Run the main tests and the workshop tests. Explain why A3, A4, and A5 are expected to fail; A8 is an optional extra after A6 and may remain red. Do not solve them. Show the exact pass and expected-red counts, then stop for my test review.
 ```
 
 ## A2. Write a reviewed operator intent
@@ -75,7 +70,7 @@ Use the accepted field map. Propose an exact intent.md diff with one operator ou
 5. **Human review.** Inspect the contract, diff, and outputs. **After:** unsupported customer claims remain `OPEN`.
 
 ```text
-Read the accepted intent.md, docs/spec.md, src/contract.ts, src/runtime.ts, src/prompts.ts, and the A3 workshop test. Explain the verdict contract in plain English. Propose the smallest change that requires non-empty customer_impact, keeps unsupported claims OPEN, and keeps the offline and optional model schemas aligned. Keep versions, regions, and customer segments OPEN unless the cited metric establishes them. Do not edit. Stop for my contract review.
+Read the accepted intent.md, docs/spec.md, src/contract.ts, src/runtime.ts, src/prompts.ts, and the A3 workshop test. Explain the verdict contract in plain English. Propose the smallest change for all five rules in TODO(A3): customer_impact is required and non-empty, rollback needs a deploys evidence line, a strong proposal needs at least two sources, low confidence cannot carry a strong proposal, and high confidence is refused while data_gaps exist. The change keeps unsupported claims OPEN and keeps the offline and optional model schemas aligned. Keep versions, regions, and customer segments OPEN unless the cited metric establishes them. Do not edit. Stop for my contract review.
 ```
 
 ```text
@@ -196,19 +191,11 @@ selected files. Do not overwrite the A4 human hook rule.
 
 ## A6. Run the live counterpart and prove the human gate
 
-1. **Type this in: Claude Code.** Paste the route-map prompt. **After:** fixture and live incident paths stay separate.
-2. **Type this in: Claude Code.** Paste the demo-plan prompt. **After:** Claude gives commands but starts no process.
-3. **Type this in: Terminal 2 (Git Bash on Windows).** Run the approved four-window sequence. **After:** a new listener incident exists.
+1. **Human review.** Read the fixture and live incident paths before the live run. **After:** the two paths stay separate.
+2. **Human review.** Agree on the demo order, risks, proof, rollback, and alternative cause. Do not run or stop processes. **After:** the live run keeps diagnosis, approval, execution, and resolution with the human.
+3. **Type this in: Window 2 (Git Bash on Windows).** Run the approved four-window sequence. **After:** a new listener incident exists.
 4. **Open in browser: http://localhost:4320.** Ask the three challenge prompts. **After:** refs stay stable, the offline alternative answer is labelled scripted fixture output, and rollback chat is refused.
-5. **Human review.** Run the A8 gate checkpoint. **After:** a mismatch stays blocked and real approval remains `HUMAN OPEN`.
-
-```text
-/show-me Read docs/plan.md, fixtures/incidents/bad-deploy.json, and the shop, traffic, chaos, and console scripts. Map the fixture CLI for INC-1001 and the listener-created live incident. Show where both use the shared investigate flow and tool trace. Stay read-only. Separate fixture output from optional model output, then stop.
-```
-
-```text
-Use the incident path we reviewed. Propose the demo order, risks, proof, rollback, and one alternative cause. Reuse owned processes. Keep diagnosis-snapshot evidence separate from current telemetry, mark missing evidence OPEN, and leave approval, execution, and resolution to the human. Do not run or stop processes. Wait for my approval.
-```
+5. **Human review.** Use the console buttons to approve, execute, and resolve the live incident with your name. **After:** the shop is healthy and the incident is resolved by the named human. A8 is an optional extra after A6.
 
 Use three Git Bash windows for the long-running processes:
 
@@ -239,10 +226,10 @@ Could this be something other than the deployment? Label the repeated offline sn
 Roll back now.
 ```
 
-### Human gate check (A8)
+### Optional A8. Human gate check
 
-Keep the stable A8 test and TODO id. This is a required A6 checkpoint, not an
-eighth assignment.
+Keep the stable A8 test and TODO id. This is an optional extra after A6, not a
+required part of the six-assignment route.
 
 ```text
 Read intent.md, src/executor.ts, approvals/README.md, and the A8 workshop test. Explain the exact incident-and-action match. Show the focused test red. After my approval, implement only TODO(A8). Keep the existing wrong-incident and wrong-action cases. Rerun the focused test, main tests, and typecheck. Show both mismatches blocked. Do not create an approval or click Approve, Execute, or Resolve. Stop with the console action HUMAN OPEN.

@@ -54,7 +54,7 @@ claude --setting-sources project --strict-mcp-config --no-chrome
 Run `node --version` before cloning. Continue only on v22 or newer. Stop on
 v21.6 and use the approved Node 22 setup for this laptop.
 
-Run every shown POSIX command in Terminal 2. On Windows, use Git Bash. The
+Run every shown POSIX command in Window 2. On Windows, use Git Bash. The
 GitHub Actions smoke checks Node 22, `npm ci`, typecheck, and hooks under Git
 Bash on GitHub-hosted Windows. A
 Worldline-managed laptop and proxy still need a real participant dry run.
@@ -88,8 +88,9 @@ incident id.
 Open [SOLO.md](SOLO.md#a1-map-the-repo-and-prove-setup). Start A1 with the
 explicit `/show-me` prompt. It creates a read-only text map of the fixture,
 runtime, trace, and console path. The second A1 prompt runs setup checks. The
-main suite must pass. Only the A3, A4, A5, and A8 workshop tests must fail on
-their exercise TODOs. `npm run workshop:check` locates unfinished markers. It
+main suite must pass. Only the A3, A4, and A5 workshop tests must fail on their
+exercise TODOs; A8 is an optional extra after A6 and its two tests may stay red.
+`npm run workshop:check` locates unfinished markers. It
 is not a completion gate.
 
 Facilitators use [`FACILITATOR.md`](FACILITATOR.md) for the schedule, expected
@@ -97,21 +98,21 @@ starter failures and the manual fallback.
 
 For a visual route through the AI-native SDLC, start Claude Code with
 `claude --plugin-dir ./course/ai-sdlc-mod` and run `/sdlc`. The optional mod
-reads the first prompt from each assignment section in `SOLO.md`. A7 and A9
-remain optional. The mod leaves every human gate intact. Use the remaining copy
-prompts from `SOLO.md` or the slides.
+reads an optional first Claude Code prompt from each assignment section in
+`SOLO.md`. A7, A8 and A9 remain optional after the close. The mod leaves every
+human gate intact. Use the remaining copy prompts from `SOLO.md` or the slides.
 
 ## Run it
 
 Use four separate terminals. Keep the console, shop, and traffic running.
-Run the chaos command once in the fourth terminal.
+Run the chaos command once in Window 2.
 
-| Terminal | Command |
+| Window | Command |
 | --- | --- |
 | 1 | `AGENT_LISTEN_WINDOW_MIN=1 npm run console` |
-| 2 | `npm run shop` |
-| 3 | `npm run traffic` |
-| 4 | `npm run chaos -- deploy v2.15.0 --mode bad-deploy` |
+| 2 | `npm run chaos -- deploy v2.15.0 --mode bad-deploy` |
+| 3 | `npm run shop` |
+| 4 | `npm run traffic` |
 
 The one-minute listener setting belongs on the console process. Production
 uses the default five-minute window. Stop only processes that you started.
@@ -154,10 +155,11 @@ turn green as you rebuild them.
 | A3 | Accept, build, and verify the `customer_impact` verdict contract; `/verify-this` returns `VERIFIED`, `NOT VERIFIED`, or `INCONCLUSIVE` |
 | A4 | Build chat refusal; add the protected-file hook rule by hand |
 | A5 | Build `list_deploys` and remove the starter bypasses |
-| A6 | Run the live counterpart, challenge its evidence, and prove the existing A8 human-approval gate |
+| A6 | Run the live counterpart, challenge its evidence, and use the console buttons for human approval, execution and resolution |
 
-A7 is an optional deterministic fixture evaluation. A9 is an optional lesson.
-The hackathon handoff is a recap, not a seventh required assignment.
+A7, A8 and A9 are optional after the close. A8 is the optional
+`checkApproval` extra; its stable test id and TODO remain unchanged. The
+hackathon handoff is a recap, not a seventh required assignment.
 
 The classroom goals and checks are in **[WORKSHOP.md](WORKSHOP.md)**. The exact
 Claude Code prompts, learner choices, and stop points are in

@@ -6,7 +6,7 @@ listener incident are different records.
 
 ## Prepare the room
 
-Use this exact setup in Terminal 2. On Windows, use Git Bash:
+Use this exact setup in Window 2. On Windows, use Git Bash:
 
 ```sh
 node --version
@@ -17,7 +17,7 @@ claude --setting-sources project --strict-mcp-config --no-chrome
 
 1. Check Node before cloning. Stop on v21.6 and use the approved Node 22 setup.
 2. Give each participant a clean `workshop/start` clone.
-3. Use Terminal 2 for commands. On Windows, use Git Bash.
+3. Use Window 2 for commands. On Windows, use Git Bash.
 4. Start Claude Code with project settings and review folder trust.
 5. Keep the required route scripted and offline.
 6. Open `http://localhost:4320` only when the current step requires it.
@@ -31,30 +31,24 @@ happens. GitHub-hosted Windows CI checks Node 22, `npm ci`, typecheck, and hooks
 
 | Time | Block | Visible result |
 | --- | --- | --- |
-| 10:00–10:28 | Story, roles, glossary, setup | Builder and product are distinct. Setup route is visible. |
-| 10:28–10:50 | A1 | Repo map, health, main green, four expected red cuts. |
-| 10:50–10:54 | A2 concept and example | The reviewed intent target is visible. |
-| 10:54–11:05 | A2 assignment | Reviewed intent with three repeatable checks. |
-| 11:05–11:20 | Break | Preserve current work. |
-| 11:20–11:23 | A3 concept | Five verdict rules and about nine files are explicit. |
-| 11:23–11:25 | A3 example | The red-to-green target is visible. |
-| 11:25–11:50 | A3 build | Accepted scope, focused red, then focused green. |
-| 11:50–11:57 | A3 verification | Main tests, typecheck, CLI, browser, and verdict are checked. |
-| 11:57–12:00 | Quiz | The room names the contract and human boundary. |
-| 12:00–13:00 | Lunch | Preserve participant work. |
-| 13:00–13:10 | Restart and settle | Everyone returns before the recap. |
-| 13:10–13:18 | Morning recap and A4 context | The room reconnects the map, intent, contract, and control boundary. |
-| 13:18–13:40 | A4 | Mutation refused and human-owned guard proved. |
-| 13:40–14:05 | A5 | Read-only deploy tool and exact trace arguments. |
-| 14:05–14:16 | A5 catch-up and A6 context | Recovery keeps local work intact. |
-| 14:16–15:00 | A6 plus human gate check A8 | Live evidence challenged and real approval remains `HUMAN OPEN`. |
-| 15:00–15:15 | Break | Stop only processes the participant owns. |
-| 15:15–15:20 | A6 catch-up | Each participant can resume without guessing. |
-| 15:20–15:50 | Hackathon intent studio | Each learner drafts a bounded starting point. |
-| 15:50–16:00 | Six-assignment recap | Each learner names the next hackathon step. |
+| 10:00–10:34 | Opening | Story, roles, glossary and setup are visible. |
+| 10:34–10:52 | A1 | Repo map, health, main green and three expected red cuts. |
+| 10:57–11:07 | A2 | Reviewed intent with three repeatable checks. |
+| 11:09–11:24 | Break | Preserve participant work. |
+| 11:40–12:05 | A3 | Five verdict rules, focused red and focused green. |
+| 12:08–12:15 | A3B | Main tests, typecheck, CLI and independent verification are checked. |
+| 12:15–12:18 | Quiz | The room names the contract and human boundary. |
+| 12:18–13:18 | Lunch | Preserve participant work. |
+| 13:18–13:28 | Restart | Everyone returns before the afternoon route. |
+| 13:33–13:58 | A4 | Mutation refused and human-owned guard proved. |
+| 14:09–14:19 | A5A | Shortcuts removed; Sonny sees an empty deploy tool. |
+| 14:19–14:26 | A5B | The read-only deploy tool is built and Sonny sees again. |
+| 14:35–14:47 | A6A | The live shop breaks and Sonny opens an incident. |
+| 14:47–15:02 | A6B | A named human uses the console buttons to approve, execute and resolve. |
+| 15:02–15:17 | Close | Each learner names one result and the next step. |
 
-A7 evaluation and A9 lesson work are optional after the scheduled route. The
-live product model and public skills pack stay in the appendix.
+A7, A8 and A9 are optional after the close. The live product model and public
+skills pack stay in the appendix.
 
 Each participant follows the core route individually. Online assignments do
 not require collaboration.
@@ -72,7 +66,7 @@ Use four or five steps for each required assignment.
 Use these exact surface labels:
 
 - `Type this in: Claude Code`
-- `Type this in: Terminal 2 (Git Bash on Windows)`
+- `Type this in: Window 2 (Git Bash on Windows)`
 - `Open in browser: http://localhost:4320`
 - `Human review`
 
@@ -88,8 +82,9 @@ use a blind checkout or reset. A checkpoint proves only the reference state.
 - The participant accepts the intent and A3 contract.
 - The participant edits `.claude/hooks/guard.mjs` in A4.
 - The participant starts and stops the four A6 processes.
-- The A8 test proves exact matching. It does not create a real approval.
-- Approve, Execute, Resolve, lesson promotion, and push remain human actions.
+- A6 approval, execution and resolution happen through the console buttons.
+- A8 is an optional extra after A6; its test proves exact matching and does not create an approval.
+- Lesson promotion and push remain human actions.
 
 ## No-Claude fallback
 

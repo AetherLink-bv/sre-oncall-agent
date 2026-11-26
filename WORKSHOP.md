@@ -15,7 +15,7 @@ model run.
 
 ## Set up once
 
-Use Terminal 2 for commands. On Windows, use Git Bash for every shown POSIX
+Use Window 2 for commands. On Windows, use Git Bash for every shown POSIX
 command, including `AGENT_MODEL=...`, `env -u ...`, and multiline shell blocks.
 
 ```sh
@@ -39,16 +39,17 @@ That real participant dry run remains `OPEN`.
 
 | Assignment | Build and prove | Visible result |
 | --- | --- | --- |
-| A1 | Map the fixture and live intake paths. Prove setup. | Main checks pass. Only A3, A4, A5, and A8 are red. |
+| A1 | Map the fixture and live intake paths. Prove setup. | Main checks pass. Only A3, A4, and A5 are red; A8 is optional after A6. |
 | A2 | Write a reviewed operator intent. | One outcome, three repeatable checks, and human boundaries. |
 | A3 | Apply five verdict rules across about nine bounded files. | Red-to-green contract proof and a read-only verification verdict. |
 | A4 | Refuse mutations in chat. Add one human-owned file guard. | Chat stays read-only and the focused guard test records denial. |
 | A5 | A5A: remove the three shortcuts, so Sonny goes blind. A5B: build the read-only `list_deploys` tool, so he sees again. | `list_deploys → []` with `FAIL contract`, then the deploy `d-4821` (v2.15.0) in the trace with `PASS contract`. |
-| A6 | Run the live counterpart, challenge evidence, and prove the A8 gate. | Stable refs, snapshot/current separation, refusal, and a real approval marked `HUMAN OPEN`. |
+| A6 | Run the live counterpart, challenge evidence, and use the console buttons for the human gate. | Stable refs, snapshot/current separation, refusal, approval, execution and resolution by a named human. |
 
-Use the exact prompts and five-step checkpoints in [SOLO.md](SOLO.md). The A8
-test id remains stable, but its human gate is part of A6. There is no seventh
-required assignment.
+Use the exact prompts and five-step checkpoints in [SOLO.md](SOLO.md). A6 uses
+the console buttons for a named human to approve, execute and resolve. The A8
+test id remains stable, but A8 is an optional extra after A6. There is no
+seventh required assignment.
 
 ## Catch up without losing work
 
@@ -73,4 +74,4 @@ step.
 - A human edits `.claude/hooks/guard.mjs` during A4.
 - A human starts and stops the A6 processes.
 - Claude Code never approves, executes, resolves, promotes, or pushes.
-- A real approval remains `HUMAN OPEN` until a named participant acts.
+- A real approval is made by a named participant through the console buttons.
